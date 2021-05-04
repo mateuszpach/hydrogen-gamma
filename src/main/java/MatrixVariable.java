@@ -1,12 +1,17 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MatrixVariable implements Variable {
 
-    private final Double[][] value;
+    private final double[][] value;
 
-    MatrixVariable(Double[][] value) throws IllegalArgumentException {
+    MatrixVariable(double[][] value) throws IllegalArgumentException {
         if (value == null || value.length == 0 || value[0].length == 0)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Values empty");
+        for (double[] doubles : value)
+            if (doubles.length != value[0].length)
+                throw new IllegalArgumentException("Different number of columns in different rows.");
+
         this.value = value;
     }
 
@@ -20,5 +25,17 @@ public class MatrixVariable implements Variable {
 
     public Integer colsNum() {
         return value[0].length;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < rowsNum(); i++){
+            for (int j = 0; j < colsNum(); j++) {
+                builder.append(value[i][j]).append(' ');
+            }
+            builder.append('\n');
+        }
+        return builder.toString();
     }
 }
