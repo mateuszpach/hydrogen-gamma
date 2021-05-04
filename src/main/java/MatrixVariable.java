@@ -1,3 +1,4 @@
+import java.io.ObjectStreamException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -15,15 +16,15 @@ public class MatrixVariable implements Variable {
         this.value = value;
     }
 
-    public Double get(int i, int j) {
+    public double get(int i, int j) {
         return value[i][j];
     }
 
-    public Integer rowsNum() {
+    public int rowsNum() {
         return value.length;
     }
 
-    public Integer colsNum() {
+    public int colsNum() {
         return value[0].length;
     }
 
@@ -37,5 +38,21 @@ public class MatrixVariable implements Variable {
             builder.append('\n');
         }
         return builder.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() != MatrixVariable.class)
+            return false;
+        MatrixVariable m = (MatrixVariable) o;
+        if (rowsNum() != m.rowsNum() || colsNum() != m.colsNum())
+            return false;
+        for (int i = 0; i < rowsNum(); i++) {
+            for (int j = 0; j < colsNum(); j++) {
+                if (get(i, j) != m.get(i, j))
+                    return false;
+            }
+        }
+        return true;
     }
 }

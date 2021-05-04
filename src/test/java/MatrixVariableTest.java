@@ -1,9 +1,6 @@
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
-
 
 public class MatrixVariableTest {
 
@@ -57,5 +54,27 @@ public class MatrixVariableTest {
                 assertEquals(a[i][j], A.get(i, j));
             }
         }
+    }
+
+    @Test
+    void sameMatricesEqual() {
+        MatrixVariable A = new MatrixVariable(new double[][] {{1.0, -2.0}, {1e100, -3e100}});
+        MatrixVariable B = new MatrixVariable(new double[][] {{1.0, -2.0}, {1e100, -3e100}});
+
+        assertEquals(A, B);
+        assertEquals(B, A);
+    }
+
+    @Test
+    void differentMatricesNotEqual() {
+        MatrixVariable A = new MatrixVariable(new double[][] {{1e-20, -2.0}, {1e100, -3e100}});
+        MatrixVariable B = new MatrixVariable(new double[][] {{-1e-20, -2.0}, {1e100, -3e100}});
+        System.out.println(A.get(0,0));
+        System.out.println(B.get(0,0));
+
+        assertNotEquals(A, B);
+        assertNotEquals(B, A);
+        assertNotEquals(new MatrixVariable(new double[][] {{1.0, 1.0}}), new MatrixVariable(new double[][]{{1.0}}));
+        assertNotEquals(new MatrixVariable(new double[][] {{1.0, 1.0}}), new MatrixVariable(new double[][]{{1.0, 1.0}, {1.0, 1.0}}));
     }
 }
