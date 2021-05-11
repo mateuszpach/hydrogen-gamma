@@ -4,7 +4,7 @@ import util.Pair;
 public interface LinearAlgebra {
 
 
-    public static Double determinant(MatrixVariable A) throws IllegalArgumentException {
+    public static Double determinant(MatrixVariable A) {
         Pair<Pair<MatrixVariable, MatrixVariable>, Integer[]> lu = decompositionLUPivoted(A);
         MatrixVariable U = lu.first.second;
         double det = 1.0;
@@ -15,7 +15,7 @@ public interface LinearAlgebra {
     }
 
     // solves linear system of shape Ax = b, where A is square matrix
-    public static MatrixVariable solveLinearSystem(MatrixVariable A, MatrixVariable b) throws IllegalArgumentException {
+    public static MatrixVariable solveLinearSystem(MatrixVariable A, MatrixVariable b) {
         Pair<Pair<MatrixVariable, MatrixVariable>, Integer[]> lu = decompositionLUPivoted(A);
         MatrixVariable L = lu.first.first;
         MatrixVariable U = lu.first.second;
@@ -30,10 +30,10 @@ public interface LinearAlgebra {
     }
 
     // given A finds matrices L and U such that LU = A, L is lower triangular and U is upper triangular
-    public static Pair<MatrixVariable, MatrixVariable> decompositionLU(MatrixVariable matrix) throws IllegalArgumentException {
+    public static Pair<MatrixVariable, MatrixVariable> decompositionLU(MatrixVariable matrix) {
         int n = matrix.rowsNum();
         int m = matrix.colsNum();
-        if (n != m) throw new IllegalArgumentException("Matrix is not square.");
+        if (n != m) throw new MatrixNotSquareException();
 
         Pair<double[][], double[][]> initialLU = prepareLU(matrix);
         double[][] L = initialLU.first;
@@ -51,10 +51,10 @@ public interface LinearAlgebra {
 
 
     // for A finds L, U and permutation p such that LU = p(A)
-    private static Pair<Pair<MatrixVariable, MatrixVariable>, Integer[]> decompositionLUPivoted(MatrixVariable matrix) throws IllegalArgumentException {
+    private static Pair<Pair<MatrixVariable, MatrixVariable>, Integer[]> decompositionLUPivoted(MatrixVariable matrix) {
         int n = matrix.rowsNum();
         int m = matrix.colsNum();
-        if (n != m) throw new IllegalArgumentException("Matrix is not square");
+        if (n != m) throw new MatrixNotSquareException();
 
         Integer[] permutation = identity(n);
 
@@ -178,4 +178,6 @@ public interface LinearAlgebra {
         System.out.println(X);
         System.out.println(determinant(new MatrixVariable(A)));
     }
+
+    public static class MatrixNotSquareException extends RuntimeException {}
 }

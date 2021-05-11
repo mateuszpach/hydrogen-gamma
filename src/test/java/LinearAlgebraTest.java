@@ -6,22 +6,22 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LinearAlgebraTest {
 
     @Test
-    void throwingIllegalArgument() {
+    void throwingMatrixNotSquare() {
         double[][] a = {{1.0, 1.0}, {2.0, 2.0}, {3.0, 3.0}};
         double[][] b = {{1.0, 1.0}};
         double[][] c = {{1.0}, {1.0}};
 
-        assertThrows(IllegalArgumentException.class, () -> LinearAlgebra.decompositionLU(new MatrixVariable(a)));
-        assertThrows(IllegalArgumentException.class, () -> LinearAlgebra.decompositionLU(new MatrixVariable(b)));
-        assertThrows(IllegalArgumentException.class, () -> LinearAlgebra.decompositionLU(new MatrixVariable(c)));
+        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.decompositionLU(new MatrixVariable(a)));
+        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.decompositionLU(new MatrixVariable(b)));
+        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.decompositionLU(new MatrixVariable(c)));
 
-        assertThrows(IllegalArgumentException.class, () -> LinearAlgebra.determinant(new MatrixVariable(a)));
-        assertThrows(IllegalArgumentException.class, () -> LinearAlgebra.determinant(new MatrixVariable(b)));
-        assertThrows(IllegalArgumentException.class, () -> LinearAlgebra.determinant(new MatrixVariable(c)));
+        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.determinant(new MatrixVariable(a)));
+        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.determinant(new MatrixVariable(b)));
+        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.determinant(new MatrixVariable(c)));
 
-        assertThrows(IllegalArgumentException.class, () -> LinearAlgebra.solveLinearSystem(new MatrixVariable(a), null));
-        assertThrows(IllegalArgumentException.class, () -> LinearAlgebra.solveLinearSystem(new MatrixVariable(b), null));
-        assertThrows(IllegalArgumentException.class, () -> LinearAlgebra.solveLinearSystem(new MatrixVariable(c), null));
+        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.solveLinearSystem(new MatrixVariable(a), null));
+        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.solveLinearSystem(new MatrixVariable(b), null));
+        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.solveLinearSystem(new MatrixVariable(c), null));
     }
 
     @Test
