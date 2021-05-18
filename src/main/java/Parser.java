@@ -25,30 +25,30 @@ public class Parser {
         this.futureIndex = 0;
         this.parseVariables();
         this.simplifyOperation();
-        for (String key : variables.keySet()) {
-            System.out.println(key + " " + variables.get(key).getType());
-            switch (variables.get(key).getType()) {
-                case FUNCTION:
-                    System.out.println(variables.get(key).getFunction().value);
-                    break;
-                case NUMBER:
-                    System.out.println(variables.get(key).getNumber());
-                    break;
-                case MATRIX:
-                    System.out.println(variables.get(key).getMatrix().toString());
-                    break;
-                case TEXT:
-                    System.out.println(variables.get(key).getText());
-                    break;
-            }
-        }
-        for (String key : futureVariables.keySet()) {
-            System.out.println(key + " " + futureVariables.get(key).first);
-            System.out.print(" -----> ");
-            for (String a : futureVariables.get(key).second)
-                System.out.print(a + " ");
-            System.out.println();
-        }
+        //for (String key : variables.keySet()) {
+        //    System.out.println(key + " " + variables.get(key).getType());
+        //    switch (variables.get(key).getType()) {
+        //        case FUNCTION:
+        //            System.out.println(variables.get(key).getFunction().value);
+        //            break;
+        //        case NUMBER:
+        //            System.out.println(variables.get(key).getNumber());
+        //            break;
+        //        case MATRIX:
+        //            System.out.println(variables.get(key).getMatrix().toString());
+        //            break;
+        //        case TEXT:
+        //            System.out.println(variables.get(key).getText());
+        //            break;
+        //    }
+        //}
+        //for (String key : futureVariables.keySet()) {
+        //    System.out.println(key + " " + futureVariables.get(key).first);
+        //    System.out.print(" -----> ");
+        //    for (String a : futureVariables.get(key).second)
+        //        System.out.print(a + " ");
+        //    System.out.println();
+        //}
     }
 
     public void compute() {
