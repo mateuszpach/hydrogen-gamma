@@ -13,28 +13,21 @@ public class Parser {
     int futureIndex;
 
     Parser() {
-        modules = new HashMap<>();
-        modules.put("+", "+");
-        modules.put("-", "-");
-        modules.put("*", "*");
-        modules.put("/", "/");
+        modules = new HashMap<>(); // will hold map from module calling name to some input recipe for modules stating what forms of input they expect
     }
 
-    private enum varType {
-        MATRIX, TEXT, NUMBER, FUNCTION
-    }
 
     public void load(String varDefinition, String operation) {
-        this.varDefinition = varDefinition;
-        this.operation = "+(" + operation + ")";
+        this.varDefinition = varDefinition.replaceAll("\\s+", "").replaceAll("#", "");
+        this.operation = operation;
         variables = new HashMap<>();
         futureVariables = new HashMap<>();
         this.futureIndex = 0;
         this.parseVariables();
-        this.computeOperation();
+        this.simplifyOperation();
         for (String key : variables.keySet()) {
-            System.out.println(key + " " + variables.get(key).type);
-            switch (variables.get(key).type) {
+            System.out.println(key + " " + variables.get(key).getType());
+            switch (variables.get(key).getType()) {
                 case FUNCTION:
                     System.out.println(variables.get(key).getFunction().value);
                     break;
@@ -56,6 +49,9 @@ public class Parser {
                 System.out.print(a + " ");
             System.out.println();
         }
+    }
+
+    public void compute() {
         //here goes some kind of switch that computes #0,#1,#2, ... and returns the last one
         //why not yet implemented? modules are still written in somewhat random fashion
     }
@@ -67,7 +63,7 @@ public class Parser {
             if (b.length != 2)
                 throw new IllegalArgumentException("Variable definition must contain exactly one ':' character: " + a);
             if (b[1].charAt(0) == '\"') {//text
-                if (b[1].charAt(b[1].length() - 1) == '\"') {
+                if (b[1].charAt(b[1].length() - 1) == '\"' && b[1].length() >= 2) {
                     variables.put(b[0], new varBox(b[1]));
                 } else
                     throw new IllegalArgumentException("Text variable definition must contain exactly two '\"' character at front and end: " + a);
@@ -89,7 +85,8 @@ public class Parser {
                     throw new IllegalArgumentException("Function variable definition must be within () characters: " + a);
             } else if (b[1].charAt(0) == '[') {//matrix
                 if (b[1].charAt(b[1].length() - 1) == ']') {
-                    String[] rows = b[1].substring(1, b[1].length() - 1).split("\\|");
+                    b[1] = b[1].replaceAll("/", " / ");// looks stupid but makes rows not glue together
+                    String[] rows = b[1].substring(1, b[1].length() - 1).split("/");
                     ArrayList<ArrayList<Double>> matrix = new ArrayList<>();
                     for (String row : rows) {
                         ArrayList<Double> rowVal = new ArrayList<>();
@@ -105,6 +102,8 @@ public class Parser {
                                 throw new IllegalArgumentException(x + " from matrix definition " + a + " does not represent valid number");
                             }
                         }
+                        if (rowVal.size() < 1)
+                            throw new IllegalArgumentException("A row from matrix definition " + a + " was found empty");
                         matrix.add(rowVal);
                     }
                     int rowSize = matrix.get(0).size();
@@ -130,7 +129,7 @@ public class Parser {
         }
     }
 
-    private void computeOperation() {
+    private void simplifyOperation() {
         ArrayList<String> list = new ArrayList<>();
         simplify(this.operation, list);
     }
@@ -140,8 +139,6 @@ public class Parser {
     }
 
     private String simplify(String query, ArrayList<String> list) {
-        if (query.length() == 0)
-            return query;
         char[] chars = query.toCharArray();
         int i = 0;
         while (i < query.length()) {
@@ -184,55 +181,4 @@ public class Parser {
     }
 
 
-    private static class varBox {
-        private MatrixVariable matrix;
-        private String text;
-        private Double number;
-        private FunctionVariable function;
-        private final varType type;
-
-        varBox(MatrixVariable matrix) {
-            this.type = varType.MATRIX;
-            this.matrix = matrix;
-        }
-
-        varBox(String text) {
-            this.type = varType.TEXT;
-            this.text = text;
-        }
-
-        varBox(Double number) {
-            this.type = varType.NUMBER;
-            this.number = number;
-        }
-
-        varBox(FunctionVariable function) {
-            this.type = varType.FUNCTION;
-            this.function = function;
-        }
-
-        MatrixVariable getMatrix() {
-            if (this.type != varType.MATRIX)
-                throw new IllegalArgumentException("Is not a matrix");
-            return this.matrix;
-        }
-
-        Double getNumber() {
-            if (this.type != varType.NUMBER)
-                throw new IllegalArgumentException("Is not a number");
-            return this.number;
-        }
-
-        String getText() {
-            if (this.type != varType.TEXT)
-                throw new IllegalArgumentException("Is not a text");
-            return this.text;
-        }
-
-        FunctionVariable getFunction() {
-            if (this.type != varType.FUNCTION)
-                throw new IllegalArgumentException("Is not a function");
-            return this.function;
-        }
-    }
 }
