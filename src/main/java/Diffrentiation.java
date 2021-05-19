@@ -32,14 +32,37 @@ public abstract class Diffrentiation {
         if (formula.isEmpty())
             throw new InvalidFormulaException(formula);
 
-        if (isTrivial(formula))
-            return new FunctionVariable(knownDerivatives.get(formula));
-
-        if (formula.charAt(0) == '-' && isTrivial(formula.substring(1)))
-            return new FunctionVariable('-' + knownDerivatives.get(formula.substring(1)));
-
-
         formula = removeParentheses(formula);
+        if (isConstant(formula))
+            return new FunctionVariable("0");
+
+        StringBuilder derivativeFormula = new StringBuilder();
+        boolean negative = false;
+
+        if (formula.charAt(0) == '-') {
+            negative = true;
+            formula = formula.substring(1, formula.length());
+        }
+        formula = removeParentheses(formula);
+
+        boolean done = false;
+
+        if (isTrivial(formula)) {
+            done = true;
+            derivativeFormula.append(knownDerivatives.get(formula));
+        }
+        else if (isPoly(formula)) {
+            done = true;
+            derivativeFormula.append(polyDeriv(formula));
+        }
+
+        if (done) {
+            if (negative) {
+                derivativeFormula.insert(0, "(-(");
+                derivativeFormula.append("))");
+            }
+            return new FunctionVariable(derivativeFormula.toString());
+        }
 
         ArrayList<Integer> operPos = operatorsPositions(formula);
 
@@ -48,7 +71,6 @@ public abstract class Diffrentiation {
         if (!correctOperators(formula))
             throw new InvalidFormulaException(formula);
 
-        StringBuilder derivativeFormula = new StringBuilder();
         Pair<ArrayList<String>, ArrayList<Character>> additive = findSubcomponents(formula, "+-");
 
         if (additive.second.isEmpty()) {    // multiplicative
@@ -107,6 +129,11 @@ public abstract class Diffrentiation {
             }
             derivativeFormula.append(symbolicDerivative(new FunctionVariable(components.get(components.size() - 1))).value);
             derivativeFormula.append(')');
+        }
+
+        if (negative) {
+            derivativeFormula.insert(0, "(-(");
+            derivativeFormula.append("))");
         }
 
         return new FunctionVariable(derivativeFormula.toString());
@@ -176,6 +203,31 @@ public abstract class Diffrentiation {
 
     private static boolean isTrivial(String formula) {
         return knownDerivatives.containsKey(formula);
+    }
+
+    private static boolean isConstant(String formula) {
+        try {
+            double d = Double.parseDouble(formula);
+        }
+        catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean isPoly(String formula) {
+        if (formula.length() < 5)
+            return false;
+        return formula.substring(0, 3).equals("x^(") && formula.charAt(formula.length() - 1) == ')' &&
+                isConstant(formula.substring(3, formula.length() - 1));
+    }
+
+    private static String polyDeriv(String poly) {
+        int i = 0;
+        StringBuilder deriv = new StringBuilder();
+        Double num = Double.parseDouble(poly.substring(3, poly.length() - 1));
+        Double newPow = num - 1;
+        return num.toString() + "*" + "x^(" + newPow + ")";
     }
 
     private static ArrayList<Integer> operatorsPositions(String formula) {
