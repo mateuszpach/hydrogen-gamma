@@ -2,6 +2,7 @@ import util.Pair;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -15,6 +16,8 @@ public abstract class Diffrentiation {
         knownDerivatives.put("cos(x)", "(-sin(x))");
         knownDerivatives.put("e^(x)", "e^(x)");
         knownDerivatives.put("x", "1");
+        knownDerivatives.put("1", "0");
+        knownDerivatives.put("0", "0");
         knownDerivatives.put("ln(x)", "1/x");
 
         knownOperators.add('+');
@@ -27,34 +30,57 @@ public abstract class Diffrentiation {
         String formula = removeParentheses(func.value);
 
         if (formula.isEmpty())
-            return new FunctionVariable("");
+            throw new InvalidFormulaException(formula);
 
-        if (isTrivial(formula))
-            return new FunctionVariable(knownDerivatives.get(formula));
+        formula = removeParentheses(formula);
+        if (isConstant(formula))
+            return new FunctionVariable("0");
 
-        if (formula.charAt(0) == '-' && isTrivial(formula.substring(1)))
-            return new FunctionVariable('-' + knownDerivatives.get(formula.substring(1)));
+        StringBuilder derivativeFormula = new StringBuilder();
+        boolean negative = false;
+
+        if (formula.charAt(0) == '-') {
+            negative = true;
+            formula = formula.substring(1, formula.length());
+        }
+        formula = removeParentheses(formula);
+
+        boolean done = false;
+
+        if (isTrivial(formula)) {
+            done = true;
+            derivativeFormula.append(knownDerivatives.get(formula));
+        }
+        else if (isPoly(formula)) {
+            done = true;
+            derivativeFormula.append(polyDeriv(formula));
+        }
+
+        if (done) {
+            if (negative) {
+                derivativeFormula.insert(0, "(-(");
+                derivativeFormula.append("))");
+            }
+            return new FunctionVariable(derivativeFormula.toString());
+        }
 
         ArrayList<Integer> operPos = operatorsPositions(formula);
 
         if (operPos.isEmpty())
-            throw new DerivativeNotKnownException();
+            throw new DerivativeNotKnownException(formula);
         if (!correctOperators(formula))
-            throw new InvalidFormulaException();
-
-        StringBuilder derivativeFormula = new StringBuilder();
-        derivativeFormula.append('(');
+            throw new InvalidFormulaException(formula);
 
         Pair<ArrayList<String>, ArrayList<Character>> additive = findSubcomponents(formula, "+-");
 
         if (additive.second.isEmpty()) {    // multiplicative
             Pair<ArrayList<String>, ArrayList<Character>> multiplicative = findSubcomponents(formula, "*/");
             if (multiplicative.second.isEmpty())
-                throw new DerivativeNotKnownException();
+                throw new DerivativeNotKnownException(formula);
             ArrayList<String> components = multiplicative.first;
             ArrayList<Character> operators = multiplicative.second;
 
-            derivativeFormula = new StringBuilder(components.get(0));
+            derivativeFormula = new StringBuilder(removeParentheses(components.get(0)));
 
             for (int i = 1; i < components.size(); i++) {
                 String nextComp = components.get(i);
@@ -63,33 +89,36 @@ public abstract class Diffrentiation {
                 String nextDeriv = symbolicDerivative(new FunctionVariable(nextComp)).value;
 
                 if (operators.get(i - 1) == '*') {
+                    derivativeFormula.insert(0, '(');
                     derivativeFormula.append('*');
                     derivativeFormula.append(nextDeriv);
                     derivativeFormula.append('+');
-                    derivativeFormula.append(nextComp);
+                    derivativeFormula.append(removeParentheses(nextComp));
                     derivativeFormula.append('*');
                     derivativeFormula.append(buffDeriv);
+                    derivativeFormula.append(')');
                 }
                 else {  // oper == '/'
+                    derivativeFormula.insert(0, '(');
                     derivativeFormula.append("*(-1)*");
                     derivativeFormula.append(nextDeriv);
                     derivativeFormula.append("/(");
-                    derivativeFormula.append(nextComp);
+                    derivativeFormula.append(removeParentheses(nextComp));
                     derivativeFormula.append(")^2");
 
                     derivativeFormula.append('+');
-                    derivativeFormula.append(nextComp);
+                    derivativeFormula.append(removeParentheses(nextComp));
                     derivativeFormula.append('*');
                     derivativeFormula.append(buffDeriv);
                     derivativeFormula.append("/(");
-                    derivativeFormula.append(nextComp);
+                    derivativeFormula.append(removeParentheses(nextComp));
                     derivativeFormula.append(")^2");
+                    derivativeFormula.append(')');
                 }
             }
-
-
         }
         else {
+            derivativeFormula.insert(0, '(');
             ArrayList<String> components = additive.first;
             ArrayList<Character> operators = additive.second;
 
@@ -99,19 +128,32 @@ public abstract class Diffrentiation {
                 derivativeFormula.append(operators.get(i));
             }
             derivativeFormula.append(symbolicDerivative(new FunctionVariable(components.get(components.size() - 1))).value);
+            derivativeFormula.append(')');
         }
 
-        derivativeFormula.append(')');
+        if (negative) {
+            derivativeFormula.insert(0, "(-(");
+            derivativeFormula.append("))");
+        }
+
         return new FunctionVariable(derivativeFormula.toString());
     }
 
     private static Pair<ArrayList<String>, ArrayList<Character>> findSubcomponents(String formula, String searchedOpers) {
         ArrayList<String> components = new ArrayList<>();
         ArrayList<Character> operations = new ArrayList<>();
+        int opened = 0;
+
+        if (formula.charAt(0) == '(')
+            opened++;
 
         int prev = 0;
         for (int i = 1; i < formula.length(); i++) {
-            if (searchedOpers.indexOf(formula.charAt(i)) != -1) {
+            if (formula.charAt(i) == '(')
+                opened++;
+            if (formula.charAt(i) == ')')
+                opened--;
+            if (searchedOpers.indexOf(formula.charAt(i)) != -1 && opened == 0) {
                 components.add(formula.substring(prev, i));
                 operations.add(formula.charAt(i));
                 prev = i + 1;
@@ -124,17 +166,80 @@ public abstract class Diffrentiation {
 
     // TODO
     private static String removeParentheses(String formula) {
-        return formula;
+        int n = formula.length();
+        if (formula.length() < 2 || formula.charAt(0) != '(' || formula.charAt(n - 1) != ')')
+            return formula;
+
+        Stack<Integer> opening = new Stack<>();
+
+        int preflast = 0;
+        while (preflast < n && formula.charAt(preflast) == '(')
+            preflast++;
+        preflast--;
+
+        int suffirst = n - 1;
+        while (suffirst >= 0 && formula.charAt(suffirst) == ')')
+            suffirst--;
+        suffirst++;
+
+        int beginIdx = 0;
+        int finIdx = n;
+
+        for (int i = 0; i < n; i++) {
+            if (formula.charAt(i) == '(')
+                opening.push(i);
+            if (formula.charAt(i) == ')') {
+                if (i >= suffirst && opening.peek() <= preflast) {
+                    beginIdx = opening.peek() + 1;
+                    finIdx = i;
+                    break;
+                }
+                opening.pop();
+            }
+        }
+
+        return formula.substring(beginIdx, finIdx);
     }
 
     private static boolean isTrivial(String formula) {
         return knownDerivatives.containsKey(formula);
     }
 
+    private static boolean isConstant(String formula) {
+        try {
+            double d = Double.parseDouble(formula);
+        }
+        catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean isPoly(String formula) {
+        if (formula.length() < 5)
+            return false;
+        return formula.substring(0, 3).equals("x^(") && formula.charAt(formula.length() - 1) == ')' &&
+                isConstant(formula.substring(3, formula.length() - 1));
+    }
+
+    private static String polyDeriv(String poly) {
+        int i = 0;
+        StringBuilder deriv = new StringBuilder();
+        Double num = Double.parseDouble(poly.substring(3, poly.length() - 1));
+        Double newPow = num - 1;
+        return num.toString() + "*" + "x^(" + newPow + ")";
+    }
+
     private static ArrayList<Integer> operatorsPositions(String formula) {
+        int opened = 0;
         ArrayList<Integer> operators = new ArrayList<>();
         for (int i = 0; i < formula.length(); i++) {
-            if (knownOperators.contains(formula.charAt(i)))
+            if (formula.charAt(i) == '(')
+                opened++;
+            if (formula.charAt(i) == ')')
+                opened--;
+
+            if (knownOperators.contains(formula.charAt(i)) && opened == 0)
                 operators.add(i);
         }
 
@@ -151,6 +256,24 @@ public abstract class Diffrentiation {
         return true;
     }
 
-    public static class DerivativeNotKnownException extends RuntimeException {}
-    public static class InvalidFormulaException extends RuntimeException {}
+    public static class DerivativeNotKnownException extends RuntimeException {
+        private final String formula;
+        DerivativeNotKnownException(String form) {
+            formula = form;
+        }
+        @Override
+        public String toString() {
+            return formula;
+        }
+    }
+    public static class InvalidFormulaException extends RuntimeException {
+        private final String formula;
+        InvalidFormulaException(String form) {
+            formula = form;
+        }
+        @Override
+        public String toString() {
+            return formula;
+        }
+    }
 }
