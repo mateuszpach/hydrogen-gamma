@@ -1,5 +1,5 @@
 import org.junit.jupiter.api.Test;
-import util.Pair;
+import utils.Pair;
 
 import static org.junit.jupiter.api.Assertions.*;
 

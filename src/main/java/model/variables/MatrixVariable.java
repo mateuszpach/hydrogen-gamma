@@ -1,12 +1,9 @@
-import java.io.ObjectStreamException;
-import java.util.ArrayList;
-import java.util.Arrays;
+package model.variables;
+import model.Variable;
 
-public class MatrixVariable implements Variable {
+public class MatrixVariable extends Variable<double[][]> {
 
-    private final double[][] value;
-
-    MatrixVariable(double[][] value) throws IllegalArgumentException {
+    public MatrixVariable(double[][] value) throws IllegalArgumentException {
         if (value == null || value.length == 0 || value[0].length == 0)
             throw new IllegalArgumentException("Values empty");
         for (double[] doubles : value)

@@ -1,3 +1,8 @@
+package model.modules;
+
+import model.variables.MatrixVariable;
+import model.variables.NumericVariable;
+
 import java.util.function.Function;
 
 public interface MatrixOperations {

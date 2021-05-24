@@ -1,4 +1,6 @@
+import model.modules.AddNumbers;
 import org.junit.jupiter.api.Test;
+import model.variables.NumericVariable;
 
 import java.util.Random;
 
@@ -14,14 +16,14 @@ public class NumbersTest {
         NumericVariable aV = new NumericVariable(aD);
         double bD = rand.nextDouble();
         NumericVariable bV = new NumericVariable(bD);
-        NumericVariable sum = add.call(aV, bV);
+        NumericVariable sum = add.execute(aV, bV);
         assertEquals(sum.value, aD + bD);
     }
 
     @Test
     void emptyAdd() {
         //pretty useless, but it is a certain corner case
-        assertEquals(0d, add.call().value);
+        assertEquals(0d, add.execute().value);
     }
 
     @Test
@@ -35,8 +37,8 @@ public class NumbersTest {
             args[i] = new NumericVariable(a);
             sum += a;
         }
-        System.out.println(sum + " " + add.call(args).value);
-        assertEquals(sum, add.call(args).value);
+        System.out.println(sum + " " + add.execute(args).value);
+        assertEquals(sum, add.execute(args).value);
     }
 
 

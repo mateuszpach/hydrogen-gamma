@@ -1,5 +1,11 @@
-public class varBox {
-    enum varType {
+package model;
+
+import model.variables.MatrixVariable;
+import model.variables.FunctionVariable;
+
+public class VarBox {
+
+    public enum VarType {
         MATRIX, TEXT, NUMBER, FUNCTION
     }
 
@@ -7,53 +13,53 @@ public class varBox {
     private String text;
     private Double number;
     private FunctionVariable function;
-    private final varType type;
+    private final VarType type;
 
-    varBox(MatrixVariable matrix) {
-        this.type = varType.MATRIX;
+    VarBox(MatrixVariable matrix) {
+        this.type = VarType.MATRIX;
         this.matrix = matrix;
     }
 
-    varBox(String text) {
-        this.type = varType.TEXT;
+    VarBox(String text) {
+        this.type = VarType.TEXT;
         this.text = text;
     }
 
-    varBox(Double number) {
-        this.type = varType.NUMBER;
+    VarBox(Double number) {
+        this.type = VarType.NUMBER;
         this.number = number;
     }
 
-    varBox(FunctionVariable function) {
-        this.type = varType.FUNCTION;
+    VarBox(FunctionVariable function) {
+        this.type = VarType.FUNCTION;
         this.function = function;
     }
 
     public MatrixVariable getMatrix() {
-        if (this.type != varType.MATRIX)
+        if (this.type != VarType.MATRIX)
             throw new IllegalArgumentException("Is not a matrix");
         return this.matrix;
     }
 
     public Double getNumber() {
-        if (this.type != varType.NUMBER)
+        if (this.type != VarType.NUMBER)
             throw new IllegalArgumentException("Is not a number");
         return this.number;
     }
 
     public String getText() {
-        if (this.type != varType.TEXT)
+        if (this.type != VarType.TEXT)
             throw new IllegalArgumentException("Is not a text");
         return this.text;
     }
 
     public FunctionVariable getFunction() {
-        if (this.type != varType.FUNCTION)
+        if (this.type != VarType.FUNCTION)
             throw new IllegalArgumentException("Is not a function");
         return this.function;
     }
 
-    public varType getType() {
+    public VarType getType() {
         return this.type;
     }
 }

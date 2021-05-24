@@ -1,19 +1,24 @@
-import util.Pair;
+package model;
+
+import utils.Pair;
+import model.variables.MatrixVariable;
+import model.variables.FunctionVariable;
 
 import java.util.*;
 
 import static java.lang.Math.min;
 
 public class Parser {
+
     private String varDefinition;
     private String operation;
-    Map<String, String> modules;
-    Map<String, varBox> variables;
-    Map<String, Pair<String, ArrayList<String>>> futureVariables;
+    public Map<String, String> modules;
+    public Map<String, VarBox> variables;
+    public Map<String, Pair<String, ArrayList<String>>> futureVariables;
     int futureIndex;
 
-    Parser() {
-        modules = new HashMap<>(); // will hold map from module calling name to some input recipe for modules stating what forms of input they expect
+    public Parser() {
+        modules = new HashMap<>(); // will hold map from module calling name to some input recipe for model.modules stating what forms of input they expect
     }
 
 
@@ -25,20 +30,20 @@ public class Parser {
         this.futureIndex = 0;
         this.parseVariables();
         this.simplifyOperation();
-        //for (String key : variables.keySet()) {
-        //    System.out.println(key + " " + variables.get(key).getType());
-        //    switch (variables.get(key).getType()) {
+        //for (String key : model.variables.keySet()) {
+        //    System.out.println(key + " " + model.variables.get(key).getType());
+        //    switch (model.variables.get(key).getType()) {
         //        case FUNCTION:
-        //            System.out.println(variables.get(key).getFunction().value);
+        //            System.out.println(model.variables.get(key).getFunction().value);
         //            break;
         //        case NUMBER:
-        //            System.out.println(variables.get(key).getNumber());
+        //            System.out.println(model.variables.get(key).getNumber());
         //            break;
         //        case MATRIX:
-        //            System.out.println(variables.get(key).getMatrix().toString());
+        //            System.out.println(model.variables.get(key).getMatrix().toString());
         //            break;
         //        case TEXT:
-        //            System.out.println(variables.get(key).getText());
+        //            System.out.println(model.variables.get(key).getText());
         //            break;
         //    }
         //}
@@ -53,7 +58,7 @@ public class Parser {
 
     public void compute() {
         //here goes some kind of switch that computes #0,#1,#2, ... and returns the last one
-        //why not yet implemented? modules are still written in somewhat random fashion
+        //why not yet implemented? model.modules are still written in somewhat random fashion
     }
 
     private void parseVariables() {
@@ -61,10 +66,10 @@ public class Parser {
         for (String a : vars) {
             String[] b = a.split(":");
             if (b.length != 2)
-                throw new IllegalArgumentException("Variable definition must contain exactly one ':' character: " + a);
+                throw new IllegalArgumentException("model.Variable definition must contain exactly one ':' character: " + a);
             if (b[1].charAt(0) == '\"') {//text
                 if (b[1].charAt(b[1].length() - 1) == '\"' && b[1].length() >= 2) {
-                    variables.put(b[0], new varBox(b[1]));
+                    variables.put(b[0], new VarBox(b[1]));
                 } else
                     throw new IllegalArgumentException("Text variable definition must contain exactly two '\"' character at front and end: " + a);
             } else if (b[1].charAt(0) == '(') {//function
@@ -80,7 +85,7 @@ public class Parser {
                             throw new IllegalArgumentException(val + " from function definition " + a + " does not represent valid number");
                         }
                     }
-                    variables.put(b[0], new varBox(new FunctionVariable(b[1])));
+                    variables.put(b[0], new VarBox(new FunctionVariable(b[1])));
                 } else
                     throw new IllegalArgumentException("Function variable definition must be within () characters: " + a);
             } else if (b[1].charAt(0) == '[') {//matrix
@@ -115,13 +120,13 @@ public class Parser {
                     for (int i = 0; i < matrix.size(); ++i)
                         for (int j = 0; j < rowSize; ++j)
                             dMatrix[i][j] = matrix.get(i).get(j);
-                    variables.put(b[0], new varBox(new MatrixVariable(dMatrix)));
+                    variables.put(b[0], new VarBox(new MatrixVariable(dMatrix)));
                 } else
                     throw new IllegalArgumentException("Matrix variable definition must be within [] characters: " + a);
             } else {//numeric
                 try {
                     double x = Double.parseDouble(b[1]);
-                    variables.put(b[0], new varBox(x));
+                    variables.put(b[0], new VarBox(x));
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException(b[1] + " from definition " + a + " does not represent valid number");
                 }

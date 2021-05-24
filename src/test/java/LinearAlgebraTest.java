@@ -1,5 +1,7 @@
+import model.modules.LinearAlgebra;
 import org.junit.jupiter.api.Test;
-import util.Pair;
+import utils.Pair;
+import model.variables.MatrixVariable;
 
 import static org.junit.jupiter.api.Assertions.*;
 

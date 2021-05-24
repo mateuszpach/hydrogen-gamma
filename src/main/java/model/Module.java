@@ -1,5 +1,9 @@
-public interface Module<V extends Variable> {
-    V call(Variable... args);
+package model;
+
+import model.Variable;
+
+public interface Module<T extends Variable<?>, R extends Variable<?>> {
+    T execute(R... args);
 }
 //TODO: there must be a way to convert it into a lambda
 //TODO: what is the point of such an interface

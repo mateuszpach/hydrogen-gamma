@@ -1,4 +1,7 @@
-import util.Pair;
+package model.modules;
+
+import utils.Pair;
+import model.variables.MatrixVariable;
 
 
 public interface LinearAlgebra {
