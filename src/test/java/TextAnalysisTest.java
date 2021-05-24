@@ -1,3 +1,4 @@
+import model.modules.TextAnalysis;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

@@ -1,4 +1,7 @@
+import model.modules.MatrixOperations;
 import org.junit.jupiter.api.Test;
+import model.variables.MatrixVariable;
+import model.variables.NumericVariable;
 
 import static org.junit.jupiter.api.Assertions.*;
 

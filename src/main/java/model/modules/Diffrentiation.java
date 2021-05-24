@@ -1,12 +1,15 @@
-import util.Pair;
+package model.modules;
 
-import java.nio.charset.StandardCharsets;
+import model.Module;
+import utils.Pair;
+import model.variables.FunctionVariable;
+
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public abstract class Diffrentiation {
+public class Diffrentiation implements Module<FunctionVariable, FunctionVariable> {
 
     public static TreeMap<String, String> knownDerivatives = new TreeMap<>();
     public static TreeSet<Character> knownOperators = new TreeSet<>();
@@ -26,7 +29,12 @@ public abstract class Diffrentiation {
         knownOperators.add('/');
     }
 
-    public static FunctionVariable symbolicDerivative(FunctionVariable func) {
+    @Override
+    public FunctionVariable execute(FunctionVariable[] args) {
+        return symbolicDerivative(args[0]);
+    }
+
+    private static FunctionVariable symbolicDerivative(FunctionVariable func) {
         String formula = removeParentheses(func.value);
 
         if (formula.isEmpty())

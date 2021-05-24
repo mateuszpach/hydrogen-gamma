@@ -1,6 +1,6 @@
+import model.Parser;
+import model.VarBox;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,26 +42,26 @@ public class ParserTest {
         Parser parser = new Parser();
         assertDoesNotThrow(() -> parser.load("a:1;b:-1;c:1.1;d:-1.1;e:\"\";f:\"\"\";g:(1);h:(1,-1,1.1,-1.1);i:[1];j:[1/-1/1.1/-1.1];k:[1,-1/1.1,-1.1];l:[1,-1,1.1,-1.1]", ""));
 
-        assertEquals(parser.variables.get("a").getType(), varBox.varType.NUMBER);
-        assertEquals(parser.variables.get("b").getType(), varBox.varType.NUMBER);
-        assertEquals(parser.variables.get("c").getType(), varBox.varType.NUMBER);
-        assertEquals(parser.variables.get("d").getType(), varBox.varType.NUMBER);
-        assertEquals(parser.variables.get("e").getType(), varBox.varType.TEXT);
-        assertEquals(parser.variables.get("f").getType(), varBox.varType.TEXT);
-        assertEquals(parser.variables.get("g").getType(), varBox.varType.FUNCTION);
-        assertEquals(parser.variables.get("h").getType(), varBox.varType.FUNCTION);
-        assertEquals(parser.variables.get("i").getType(), varBox.varType.MATRIX);
-        assertEquals(parser.variables.get("j").getType(), varBox.varType.MATRIX);
-        assertEquals(parser.variables.get("k").getType(), varBox.varType.MATRIX);
-        assertEquals(parser.variables.get("l").getType(), varBox.varType.MATRIX);
+        assertEquals(parser.variables.get("a").getType(), VarBox.VarType.NUMBER);
+        assertEquals(parser.variables.get("b").getType(), VarBox.VarType.NUMBER);
+        assertEquals(parser.variables.get("c").getType(), VarBox.VarType.NUMBER);
+        assertEquals(parser.variables.get("d").getType(), VarBox.VarType.NUMBER);
+        assertEquals(parser.variables.get("e").getType(), VarBox.VarType.TEXT);
+        assertEquals(parser.variables.get("f").getType(), VarBox.VarType.TEXT);
+        assertEquals(parser.variables.get("g").getType(), VarBox.VarType.FUNCTION);
+        assertEquals(parser.variables.get("h").getType(), VarBox.VarType.FUNCTION);
+        assertEquals(parser.variables.get("i").getType(), VarBox.VarType.MATRIX);
+        assertEquals(parser.variables.get("j").getType(), VarBox.VarType.MATRIX);
+        assertEquals(parser.variables.get("k").getType(), VarBox.VarType.MATRIX);
+        assertEquals(parser.variables.get("l").getType(), VarBox.VarType.MATRIX);
         assertEquals(parser.variables.size(), 12);
     }
 
     @Test
-    void operationsAreSimplifiedCorrectly() {//input is changed into list of variables in postorder with recipes
+    void operationsAreSimplifiedCorrectly() {//input is changed into list of model.variables in postorder with recipes
         Parser parser = new Parser();
         assertDoesNotThrow(() -> parser.load("a:1", "+(+(+(a),a),a,+(a,+(a)))"));
-        assertEquals(parser.variables.get("a").getType(), varBox.varType.NUMBER);
+        assertEquals(parser.variables.get("a").getType(), VarBox.VarType.NUMBER);
         assertEquals(parser.variables.size(), 1);
         assertEquals(parser.futureVariables.get("#4").first, "+");
         assertEquals(parser.futureVariables.get("#4").second.size(), 3);
