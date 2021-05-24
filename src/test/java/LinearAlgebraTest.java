@@ -1,4 +1,4 @@
-import model.modules.LinearAlgebra;
+import model.modules.utils.LinearAlgebra;
 import org.junit.jupiter.api.Test;
 import utils.Pair;
 import model.variables.MatrixVariable;
@@ -13,79 +13,80 @@ public class LinearAlgebraTest {
         double[][] b = {{1.0, 1.0}};
         double[][] c = {{1.0}, {1.0}};
 
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.decompositionLU(new MatrixVariable(a)));
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.decompositionLU(new MatrixVariable(b)));
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.decompositionLU(new MatrixVariable(c)));
-
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.determinant(new MatrixVariable(a)));
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.determinant(new MatrixVariable(b)));
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.determinant(new MatrixVariable(c)));
-
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.solveLinearSystem(new MatrixVariable(a), null));
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.solveLinearSystem(new MatrixVariable(b), null));
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.solveLinearSystem(new MatrixVariable(c), null));
+        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.decompositionLUPivoted(new MatrixVariable(a)));
+        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.decompositionLUPivoted(new MatrixVariable(b)));
+        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.decompositionLUPivoted(new MatrixVariable(c)));
     }
 
     @Test
-    void decompositionLUHardMatrices() {
-        double[][] a = {{0.0, 1.0}, {1.0, 2.0}};
-        double[][] b = {{Math.PI, Math.PI, Math.PI}, {Math.PI, Math.PI, 2.234}, {0.5 * Math.PI, 1.75, 3.356e7}};
-        double[][] c = {{0.0, 0.0}, {Double.MIN_VALUE, Double.MIN_VALUE}};
+    void decompositionLUPivotedTest() {
+        MatrixVariable a = new MatrixVariable(new double[][]{{0.0, 1.0}, {1.0, 1.0}});
 
-        assertDoesNotThrow(() -> LinearAlgebra.decompositionLU(new MatrixVariable(a)));
-        assertDoesNotThrow(() -> LinearAlgebra.decompositionLU(new MatrixVariable(b)));
-        assertDoesNotThrow(() -> LinearAlgebra.decompositionLU(new MatrixVariable(c)));
+        Pair<Pair<MatrixVariable, MatrixVariable>, Integer[]> lu = LinearAlgebra.decompositionLUPivoted(a);
+
+        MatrixVariable expL = new MatrixVariable(new double[][]{{1.0, 0.0}, {0.0, 1.0}});
+        MatrixVariable expU = new MatrixVariable(new double[][]{{1.0, 1.0}, {0.0, 1.0}});
+
+        assertEquals(expL, lu.first.first);
+        assertEquals(expU, lu.first.second);
+        assertEquals(1, lu.second[0]);
+        assertEquals(0, lu.second[1]);
     }
 
     @Test
-    void properDecompositionsLU() {
-        double[][] a = {{1.0, 1.0, 1.0}, {4.0, 3.0, -1.0}, {3.0, 5.0, 3.0}};
-        double[][] b = {{1.0, 0.0, 0.0, 0.0}, {0.0, 1.0, 0.0, 0.0}, {0.0, 0.0, 1.0, 0.0}, {0.0, 0.0, 0.0, 1.0}};
-        double[][] c = {{2.0, 4.0, 3.0, 5.0}, {-4.0, -7.0, -5.0, -8.0}, {6.0, 8.0, 2.0, 9.0}, {4.0, 9.0, -2.0, 14.0}};
+    void performGaussElimStepTest() {
+        MatrixVariable L = new MatrixVariable(new double[][] {{0.0, 0.0}, {0.0, 0.0}});
+        MatrixVariable U = new MatrixVariable(new double[][] {{2.0, -1.0}, {1.0, -3.0}});
+        MatrixVariable expectL = new MatrixVariable(new double[][] {{1.0, 0.0}, {0.5, 0.0}});
+        MatrixVariable expectU = new MatrixVariable(new double[][] {{2.0, -1.0}, {0.0, -2.5}});
 
-        MatrixVariable expectedL1 = new MatrixVariable(new double[][]{{1.0, 0.0, 0.0}, {4.0, 1.0, 0.0}, {3.0, -2.0, 1.0}});
-        MatrixVariable expectedU1 = new MatrixVariable(new double[][]{{1.0, 1.0, 1.0}, {0.0, -1.0, -5.0}, {0.0, 0.0, -10.0}});
-        MatrixVariable expectedL2 = new MatrixVariable(b);
-        MatrixVariable expectedU2 = new MatrixVariable(b.clone());
-        MatrixVariable expectedL3 = new MatrixVariable(new double[][]{{1.0, 0.0, 0.0, 0.0}, {-2.0, 1.0, 0.0, 0.0}, {3.0, -4.0, 1.0, 0.0}, {2.0, 1.0, 3.0, 1.0}});
-        MatrixVariable expectedU3 = new MatrixVariable(new double[][]{{2.0, 4.0, 3.0, 5.0}, {0.0, 1.0, 1.0, 2.0}, {0.0, 0.0, -3.0, 2.0}, {0.0, 0.0, 0.0, -4.0}});
+        LinearAlgebra.performGaussElimStep(L, U, 0);
 
-        Pair<MatrixVariable, MatrixVariable> lu1 = LinearAlgebra.decompositionLU(new MatrixVariable(a));
-        Pair<MatrixVariable, MatrixVariable> lu2 = LinearAlgebra.decompositionLU(new MatrixVariable(b));
-        Pair<MatrixVariable, MatrixVariable> lu3 = LinearAlgebra.decompositionLU(new MatrixVariable(c));
-
-        assertEquals(expectedL1, lu1.first);
-        assertEquals(expectedU1, lu1.second);
-        assertEquals(expectedL2, lu2.first);
-        assertEquals(expectedU2, lu2.second);
-        assertEquals(expectedL3, lu3.first);
-        assertEquals(expectedU3, lu3.second);
+        assertEquals(expectL, L);
+        assertEquals(expectU, U);
     }
 
     @Test
-    void properDeterminant() {
-        MatrixVariable A = new MatrixVariable(new double[][] {{3.0, 4.0}, {-1.0, 30.0}});
-        MatrixVariable B = new MatrixVariable(new double[][] {{1.0}});
-        MatrixVariable C = new MatrixVariable(new double[][] {{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}, {7.0, 8.0, 9.0}});
+    void prepareLUTest() {
+        MatrixVariable a = new MatrixVariable(new double[][]{{1.0, 2.0}, {3.0, 4.0}});
+        MatrixVariable zeros = new MatrixVariable(new double[][]{{0.0, 0.0}, {0.0, 0.0}});
 
-        assertTrue(Math.abs(LinearAlgebra.determinant(A) - 94.0) < 1e-10);
-        assertTrue(Math.abs(LinearAlgebra.determinant(B) - 1.0) < 1e-10);
-        assertTrue(Math.abs(LinearAlgebra.determinant(C) - 0.0) < 1e-10);
+        Pair<MatrixVariable, MatrixVariable> prep = LinearAlgebra.prepareLU(a);
+
+        assertEquals(zeros, prep.first);
+        assertEquals(a, prep.second);
     }
 
     @Test
-    void properlySolvedLinearSystems() {
-        MatrixVariable A = new MatrixVariable(new double[][] {{1.0, -1.0}, {2.0, 1.0}});
-        MatrixVariable B = new MatrixVariable(new double[][] {{3.0}, {9.0}});
-        MatrixVariable sol1 = new MatrixVariable(new double[][] {{4.0}, {1.0}});
-        MatrixVariable C = new MatrixVariable(new double[][] {{1.0, 1.0, -1.0}, {0.0, 1.0, 3.0}, {-1.0, 0.0, -2.0}});
-        MatrixVariable D = new MatrixVariable(new double[][] {{9.0}, {3.0}, {2.0}});
-        MatrixVariable sol2 = new MatrixVariable(new double[][] {{2.0 / 3.0}, {7.0}, {-4.0 / 3.0}});
-        MatrixVariable x = LinearAlgebra.solveLinearSystem(C, D);
+    void solveSystemUpperTest() {
+        double[][] a = {{2.0, 5.0}, {0.0, 8.0}};
+        double[][] b = {{-2.0}, {3.0}};
+        Integer[] perm = new Integer[]{1, 0};
 
-        assertEquals(sol1, LinearAlgebra.solveLinearSystem(A, B));
-        for (int i = 0; i < 3; i++) {
-            assertTrue(Math.abs(x.get(i, 0) - sol2.get(i, 0)) < 1e-10);
+        MatrixVariable sol = LinearAlgebra.solveSystemUpper(new MatrixVariable(a), new MatrixVariable(b), perm);
+
+        assertEquals(new MatrixVariable(new double[][]{{2.125}, {-0.25}}), sol);
+    }
+
+    @Test
+    void solveSystemLowerTest() {
+        double[][] a = {{2.0, 0.0}, {-3.0, 4.0}};
+        double[][] b = {{1.0}, {-1.0}};
+        Integer[] perm = new Integer[]{0, 1};
+
+        MatrixVariable sol = LinearAlgebra.solveSystemLower(new MatrixVariable(a), new MatrixVariable(b), perm);
+
+        assertEquals(new MatrixVariable(new double[][]{{0.5}, {0.125}}), sol);
+    }
+
+    @Test
+    void identityTest() {
+        Integer[] id1 = LinearAlgebra.identityPermutation(1);
+        Integer[] id2 = LinearAlgebra.identityPermutation(5);
+
+        assertEquals(0, id1[0]);
+        for (int i = 0; i < 5; i++) {
+            assertEquals(i, id2[i]);
         }
     }
 }

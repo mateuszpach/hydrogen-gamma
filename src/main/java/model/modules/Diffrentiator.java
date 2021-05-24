@@ -9,7 +9,7 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class Diffrentiation implements Module<FunctionVariable, FunctionVariable> {
+public class Diffrentiator implements Module<FunctionVariable, FunctionVariable> {
 
     public static TreeMap<String, String> knownDerivatives = new TreeMap<>();
     public static TreeSet<Character> knownOperators = new TreeSet<>();
@@ -30,7 +30,7 @@ public class Diffrentiation implements Module<FunctionVariable, FunctionVariable
     }
 
     @Override
-    public FunctionVariable execute(FunctionVariable[] args) {
+    public FunctionVariable execute(FunctionVariable... args) {
         return symbolicDerivative(args[0]);
     }
 

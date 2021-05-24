@@ -1,4 +1,4 @@
-import model.modules.AddNumbers;
+import model.modules.NumberAdder;
 import org.junit.jupiter.api.Test;
 import model.variables.NumericVariable;
 
@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NumbersTest {
     Random rand = new Random();
-    AddNumbers add = new AddNumbers();
+    NumberAdder add = new NumberAdder();
 
     @Test
     void binaryAdd() {

@@ -1,11 +1,11 @@
-import model.modules.Diffrentiation;
+import model.modules.Diffrentiator;
 import org.junit.jupiter.api.Test;
 import model.variables.FunctionVariable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class DiffrentiationTest {
+public class DiffrentiatorTest {
 
     @Test
     public void trivialDerivatives() {
@@ -15,7 +15,7 @@ public class DiffrentiationTest {
         FunctionVariable f4 = new FunctionVariable("ln(x)");
         FunctionVariable f5 = new FunctionVariable("x");
 
-        Diffrentiation diff = new Diffrentiation();
+        Diffrentiator diff = new Diffrentiator();
 
         assertEquals("cos(x)", diff.execute(new FunctionVariable[]{f1}).value);
         assertEquals("(-sin(x))", diff.execute(new FunctionVariable[]{f2}).value);
@@ -32,13 +32,13 @@ public class DiffrentiationTest {
         FunctionVariable f4 = new FunctionVariable("sin+cox(x)");
         FunctionVariable f5 = new FunctionVariable("--x");
 
-        Diffrentiation diff = new Diffrentiation();
+        Diffrentiator diff = new Diffrentiator();
 
-        assertThrows(Diffrentiation.InvalidFormulaException.class, () -> diff.execute(new FunctionVariable[]{f1}));
-        assertThrows(Diffrentiation.InvalidFormulaException.class, () -> diff.execute(new FunctionVariable[]{f2}));
-        assertThrows(Diffrentiation.DerivativeNotKnownException.class, () -> diff.execute(new FunctionVariable[]{f3}));
-        assertThrows(Diffrentiation.DerivativeNotKnownException.class, () -> diff.execute(new FunctionVariable[]{f4}));
-        assertThrows(Diffrentiation.DerivativeNotKnownException.class, () -> diff.execute(new FunctionVariable[]{f5}));
+        assertThrows(Diffrentiator.InvalidFormulaException.class, () -> diff.execute(new FunctionVariable[]{f1}));
+        assertThrows(Diffrentiator.InvalidFormulaException.class, () -> diff.execute(new FunctionVariable[]{f2}));
+        assertThrows(Diffrentiator.DerivativeNotKnownException.class, () -> diff.execute(new FunctionVariable[]{f3}));
+        assertThrows(Diffrentiator.DerivativeNotKnownException.class, () -> diff.execute(new FunctionVariable[]{f4}));
+        assertThrows(Diffrentiator.DerivativeNotKnownException.class, () -> diff.execute(new FunctionVariable[]{f5}));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class DiffrentiationTest {
         FunctionVariable f4 = new FunctionVariable("ln(x)+sin(x)");
         FunctionVariable f5 = new FunctionVariable("x+x");
 
-        Diffrentiation diff = new Diffrentiation();
+        Diffrentiator diff = new Diffrentiator();
 
         assertEquals("(cos(x)+(-sin(x)))", diff.execute(new FunctionVariable[]{f1}).value);
         assertEquals("(1+e^(x))", diff.execute(new FunctionVariable[]{f2}).value);
@@ -66,7 +66,7 @@ public class DiffrentiationTest {
         FunctionVariable f4 = new FunctionVariable("sin(x)*x*cos(x)");
         FunctionVariable f5 = new FunctionVariable("e^(x)/sin(x)");
 
-        Diffrentiation diff = new Diffrentiation();
+        Diffrentiator diff = new Diffrentiator();
 
         assertEquals("(sin(x)*(-sin(x))+cos(x)*cos(x))", diff.execute(new FunctionVariable[]{f1}).value);
         assertEquals("(x*e^(x)+e^(x)*1)", diff.execute(new FunctionVariable[]{f2}).value);
@@ -83,7 +83,7 @@ public class DiffrentiationTest {
         FunctionVariable f4 = new FunctionVariable("(((sin(x)))/((cos(x)))+(x))");
         FunctionVariable f5 = new FunctionVariable("((((((e^(x))))+(x))))");
 
-        Diffrentiation diff = new Diffrentiation();
+        Diffrentiator diff = new Diffrentiator();
 
         assertEquals("(cos(x)+(-sin(x)))", diff.execute(new FunctionVariable[]{f1}).value);
         assertEquals("(e^(x)+1)", diff.execute(new FunctionVariable[]{f2}).value);
@@ -100,7 +100,7 @@ public class DiffrentiationTest {
         FunctionVariable f4 = new FunctionVariable("x^(0)");
         FunctionVariable f5 = new FunctionVariable("sin(x)*(-5*x^(2))");
 
-        Diffrentiation diff = new Diffrentiation();
+        Diffrentiator diff = new Diffrentiator();
 
         assertEquals("51.0*x^(50.0)", diff.execute(new FunctionVariable[]{f1}).value);
         assertEquals("-14.0*x^(-15.0)", diff.execute(new FunctionVariable[]{f2}).value);
@@ -117,7 +117,7 @@ public class DiffrentiationTest {
         FunctionVariable f4 = new FunctionVariable("-4*cos(x)");
         FunctionVariable f5 = new FunctionVariable("x/10");
 
-        Diffrentiation diff = new Diffrentiation();
+        Diffrentiator diff = new Diffrentiator();
 
         assertEquals("0", diff.execute(new FunctionVariable[]{f1}).value);
         assertEquals("0", diff.execute(new FunctionVariable[]{f2}).value);

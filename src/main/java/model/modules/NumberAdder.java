@@ -3,7 +3,7 @@ package model.modules;
 import model.Module;
 import model.variables.NumericVariable;
 
-public class AddNumbers implements Module<NumericVariable, NumericVariable> {
+public class NumberAdder implements Module<NumericVariable, NumericVariable> {
 
     @Override
     public NumericVariable execute(NumericVariable... args) {
