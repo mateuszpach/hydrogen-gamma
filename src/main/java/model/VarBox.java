@@ -1,62 +1,24 @@
 package model;
 
-import model.variables.MatrixVariable;
-import model.variables.FunctionVariable;
-
 public class VarBox {
 
     public enum VarType {
         MATRIX, TEXT, NUMBER, FUNCTION
     }
 
-    private MatrixVariable matrix;
-    private String text;
-    private Double number;
-    private FunctionVariable function;
+    Variable<?> value;
+
     private final VarType type;
+    String label;
 
-    VarBox(MatrixVariable matrix) {
-        this.type = VarType.MATRIX;
-        this.matrix = matrix;
+    VarBox(Variable<?> val, VarType type, String Label) {
+        this.value = val;
+        this.type = type;
+        this.label = Label;
     }
 
-    VarBox(String text) {
-        this.type = VarType.TEXT;
-        this.text = text;
-    }
-
-    VarBox(Double number) {
-        this.type = VarType.NUMBER;
-        this.number = number;
-    }
-
-    VarBox(FunctionVariable function) {
-        this.type = VarType.FUNCTION;
-        this.function = function;
-    }
-
-    public MatrixVariable getMatrix() {
-        if (this.type != VarType.MATRIX)
-            throw new IllegalArgumentException("Is not a matrix");
-        return this.matrix;
-    }
-
-    public Double getNumber() {
-        if (this.type != VarType.NUMBER)
-            throw new IllegalArgumentException("Is not a number");
-        return this.number;
-    }
-
-    public String getText() {
-        if (this.type != VarType.TEXT)
-            throw new IllegalArgumentException("Is not a text");
-        return this.text;
-    }
-
-    public FunctionVariable getFunction() {
-        if (this.type != VarType.FUNCTION)
-            throw new IllegalArgumentException("Is not a function");
-        return this.function;
+    public Variable<?> getValue() {
+        return this.value;
     }
 
     public VarType getType() {
