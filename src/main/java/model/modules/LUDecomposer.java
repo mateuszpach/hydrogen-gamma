@@ -1,18 +1,19 @@
 package model.modules;
 
 import model.Module;
+import model.Variable;
 import model.modules.utils.LinearAlgebra;
 import model.variables.MatrixVariable;
 import utils.Pair;
 
 import javax.sound.sampled.Line;
 
-public class LUDecomposer implements Module<MatrixVariable, MatrixVariable> {
+public class LUDecomposer implements Module<MatrixVariable> {
 
     @Override
-    public MatrixVariable execute(MatrixVariable... args) {
+    public MatrixVariable execute(TilesContainer container, Variable<?>... args) {
         // in future kafel should be stored
-        Pair<MatrixVariable, MatrixVariable> lu = decompositionLU(args[0]);
+        Pair<MatrixVariable, MatrixVariable> lu = decompositionLU((MatrixVariable) args[0]);
         return null;
     }
 

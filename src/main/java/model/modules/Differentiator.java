@@ -1,6 +1,7 @@
 package model.modules;
 
 import model.Module;
+import model.Variable;
 import utils.Pair;
 import model.variables.FunctionVariable;
 
@@ -9,7 +10,7 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class Diffrentiator implements Module<FunctionVariable, FunctionVariable> {
+public class Differentiator implements Module<FunctionVariable> {
 
     public static TreeMap<String, String> knownDerivatives = new TreeMap<>();
     public static TreeSet<Character> knownOperators = new TreeSet<>();
@@ -30,8 +31,9 @@ public class Diffrentiator implements Module<FunctionVariable, FunctionVariable>
     }
 
     @Override
-    public FunctionVariable execute(FunctionVariable... args) {
-        return symbolicDerivative(args[0]);
+    public FunctionVariable execute(TilesContainer container, Variable<?>... args) {
+        FunctionVariable function = (FunctionVariable) args[0];
+        return symbolicDerivative(function);
     }
 
     private static FunctionVariable symbolicDerivative(FunctionVariable func) {

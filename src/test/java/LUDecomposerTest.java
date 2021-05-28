@@ -1,6 +1,7 @@
 import static org.junit.jupiter.api.Assertions.*;
 
 import model.modules.LUDecomposer;
+import model.modules.TilesContainer;
 import model.modules.utils.LinearAlgebra;
 import model.variables.MatrixVariable;
 import org.junit.jupiter.api.Test;
@@ -13,12 +14,16 @@ public class LUDecomposerTest {
         double[][] a = {{1.0, 1.0}, {2.0, 2.0}, {3.0, 3.0}};
         double[][] b = {{1.0, 1.0}};
         double[][] c = {{1.0}, {1.0}};
+        TilesContainer container = new TilesContainer() {
+            @Override
+            public void storeTile() {}
+        };
 
         LUDecomposer lu = new LUDecomposer();
 
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> lu.execute(new MatrixVariable(a)));
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> lu.execute(new MatrixVariable(b)));
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> lu.execute(new MatrixVariable(c)));
+        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> lu.execute(container, new MatrixVariable(a)));
+        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> lu.execute(container, new MatrixVariable(b)));
+        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> lu.execute(container, new MatrixVariable(c)));
     }
 
     // TODO test L and U stored in kafelki. Commented out are old tests from static LinearAlgebra module.

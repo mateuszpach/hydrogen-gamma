@@ -1,15 +1,16 @@
 package model.modules;
 
 import model.Module;
+import model.Variable;
 import model.modules.utils.LinearAlgebra;
 import model.variables.MatrixVariable;
 import utils.Pair;
 
-public class LinearSystemSolver implements Module<MatrixVariable, MatrixVariable> {
+public class LinearSystemSolver implements Module<MatrixVariable> {
 
     @Override
-    public MatrixVariable execute(MatrixVariable... args) {
-        return solveLinearSystem(args[0], args[1]);
+    public MatrixVariable execute(TilesContainer container, Variable<?>... args) {
+        return solveLinearSystem((MatrixVariable)args[0], (MatrixVariable) args[1]);
     }
 
     // solves linear system of shape Ax = b, where A is square matrix

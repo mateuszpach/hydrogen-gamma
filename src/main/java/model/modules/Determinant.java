@@ -1,15 +1,17 @@
 package model.modules;
 
 import model.Module;
+import model.Variable;
 import model.modules.utils.LinearAlgebra;
 import model.variables.MatrixVariable;
 import model.variables.NumericVariable;
 import utils.Pair;
 
-public class Determinant implements Module<NumericVariable, MatrixVariable> {
+public class Determinant implements Module<NumericVariable> {
     @Override
-    public NumericVariable execute(MatrixVariable... args) {
-        Double det = determinant(args[0]);
+    public NumericVariable execute(TilesContainer container, Variable<?>... args) {
+        MatrixVariable matrix = (MatrixVariable) args[0];
+        Double det = determinant(matrix);
         return new NumericVariable(det);
     }
 
