@@ -1,9 +1,10 @@
 package model;
 
 import model.Variable;
+import model.modules.TilesContainer;
 
-public interface Module<T extends Variable<?>, R extends Variable<?>> {
-    T execute(R... args);
+public interface Module<T extends Variable<?>> {
+    T execute(TilesContainer container, Variable<?>... args);
 }
 //TODO: there must be a way to convert it into a lambda
 //TODO: what is the point of such an interface
