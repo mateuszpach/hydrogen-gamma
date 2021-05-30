@@ -2,7 +2,7 @@ package vartiles;
 
 import model.variables.NumericVariable;
 
-public class NumericTileMaker implements TileMaker {
+public class NumericTileMaker extends DefaultTileMaker {
 
     private NumericVariable number;
 
@@ -11,7 +11,7 @@ public class NumericTileMaker implements TileMaker {
     }
 
     @Override
-    public String makeHtml() {
-        return null;
+    public String getContent() {
+        return '$' + number.value.toString() + '$'; // TODO: change to proper format
     }
 }
