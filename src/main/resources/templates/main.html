@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" th:fragment="layout (title, content)" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:replace="${title}">Layout Title</title>
+    <script type="text/javascript" id="MathJax-conf"
+            src="js/mathjaxconf.js">
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+</head>
+<body>
+<h1>Hydrogen Gamma</h1>
+<div th:replace="${content}">
+    <p>Layout content</p>
+</div>
+<footer>
+</footer>
+</body>
+</html>

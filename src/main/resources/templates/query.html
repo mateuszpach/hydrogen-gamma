@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html th:replace="~{main :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Hydrogen Gamma</title>
+</head>
+<body>
+<section>
+    <form action="query" method="get">
+        <label>Parameters:</label>
+        <input type="text" field="params" name="params"/>
+        <label>Expression:</label>
+        <input type="text" field="expr" name="expr"/>
+        <button type="submit">Calculate</button>
+    </form>
+    <!--/*@thymesVar id="tiles" type="java.util.ArrayList<controllers.QueryController.Tile>"*/-->
+    <!--/*@thymesVar id="tile" type="controllers.QueryController.Tile"*/-->
+    <div th:each="tile : ${tiles}" style="border:1px solid black; padding: 20px; margin: 5px;">
+
+        <!--/*@thymesVar id="label" type="java.lang.String"*/-->
+        <h3 th:text="${tile.label}"></h3>
+        <!--/*@thymesVar id="content" type="java.lang.String"*/-->
+        <h3 th:text="${tile.content}"></h3>
+    </div>
+</section>
+</body>
+</html>
