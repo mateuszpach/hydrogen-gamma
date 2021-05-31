@@ -2,7 +2,7 @@ package vartiles;
 
 import model.variables.MatrixVariable;
 
-public class MatrixTileMaker implements TileMaker {
+public class MatrixTileMaker extends DefaultTileMaker {
 
     private MatrixVariable matrix;
 
@@ -11,7 +11,7 @@ public class MatrixTileMaker implements TileMaker {
     }
 
     @Override
-    public String makeHtml() {
-        return null;
+    public String getContent() {
+        return '$' + matrix.toString() + '$'; // TODO: change to proper format
     }
 }

@@ -2,7 +2,7 @@ package vartiles;
 
 import model.variables.FunctionVariable;
 
-public class FunctionTileMaker implements TileMaker {
+public class FunctionTileMaker extends DefaultTileMaker {
 
     private FunctionVariable function;
 
@@ -11,7 +11,7 @@ public class FunctionTileMaker implements TileMaker {
     }
 
     @Override
-    public String makeHtml() {
-        return null;
+    public String getContent() {
+        return '$' + function.value + '$'; // TODO: change to proper format
     }
 }

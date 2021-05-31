@@ -1,13 +1,13 @@
-import model.Parser;
+import model.ParserImpl;
 import model.VarBox;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ParserTest {
+public class ParserImplTest {
     @Test
     void removeWhitespaceAndHashtags() {
-        Parser parser = new Parser();
+        ParserImpl parser = new ParserImpl();
         parser.load("#a#a#:#1#;b    b   :   1   ;\nc\nc\n:\n1\n;\rd\r\rd\r:\r1\r; e e : 1 ", "");
         assertTrue(parser.variables.containsKey("aa"));
         assertTrue(parser.variables.containsKey("bb"));
@@ -19,7 +19,7 @@ public class ParserTest {
 
     @Test
     void parseVariableDefinitionStructure() {
-        Parser parser = new Parser();
+        ParserImpl parser = new ParserImpl();
         assertThrows(IllegalArgumentException.class, () -> parser.load("a;1", ""));
         assertThrows(IllegalArgumentException.class, () -> parser.load("a:\"", ""));
         assertThrows(IllegalArgumentException.class, () -> parser.load("a:(", ""));
@@ -39,7 +39,7 @@ public class ParserTest {
 
     @Test
     void correctVariablesPassWithCorrectType() {
-        Parser parser = new Parser();
+        ParserImpl parser = new ParserImpl();
         assertDoesNotThrow(() -> parser.load("a:1;b:-1;c:1.1;d:-1.1;e:\"\";f:\"\"\";g:(1);h:(1,-1,1.1,-1.1);i:[1];j:[1/-1/1.1/-1.1];k:[1,-1/1.1,-1.1];l:[1,-1,1.1,-1.1]", ""));
 
         assertEquals(parser.variables.get("a").getType(), VarBox.VarType.NUMBER);
@@ -59,7 +59,7 @@ public class ParserTest {
 
     @Test
     void operationsAreSimplifiedCorrectly() {//input is changed into list of model.variables in postorder with recipes
-        Parser parser = new Parser();
+        ParserImpl parser = new ParserImpl();
         assertDoesNotThrow(() -> parser.load("a:1", "+(+(+(a),a),a,+(a,+(a)))"));
         assertEquals(parser.variables.get("a").getType(), VarBox.VarType.NUMBER);
         assertEquals(parser.variables.size(), 1);

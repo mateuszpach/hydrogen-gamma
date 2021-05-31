@@ -2,7 +2,7 @@ package vartiles;
 
 import model.variables.TextVariable;
 
-public class TextTileMaker implements TileMaker {
+public class TextTileMaker extends DefaultTileMaker {
 
     private TextVariable text;
 
@@ -11,7 +11,7 @@ public class TextTileMaker implements TileMaker {
     }
 
     @Override
-    public String makeHtml() {
-        return null;
+    public String getContent() {
+        return '$' + text.value + '$'; // TODO: change to proper format
     }
 }

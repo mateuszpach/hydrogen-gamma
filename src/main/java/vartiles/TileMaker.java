@@ -1,5 +1,7 @@
 package vartiles;
 
 public interface TileMaker {
-    String makeHtml();
+    String getContent();
+
+    String getLabel();
 }

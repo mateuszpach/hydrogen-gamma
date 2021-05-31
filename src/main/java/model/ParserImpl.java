@@ -1,14 +1,16 @@
 package model;
 
-import utils.Pair;
-import model.variables.MatrixVariable;
 import model.variables.FunctionVariable;
+import model.variables.MatrixVariable;
+import utils.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.lang.Math.min;
 
-public class Parser {
+public class ParserImpl {
 
     private String varDefinition;
     private String operation;
@@ -17,7 +19,7 @@ public class Parser {
     public Map<String, Pair<String, ArrayList<String>>> futureVariables;
     int futureIndex;
 
-    public Parser() {
+    public ParserImpl() {
         modules = new HashMap<>(); // will hold map from module calling name to some input recipe for model.modules stating what forms of input they expect
     }
 
