@@ -27,9 +27,6 @@ public class ParserImplTest {
         assertThrows(IllegalArgumentException.class, () -> parser.load("a:aaa", ""));
         assertThrows(IllegalArgumentException.class, () -> parser.load("a:1..1", ""));
         assertThrows(IllegalArgumentException.class, () -> parser.load("a:--1.1", ""));
-        assertThrows(IllegalArgumentException.class, () -> parser.load("a:(1..1)", ""));
-        assertThrows(IllegalArgumentException.class, () -> parser.load("a:(--1.1)", ""));
-        assertThrows(IllegalArgumentException.class, () -> parser.load("a:()", ""));
         assertThrows(IllegalArgumentException.class, () -> parser.load("a:[1,1/1]", ""));
         assertThrows(IllegalArgumentException.class, () -> parser.load("a:[1..1]", ""));
         assertThrows(IllegalArgumentException.class, () -> parser.load("a:[--1.1]", ""));
@@ -38,22 +35,9 @@ public class ParserImplTest {
     }
 
     @Test
-    void correctVariablesPassWithCorrectType() {
+    void correctVariablesPass() {
         ParserImpl parser = new ParserImpl();
         assertDoesNotThrow(() -> parser.load("a:1;b:-1;c:1.1;d:-1.1;e:\"\";f:\"\"\";g:(1);h:(1,-1,1.1,-1.1);i:[1];j:[1/-1/1.1/-1.1];k:[1,-1/1.1,-1.1];l:[1,-1,1.1,-1.1]", ""));
-
-        assertEquals(parser.variables.get("a").getType(), VarBox.VarType.NUMBER);
-        assertEquals(parser.variables.get("b").getType(), VarBox.VarType.NUMBER);
-        assertEquals(parser.variables.get("c").getType(), VarBox.VarType.NUMBER);
-        assertEquals(parser.variables.get("d").getType(), VarBox.VarType.NUMBER);
-        assertEquals(parser.variables.get("e").getType(), VarBox.VarType.TEXT);
-        assertEquals(parser.variables.get("f").getType(), VarBox.VarType.TEXT);
-        assertEquals(parser.variables.get("g").getType(), VarBox.VarType.FUNCTION);
-        assertEquals(parser.variables.get("h").getType(), VarBox.VarType.FUNCTION);
-        assertEquals(parser.variables.get("i").getType(), VarBox.VarType.MATRIX);
-        assertEquals(parser.variables.get("j").getType(), VarBox.VarType.MATRIX);
-        assertEquals(parser.variables.get("k").getType(), VarBox.VarType.MATRIX);
-        assertEquals(parser.variables.get("l").getType(), VarBox.VarType.MATRIX);
         assertEquals(parser.variables.size(), 12);
     }
 
@@ -61,7 +45,6 @@ public class ParserImplTest {
     void operationsAreSimplifiedCorrectly() {//input is changed into list of model.variables in postorder with recipes
         ParserImpl parser = new ParserImpl();
         assertDoesNotThrow(() -> parser.load("a:1", "+(+(+(a),a),a,+(a,+(a)))"));
-        assertEquals(parser.variables.get("a").getType(), VarBox.VarType.NUMBER);
         assertEquals(parser.variables.size(), 1);
         assertEquals(parser.futureVariables.get("#4").first, "+");
         assertEquals(parser.futureVariables.get("#4").second.size(), 3);

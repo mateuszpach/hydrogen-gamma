@@ -2,6 +2,8 @@ package model;
 
 import model.variables.FunctionVariable;
 import model.variables.MatrixVariable;
+import model.variables.NumericVariable;
+import model.variables.TextVariable;
 import utils.Pair;
 
 import java.util.ArrayList;
@@ -71,22 +73,11 @@ public class ParserImpl {
                 throw new IllegalArgumentException("model.Variable definition must contain exactly one ':' character: " + a);
             if (b[1].charAt(0) == '\"') {//text
                 if (b[1].charAt(b[1].length() - 1) == '\"' && b[1].length() >= 2) {
-                    variables.put(b[0], new VarBox(b[1]));
+                    variables.put(b[0], new VarBox(new TextVariable(b[1])));
                 } else
                     throw new IllegalArgumentException("Text variable definition must contain exactly two '\"' character at front and end: " + a);
             } else if (b[1].charAt(0) == '(') {//function
                 if (b[1].charAt(b[1].length() - 1) == ')') {
-                    String[] c = b[1].substring(1, b[1].length() - 1).split(",");
-                    double[] function = new double[c.length]; //ready for implementation of functionVariable
-                    int i = 0;
-                    for (String val : c) {
-                        try {
-                            double x = Double.parseDouble(val);
-                            function[i++] = x;
-                        } catch (NumberFormatException e) {
-                            throw new IllegalArgumentException(val + " from function definition " + a + " does not represent valid number");
-                        }
-                    }
                     variables.put(b[0], new VarBox(new FunctionVariable(b[1])));
                 } else
                     throw new IllegalArgumentException("Function variable definition must be within () characters: " + a);
@@ -128,7 +119,7 @@ public class ParserImpl {
             } else {//numeric
                 try {
                     double x = Double.parseDouble(b[1]);
-                    variables.put(b[0], new VarBox(x));
+                    variables.put(b[0], new VarBox(new NumericVariable(x)));
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException(b[1] + " from definition " + a + " does not represent valid number");
                 }
