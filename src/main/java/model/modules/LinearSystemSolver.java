@@ -21,10 +21,16 @@ public class LinearSystemSolver implements Module<MatrixVariable> {
         Integer[] perm = lu.second;
         int n = A.rowsNum();
 
-        double[][] Y = LinearAlgebra.solveSystemLower(L, b, perm).value;
+        double[][] Y = LinearAlgebra.solveSystemLower(L, b, perm).getValue();
         MatrixVariable yMatrix = new MatrixVariable(Y);
-        double[][] ans = LinearAlgebra.solveSystemUpper(U, yMatrix, LinearAlgebra.identityPermutation(n)).value;
+        double[][] ans = LinearAlgebra.solveSystemUpper(U, yMatrix, LinearAlgebra.identityPermutation(n)).getValue();
 
         return new MatrixVariable(ans);
+    }
+
+    @Override
+    public boolean verfiy(Variable<?>... args) {
+        //TODO
+        return false;
     }
 }

@@ -8,44 +8,45 @@ public class ParserImplTest {
     @Test
     void removeWhitespaceAndHashtags() {
         ParserImpl parser = new ParserImpl();
-        parser.load("#a#a#:#1#;b    b   :   1   ;\nc\nc\n:\n1\n;\rd\r\rd\r:\r1\r; e e : 1 ", "");
-        assertTrue(parser.variables.containsKey("aa"));
-        assertTrue(parser.variables.containsKey("bb"));
-        assertTrue(parser.variables.containsKey("cc"));
-        assertTrue(parser.variables.containsKey("dd"));
-        assertTrue(parser.variables.containsKey("ee"));
-        assertEquals(parser.variables.size(), 5);
+        parser.parse("#a#a#:#1#;b    b   :   1   ;\nc\nc\n:\n1\n;\rd\r\rd\r:\r1\r; e e : 1 ", "");
+        assertTrue(parser.varBoxes.containsKey("aa"));
+        assertTrue(parser.varBoxes.containsKey("bb"));
+        assertTrue(parser.varBoxes.containsKey("cc"));
+        assertTrue(parser.varBoxes.containsKey("dd"));
+        assertTrue(parser.varBoxes.containsKey("ee"));
+        assertEquals(parser.varBoxes.size(), 5);
     }
 
     @Test
     void parseVariableDefinitionStructure() {
         ParserImpl parser = new ParserImpl();
-        assertThrows(IllegalArgumentException.class, () -> parser.load("a;1", ""));
-        assertThrows(IllegalArgumentException.class, () -> parser.load("a:\"", ""));
-        assertThrows(IllegalArgumentException.class, () -> parser.load("a:(", ""));
-        assertThrows(IllegalArgumentException.class, () -> parser.load("a:[", ""));
-        assertThrows(IllegalArgumentException.class, () -> parser.load("a:aaa", ""));
-        assertThrows(IllegalArgumentException.class, () -> parser.load("a:1..1", ""));
-        assertThrows(IllegalArgumentException.class, () -> parser.load("a:--1.1", ""));
-        assertThrows(IllegalArgumentException.class, () -> parser.load("a:[1,1/1]", ""));
-        assertThrows(IllegalArgumentException.class, () -> parser.load("a:[1..1]", ""));
-        assertThrows(IllegalArgumentException.class, () -> parser.load("a:[--1.1]", ""));
-        assertThrows(IllegalArgumentException.class, () -> parser.load("a:[]", ""));
-        assertThrows(IllegalArgumentException.class, () -> parser.load("a:[/]", ""));
+        //returns message on throw (to parser to print status for user)
+        assertNotNull(parser.load("a;1", ""));
+        assertNotNull(parser.load("a:\"", ""));
+        assertNotNull(parser.load("a:(", ""));
+        assertNotNull(parser.load("a:[", ""));
+        assertNotNull(parser.load("a:aaa", ""));
+        assertNotNull(parser.load("a:1..1", ""));
+        assertNotNull(parser.load("a:--1.1", ""));
+        assertNotNull(parser.load("a:[1,1/1]", ""));
+        assertNotNull(parser.load("a:[1..1]", ""));
+        assertNotNull(parser.load("a:[--1.1]", ""));
+        assertNotNull(parser.load("a:[]", ""));
+        assertNotNull(parser.load("a:[/]", ""));
     }
 
     @Test
     void correctVariablesPass() {
         ParserImpl parser = new ParserImpl();
-        assertDoesNotThrow(() -> parser.load("a:1;b:-1;c:1.1;d:-1.1;e:\"\";f:\"\"\";g:(1);h:(1,-1,1.1,-1.1);i:[1];j:[1/-1/1.1/-1.1];k:[1,-1/1.1,-1.1];l:[1,-1,1.1,-1.1]", ""));
-        assertEquals(parser.variables.size(), 12);
+        assertDoesNotThrow(() -> parser.parse("a:1;b:-1;c:1.1;d:-1.1;e:\"\";f:\"\"\";g:(1);h:(1,-1,1.1,-1.1);i:[1];j:[1/-1/1.1/-1.1];k:[1,-1/1.1,-1.1];l:[1,-1,1.1,-1.1]", ""));
+        assertEquals(parser.varBoxes.size(), 12);
     }
 
     @Test
     void operationsAreSimplifiedCorrectly() {//input is changed into list of model.variables in postorder with recipes
         ParserImpl parser = new ParserImpl();
-        assertDoesNotThrow(() -> parser.load("a:1", "+(+(+(a),a),a,+(a,+(a)))"));
-        assertEquals(parser.variables.size(), 1);
+        assertDoesNotThrow(() -> parser.parse("a:1", "+(+(+(a),a),a,+(a,+(a)))"));
+        assertEquals(parser.varBoxes.size(), 1);
         assertEquals(parser.futureVariables.get("#4").first, "+");
         assertEquals(parser.futureVariables.get("#4").second.size(), 3);
         assertEquals(parser.futureVariables.get("#4").second.get(0), "#1");

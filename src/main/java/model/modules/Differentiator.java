@@ -37,7 +37,7 @@ public class Differentiator implements Module<FunctionVariable> {
     }
 
     private static FunctionVariable symbolicDerivative(FunctionVariable func) {
-        String formula = removeParentheses(func.value);
+        String formula = removeParentheses(func.getValue());
 
         if (formula.isEmpty())
             throw new InvalidFormulaException(formula);
@@ -95,8 +95,8 @@ public class Differentiator implements Module<FunctionVariable> {
             for (int i = 1; i < components.size(); i++) {
                 String nextComp = components.get(i);
 
-                String buffDeriv = symbolicDerivative(new FunctionVariable(derivativeFormula.toString())).value;
-                String nextDeriv = symbolicDerivative(new FunctionVariable(nextComp)).value;
+                String buffDeriv = symbolicDerivative(new FunctionVariable(derivativeFormula.toString())).getValue();
+                String nextDeriv = symbolicDerivative(new FunctionVariable(nextComp)).getValue();
 
                 if (operators.get(i - 1) == '*') {
                     derivativeFormula.insert(0, '(');
@@ -134,10 +134,10 @@ public class Differentiator implements Module<FunctionVariable> {
 
             for (int i = 0; i < operators.size(); i++) {
                 FunctionVariable compDeriv = symbolicDerivative(new FunctionVariable(components.get(i)));
-                derivativeFormula.append(compDeriv.value);
+                derivativeFormula.append(compDeriv.getValue());
                 derivativeFormula.append(operators.get(i));
             }
-            derivativeFormula.append(symbolicDerivative(new FunctionVariable(components.get(components.size() - 1))).value);
+            derivativeFormula.append(symbolicDerivative(new FunctionVariable(components.get(components.size() - 1))).getValue());
             derivativeFormula.append(')');
         }
 
@@ -147,6 +147,12 @@ public class Differentiator implements Module<FunctionVariable> {
         }
 
         return new FunctionVariable(derivativeFormula.toString());
+    }
+
+    @Override
+    public boolean verfiy(Variable<?>... args) {
+        //TODO
+        return false;
     }
 
     private static Pair<ArrayList<String>, ArrayList<Character>> findSubcomponents(String formula, String searchedOpers) {

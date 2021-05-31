@@ -24,13 +24,19 @@ public class LUDecomposer implements Module<MatrixVariable> {
         if (n != m) throw new LinearAlgebra.MatrixNotSquareException();
 
         Pair<MatrixVariable, MatrixVariable> initialLU = LinearAlgebra.prepareLU(matrix);
-        double[][] L = initialLU.first.value;
-        double[][] U = initialLU.second.value;
+        double[][] L = initialLU.first.getValue();
+        double[][] U = initialLU.second.getValue();
 
         for (int i = 0; i < n; i++) {
-            LinearAlgebra.performGaussElimStep(new MatrixVariable(L), new MatrixVariable(U), i);
+            LinearAlgebra.performGaussElimStep(L, U, i);
         }
 
         return new Pair<MatrixVariable, MatrixVariable>(new MatrixVariable(L), new MatrixVariable(U));
+    }
+
+    @Override
+    public boolean verfiy(Variable<?>... args) {
+        //TODO
+        return false;
     }
 }

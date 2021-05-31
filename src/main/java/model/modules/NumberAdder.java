@@ -11,8 +11,14 @@ public class NumberAdder implements Module<NumericVariable> {
         System.out.println(args.length);
         double sum = 0d;
         for (Variable<?> arg : args) {
-            sum += ((NumericVariable) arg).value;
+            sum += ((NumericVariable) arg).getValue();
         }
         return new NumericVariable(sum);
+    }
+
+    @Override
+    public boolean verfiy(Variable<?>... args) {
+        //TODO
+        return false;
     }
 }

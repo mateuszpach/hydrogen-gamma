@@ -31,7 +31,7 @@ public interface MatrixOperations {
         double[][] c = new double[a.rowsNum()][a.colsNum()];
         for (int i = 0; i < a.rowsNum(); ++i)
             for (int j = 0; j < a.colsNum(); ++j)
-                c[i][j] = a.get(i, j) * b.value;
+                c[i][j] = a.get(i, j) * b.getValue();
         return new MatrixVariable(c);
     }
 
