@@ -1,7 +1,5 @@
 package model;
 
-import model.modules.AddNumbers;
-import model.variables.NumericVariable;
 import utils.Pair;
 import model.variables.MatrixVariable;
 import model.variables.FunctionVariable;
@@ -22,10 +20,6 @@ public class Parser {
     public Parser() {
         modules = new HashMap<>(); // will hold map from module calling name to some input recipe for model.modules stating what forms of input they expect
     }
-    //TODO:
-    // 1. from each module you'll get List of triplets (variable, enum, label for "kaflarz")
-    // 2. add label on "kaflarz"
-    // 3. VarBox to hold Variable
 
 
     public void load(String varDefinition, String operation) {
@@ -75,13 +69,12 @@ public class Parser {
                 throw new IllegalArgumentException("model.Variable definition must contain exactly one ':' character: " + a);
             if (b[1].charAt(0) == '\"') {//text
                 if (b[1].charAt(b[1].length() - 1) == '\"' && b[1].length() >= 2) {
-                    // TODO: when TextVariable arrives variables.put(b[0], new VarBox(b[1]));
+                    variables.put(b[0], new VarBox(b[1]));
                 } else
                     throw new IllegalArgumentException("Text variable definition must contain exactly two '\"' character at front and end: " + a);
             } else if (b[1].charAt(0) == '(') {//function
                 if (b[1].charAt(b[1].length() - 1) == ')') {
                     String[] c = b[1].substring(1, b[1].length() - 1).split(",");
-                    //TODO: add FunctionVariable parsing
                     double[] function = new double[c.length]; //ready for implementation of functionVariable
                     int i = 0;
                     for (String val : c) {
@@ -92,7 +85,7 @@ public class Parser {
                             throw new IllegalArgumentException(val + " from function definition " + a + " does not represent valid number");
                         }
                     }
-                    variables.put(b[0], new VarBox(new FunctionVariable(b[1]), VarBox.VarType.FUNCTION, b[0]));
+                    variables.put(b[0], new VarBox(new FunctionVariable(b[1])));
                 } else
                     throw new IllegalArgumentException("Function variable definition must be within () characters: " + a);
             } else if (b[1].charAt(0) == '[') {//matrix
@@ -127,13 +120,13 @@ public class Parser {
                     for (int i = 0; i < matrix.size(); ++i)
                         for (int j = 0; j < rowSize; ++j)
                             dMatrix[i][j] = matrix.get(i).get(j);
-                    variables.put(b[0], new VarBox(new MatrixVariable(dMatrix), VarBox.VarType.MATRIX, b[0]));
+                    variables.put(b[0], new VarBox(new MatrixVariable(dMatrix)));
                 } else
                     throw new IllegalArgumentException("Matrix variable definition must be within [] characters: " + a);
             } else {//numeric
                 try {
                     double x = Double.parseDouble(b[1]);
-                    variables.put(b[0], new VarBox(new NumericVariable(x), VarBox.VarType.NUMBER, b[0]));
+                    variables.put(b[0], new VarBox(x));
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException(b[1] + " from definition " + a + " does not represent valid number");
                 }
