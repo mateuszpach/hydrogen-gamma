@@ -10,7 +10,12 @@ public class MatrixVariable extends Variable<double[][]> {
             if (doubles.length != value[0].length)
                 throw new IllegalArgumentException("Different number of columns in different rows.");
 
-        this.value = value;
+        this.value = value.clone();
+    }
+
+    @Override
+    public double[][] getValue() {
+        return value.clone();
     }
 
     public double get(int i, int j) {
