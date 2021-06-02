@@ -1,3 +1,6 @@
+import model.variables.FunctionVariable;
+import model.variables.NumericVariable;
+import model.variables.TextVariable;
 import org.junit.jupiter.api.Test;
 import model.variables.MatrixVariable;
 
@@ -46,8 +49,8 @@ public class MatrixVariableTest {
     @Test
     void properValues() {
         double[][] a = {{Double.MAX_VALUE, Double.MIN_VALUE, 0.0},
-                        {5.9999999999999999, -Double.MAX_VALUE, -Double.MIN_VALUE},
-                        {1e38, -4e-27, Math.PI}};
+                {5.9999999999999999, -Double.MAX_VALUE, -Double.MIN_VALUE},
+                {1e38, -4e-27, Math.PI}};
         MatrixVariable A = new MatrixVariable(a);
 
         for (int i = 0; i < A.rowsNum(); i++) {
@@ -68,14 +71,22 @@ public class MatrixVariableTest {
 
     @Test
     void differentMatricesNotEqual() {
-        MatrixVariable A = new MatrixVariable(new double[][] {{1e-20, -2.0}, {1e100, -3e100}});
-        MatrixVariable B = new MatrixVariable(new double[][] {{-1e-20, -2.0}, {1e100, -3e100}});
-        System.out.println(A.get(0,0));
-        System.out.println(B.get(0,0));
+        MatrixVariable A = new MatrixVariable(new double[][]{{1e-20, -2.0}, {1e100, -3e100}});
+        MatrixVariable B = new MatrixVariable(new double[][]{{-1e-20, -2.0}, {1e100, -3e100}});
+        System.out.println(A.get(0, 0));
+        System.out.println(B.get(0, 0));
 
         assertNotEquals(A, B);
         assertNotEquals(B, A);
-        assertNotEquals(new MatrixVariable(new double[][] {{1.0, 1.0}}), new MatrixVariable(new double[][]{{1.0}}));
-        assertNotEquals(new MatrixVariable(new double[][] {{1.0, 1.0}}), new MatrixVariable(new double[][]{{1.0, 1.0}, {1.0, 1.0}}));
+        assertNotEquals(new MatrixVariable(new double[][]{{1.0, 1.0}}), new MatrixVariable(new double[][]{{1.0}}));
+        assertNotEquals(new MatrixVariable(new double[][]{{1.0, 1.0}}), new MatrixVariable(new double[][]{{1.0, 1.0}, {1.0, 1.0}}));
+    }
+
+    @Test
+    void actsAsFinal() {// other types are ok since String is final by definition and double is passed byb value
+        double[][] inside = new double[][]{{5d}};
+        MatrixVariable a = new MatrixVariable(inside);
+        inside[0][0] = -5d;
+        assertNotEquals(inside, a.getValue());
     }
 }

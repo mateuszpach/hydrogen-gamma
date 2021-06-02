@@ -35,15 +35,15 @@ public class LinearAlgebraTest {
 
     @Test
     void performGaussElimStepTest() {
-        MatrixVariable L = new MatrixVariable(new double[][] {{0.0, 0.0}, {0.0, 0.0}});
-        MatrixVariable U = new MatrixVariable(new double[][] {{2.0, -1.0}, {1.0, -3.0}});
-        MatrixVariable expectL = new MatrixVariable(new double[][] {{1.0, 0.0}, {0.5, 0.0}});
-        MatrixVariable expectU = new MatrixVariable(new double[][] {{2.0, -1.0}, {0.0, -2.5}});
+        double[][] L = new double[][]{{0.0, 0.0}, {0.0, 0.0}};
+        double[][] U = new double[][]{{2.0, -1.0}, {1.0, -3.0}};
+        MatrixVariable expectL = new MatrixVariable(new double[][]{{1.0, 0.0}, {0.5, 0.0}});
+        MatrixVariable expectU = new MatrixVariable(new double[][]{{2.0, -1.0}, {0.0, -2.5}});
 
         LinearAlgebra.performGaussElimStep(L, U, 0);
 
-        assertEquals(expectL, L);
-        assertEquals(expectU, U);
+        assertEquals(expectL, new MatrixVariable(L));
+        assertEquals(expectU, new MatrixVariable(U));
     }
 
     @Test

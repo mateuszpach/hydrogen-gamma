@@ -15,6 +15,12 @@ public class Determinant implements Module<NumericVariable> {
         return new NumericVariable(det);
     }
 
+    @Override
+    public boolean verfiy(Variable<?>... args) {
+        //TODO
+        return false;
+    }
+
     private Double determinant(MatrixVariable A) {
         Pair<Pair<MatrixVariable, MatrixVariable>, Integer[]> lu = LinearAlgebra.decompositionLUPivoted(A);
         MatrixVariable U = lu.first.second;

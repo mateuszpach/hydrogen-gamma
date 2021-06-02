@@ -35,6 +35,15 @@ public class QueryController {
             String expression = req.queryParams("expr");
             System.out.println(parameters);
             System.out.println(expression);
+            String regex = "\\$"; // TODO: check if $ is only character/phrase that affects HTML and should be filtered out
+            if (parameters == null)// not taking care of your own nulls is kinda mean
+                parameters = "";
+            else
+                parameters = parameters.replaceAll(regex, "");
+            if (expression == null)
+                expression = "";
+            else
+                expression = expression.replaceAll(regex, "");
 
             TileMakersContainer container = parser.parse(parameters, expression);
 

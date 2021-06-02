@@ -12,6 +12,6 @@ public class NumericTileMaker extends DefaultTileMaker {
 
     @Override
     public String getContent() {
-        return '$' + number.value.toString() + '$'; // TODO: change to proper format
+        return '$' + number.getValue().toString() + '$'; // TODO: change to proper format
     }
 }

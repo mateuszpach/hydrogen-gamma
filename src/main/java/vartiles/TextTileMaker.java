@@ -12,6 +12,6 @@ public class TextTileMaker extends DefaultTileMaker {
 
     @Override
     public String getContent() {
-        return '$' + text.value + '$'; // TODO: change to proper format
+        return '$' + text.getValue() + '$'; // TODO: change to proper format
     }
 }

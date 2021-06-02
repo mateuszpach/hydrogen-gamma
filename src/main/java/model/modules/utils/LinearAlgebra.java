@@ -15,8 +15,8 @@ public interface LinearAlgebra {
         Integer[] permutation = identityPermutation(n);
 
         Pair<MatrixVariable, MatrixVariable> initialLU = prepareLU(matrix);
-        double[][] L = initialLU.first.value;
-        double[][] U = initialLU.second.value;
+        double[][] L = initialLU.first.getValue();
+        double[][] U = initialLU.second.getValue();
 
         for (int i = 0; i < n; i++) {
 
@@ -25,27 +25,33 @@ public interface LinearAlgebra {
             swapRows(L, i, maxIdx);
             swapElems(permutation, i, maxIdx);
 
-            performGaussElimStep(new MatrixVariable(L), new MatrixVariable(U), i);
+            performGaussElimStep(L, U, i);
         }
 
         return new Pair<>(new Pair<>(new MatrixVariable(L), new MatrixVariable(U)), permutation);
     }
 
-    static void performGaussElimStep(MatrixVariable L, MatrixVariable U, int i) {
-        int n = L.value.length;
+    static void performGaussElimStep(double[][] L, double[][] U, int i) {
+        // changed to double[][] from Matrix,
+        // I assume author must've been drunk to keep converting array to MatrixVar just to use it like array
+        // and than convert it back, all within utility method that has no point nor benefit using Variable
+
+        //also it was the only method explicitly modifying value  of Variable
+        int n = L.length;
         for (int j = i + 1; j < n; j++) {
-            if (U.value[j][i] == 0.0)
+            if (U[j][i] == 0.0)
                 continue;
 
-            L.value[j][i] = U.value[j][i] / U.value[i][i];
+            L[j][i] = U[j][i] / U[i][i];
 
             for (int k = i; k < n; k++) {
-                U.value[j][k] -= L.value[j][i] * U.value[i][k];
+                U[j][k] -= L[j][i] * U[i][k];
             }
         }
 
-        L.value[i][i] = 1.0;
+        L[i][i] = 1.0;
     }
+
 
     static Pair<MatrixVariable, MatrixVariable> prepareLU(MatrixVariable matrix) {
         int n = matrix.rowsNum();

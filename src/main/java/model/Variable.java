@@ -1,5 +1,9 @@
 package model;
 
 public abstract class Variable<T> {
-    public T value;
+    protected T value;
+
+    public T getValue() {
+        return value;
+    }
 }

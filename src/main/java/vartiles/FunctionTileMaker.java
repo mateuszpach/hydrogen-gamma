@@ -12,6 +12,6 @@ public class FunctionTileMaker extends DefaultTileMaker {
 
     @Override
     public String getContent() {
-        return '$' + function.value + '$'; // TODO: change to proper format
+        return '$' + function.getValue() + '$'; // TODO: change to proper format
     }
 }

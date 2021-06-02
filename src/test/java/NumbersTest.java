@@ -22,7 +22,7 @@ public class NumbersTest {
         double bD = rand.nextDouble();
         NumericVariable bV = new NumericVariable(bD);
         NumericVariable sum = add.execute(container, aV, bV);
-        assertEquals(sum.value, aD + bD);
+        assertEquals(sum.getValue(), aD + bD);
     }
 
     @Test
@@ -32,7 +32,7 @@ public class NumbersTest {
             @Override
             public void storeTile() {}
         };
-        assertEquals(0d, add.execute(container).value);
+        assertEquals(0d, add.execute(container).getValue());
     }
 
     @Test
@@ -40,7 +40,8 @@ public class NumbersTest {
         int testSize = 1500;
         TilesContainer container = new TilesContainer() {
             @Override
-            public void storeTile() {}
+            public void storeTile() {
+            }
         };
 
         double sum = 0;
@@ -50,8 +51,8 @@ public class NumbersTest {
             args[i] = new NumericVariable(a);
             sum += a;
         }
-        System.out.println(sum + " " + add.execute(container, args).value);
-        assertEquals(sum, add.execute(container, args).value);
+        System.out.println(sum + " " + add.execute(container, args).getValue());
+        assertEquals(sum, add.execute(container, args).getValue());
     }
 
 
