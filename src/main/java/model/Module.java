@@ -1,7 +1,7 @@
 package model;
 
 import model.Variable;
-import model.modules.TilesContainer;
+import model.TilesContainer;
 
 public interface Module<T extends Variable<?>> {
     T execute(TilesContainer container, Variable<?>... args);

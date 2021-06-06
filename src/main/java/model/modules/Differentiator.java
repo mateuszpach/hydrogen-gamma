@@ -1,9 +1,12 @@
 package model.modules;
 
 import model.Module;
+import model.TilesContainer;
 import model.Variable;
 import utils.Pair;
 import model.variables.FunctionVariable;
+import vartiles.FunctionTile;
+import vartiles.factories.FunctionTileFactory;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -33,6 +36,7 @@ public class Differentiator implements Module<FunctionVariable> {
     @Override
     public FunctionVariable execute(TilesContainer container, Variable<?>... args) {
         FunctionVariable function = (FunctionVariable) args[0];
+        container.addTile(new FunctionTileFactory().get(function, "derivative"));
         return symbolicDerivative(function);
     }
 
@@ -151,8 +155,7 @@ public class Differentiator implements Module<FunctionVariable> {
 
     @Override
     public boolean verfiy(Variable<?>... args) {
-        //TODO
-        return false;
+        return args.length == 1 && args[0].getClass() == FunctionVariable.class;
     }
 
     private static Pair<ArrayList<String>, ArrayList<Character>> findSubcomponents(String formula, String searchedOpers) {

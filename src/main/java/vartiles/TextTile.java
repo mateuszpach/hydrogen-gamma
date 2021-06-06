@@ -2,11 +2,11 @@ package vartiles;
 
 import model.variables.TextVariable;
 
-public class TextTileMaker extends DefaultTileMaker {
+public class TextTile extends DefaultTile {
 
     private TextVariable text;
 
-    public TextTileMaker(TextVariable txt) {
+    public TextTile(TextVariable txt) {
         text = txt;
     }
 

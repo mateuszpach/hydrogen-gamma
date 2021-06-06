@@ -1,16 +1,21 @@
 package model.modules;
 
 import model.Module;
+import model.TilesContainer;
 import model.Variable;
 import model.modules.utils.LinearAlgebra;
 import model.variables.MatrixVariable;
 import utils.Pair;
+import vartiles.MatrixTile;
+import vartiles.factories.MatrixTileFactory;
 
 public class LinearSystemSolver implements Module<MatrixVariable> {
 
     @Override
     public MatrixVariable execute(TilesContainer container, Variable<?>... args) {
-        return solveLinearSystem((MatrixVariable)args[0], (MatrixVariable) args[1]);
+        MatrixVariable sol = solveLinearSystem((MatrixVariable)args[0], (MatrixVariable) args[1]);
+        container.addTile(new MatrixTileFactory().get(sol, "linear system solution"));
+        return sol;
     }
 
     // solves linear system of shape Ax = b, where A is square matrix
@@ -30,7 +35,6 @@ public class LinearSystemSolver implements Module<MatrixVariable> {
 
     @Override
     public boolean verfiy(Variable<?>... args) {
-        //TODO
-        return false;
+        return args.length == 2 && args[0].getClass() == MatrixVariable.class && args[1].getClass() == MatrixVariable.class;
     }
 }

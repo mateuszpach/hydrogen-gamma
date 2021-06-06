@@ -1,6 +1,6 @@
 package vartiles;
 
-public interface TileMaker {
+public interface Tile {
     String getContent();
 
     String getLabel();

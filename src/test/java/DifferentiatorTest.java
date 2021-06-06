@@ -1,7 +1,13 @@
+import model.Variable;
+import model.modules.Determinant;
 import model.modules.Differentiator;
-import model.modules.TilesContainer;
+import model.TilesContainer;
+import model.variables.MatrixVariable;
 import org.junit.jupiter.api.Test;
 import model.variables.FunctionVariable;
+import vartiles.Tile;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,7 +23,13 @@ public class DifferentiatorTest {
         FunctionVariable f5 = new FunctionVariable("x");
         TilesContainer container = new TilesContainer() {
             @Override
-            public void storeTile() {
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
             }
         };
 
@@ -39,7 +51,14 @@ public class DifferentiatorTest {
         FunctionVariable f5 = new FunctionVariable("--x");
         TilesContainer container = new TilesContainer() {
             @Override
-            public void storeTile() {}
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
+            }
         };
 
         Differentiator diff = new Differentiator();
@@ -60,7 +79,13 @@ public class DifferentiatorTest {
         FunctionVariable f5 = new FunctionVariable("x+x");
         TilesContainer container = new TilesContainer() {
             @Override
-            public void storeTile() {
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
             }
         };
 
@@ -82,7 +107,13 @@ public class DifferentiatorTest {
         FunctionVariable f5 = new FunctionVariable("e^(x)/sin(x)");
         TilesContainer container = new TilesContainer() {
             @Override
-            public void storeTile() {
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
             }
         };
 
@@ -103,8 +134,15 @@ public class DifferentiatorTest {
         FunctionVariable f4 = new FunctionVariable("(((sin(x)))/((cos(x)))+(x))");
         FunctionVariable f5 = new FunctionVariable("((((((e^(x))))+(x))))");
         TilesContainer container = new TilesContainer() {
+
             @Override
-            public void storeTile() {
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
             }
         };
 
@@ -125,8 +163,15 @@ public class DifferentiatorTest {
         FunctionVariable f4 = new FunctionVariable("x^(0)");
         FunctionVariable f5 = new FunctionVariable("sin(x)*(-5*x^(2))");
         TilesContainer container = new TilesContainer() {
+
             @Override
-            public void storeTile() {
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
             }
         };
 
@@ -147,8 +192,15 @@ public class DifferentiatorTest {
         FunctionVariable f4 = new FunctionVariable("-4*cos(x)");
         FunctionVariable f5 = new FunctionVariable("x/10");
         TilesContainer container = new TilesContainer() {
+
             @Override
-            public void storeTile() {
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
             }
         };
 
@@ -159,5 +211,17 @@ public class DifferentiatorTest {
         assertEquals("(3*cos(x)+sin(x)*0)", diff.execute(container, new FunctionVariable[]{f3}).getValue());
         assertEquals("(-((4*(-sin(x))+cos(x)*0)))", diff.execute(container, new FunctionVariable[]{f4}).getValue());
         assertEquals("(x*(-1)*0/(10)^2+10*1/(10)^2)", diff.execute(container, new FunctionVariable[]{f5}).getValue());
+    }
+
+    @Test
+    public void verifyTest() {
+        FunctionVariable f = new FunctionVariable("cos(x)");
+        Variable<String> arr1[] = new Variable[] {f};
+        Variable<String> arr2[] = new Variable[] {f,f};
+        Variable<double[][]> arr3[] = new Variable[] {new MatrixVariable(new double[][] {{0}})};
+
+        assertTrue(new Differentiator().verfiy(arr1));
+        assertFalse(new Differentiator().verfiy(arr2));
+        assertFalse(new Differentiator().verfiy(arr3));
     }
 }

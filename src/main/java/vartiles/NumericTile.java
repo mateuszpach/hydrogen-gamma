@@ -2,11 +2,11 @@ package vartiles;
 
 import model.variables.NumericVariable;
 
-public class NumericTileMaker extends DefaultTileMaker {
+public class NumericTile extends DefaultTile {
 
     private NumericVariable number;
 
-    public NumericTileMaker(NumericVariable num) {
+    public NumericTile(NumericVariable num) {
         number = num;
     }
 

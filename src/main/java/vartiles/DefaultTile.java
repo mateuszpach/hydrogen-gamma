@@ -1,6 +1,6 @@
 package vartiles;
 
-public abstract class DefaultTileMaker implements TileMaker {
+public abstract class DefaultTile implements Tile {
     protected String label;
 
     @Override
@@ -8,7 +8,7 @@ public abstract class DefaultTileMaker implements TileMaker {
         return '$' + label + '$';
     }
 
-    public DefaultTileMaker setLabel(String label) {
+    public DefaultTile setLabel(String label) {
         this.label = label;
         return this;
     }
