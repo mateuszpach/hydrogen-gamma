@@ -3,6 +3,7 @@ package model.modules;
 import model.Module;
 import model.Variable;
 import model.modules.utils.LinearAlgebra;
+import model.variables.FunctionVariable;
 import model.variables.MatrixVariable;
 import model.variables.NumericVariable;
 import utils.Pair;
@@ -17,8 +18,7 @@ public class Determinant implements Module<NumericVariable> {
 
     @Override
     public boolean verfiy(Variable<?>... args) {
-        //TODO
-        return false;
+        return args.length == 1 && args[0].getClass() == MatrixVariable.class;
     }
 
     private Double determinant(MatrixVariable A) {

@@ -151,8 +151,7 @@ public class Differentiator implements Module<FunctionVariable> {
 
     @Override
     public boolean verfiy(Variable<?>... args) {
-        //TODO
-        return false;
+        return args.length == 1 && args[0].getClass() == FunctionVariable.class;
     }
 
     private static Pair<ArrayList<String>, ArrayList<Character>> findSubcomponents(String formula, String searchedOpers) {

@@ -1,5 +1,8 @@
+import model.Variable;
+import model.modules.Determinant;
 import model.modules.Differentiator;
 import model.modules.TilesContainer;
+import model.variables.MatrixVariable;
 import org.junit.jupiter.api.Test;
 import model.variables.FunctionVariable;
 
@@ -159,5 +162,17 @@ public class DifferentiatorTest {
         assertEquals("(3*cos(x)+sin(x)*0)", diff.execute(container, new FunctionVariable[]{f3}).getValue());
         assertEquals("(-((4*(-sin(x))+cos(x)*0)))", diff.execute(container, new FunctionVariable[]{f4}).getValue());
         assertEquals("(x*(-1)*0/(10)^2+10*1/(10)^2)", diff.execute(container, new FunctionVariable[]{f5}).getValue());
+    }
+
+    @Test
+    public void verifyTest() {
+        FunctionVariable f = new FunctionVariable("cos(x)");
+        Variable<String> arr1[] = new Variable[] {f};
+        Variable<String> arr2[] = new Variable[] {f,f};
+        Variable<double[][]> arr3[] = new Variable[] {new MatrixVariable(new double[][] {{0}})};
+
+        assertTrue(new Differentiator().verfiy(arr1));
+        assertFalse(new Differentiator().verfiy(arr2));
+        assertFalse(new Differentiator().verfiy(arr3));
     }
 }

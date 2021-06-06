@@ -30,7 +30,6 @@ public class LinearSystemSolver implements Module<MatrixVariable> {
 
     @Override
     public boolean verfiy(Variable<?>... args) {
-        //TODO
-        return false;
+        return args.length == 2 && args[0].getClass() == MatrixVariable.class && args[1].getClass() == MatrixVariable.class;
     }
 }

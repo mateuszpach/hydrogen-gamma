@@ -1,8 +1,10 @@
 import static org.junit.jupiter.api.Assertions.*;
 
+import model.Variable;
 import model.modules.Determinant;
 import model.modules.TilesContainer;
 import model.modules.utils.LinearAlgebra;
+import model.variables.FunctionVariable;
 import model.variables.MatrixVariable;
 import org.junit.jupiter.api.Test;
 
@@ -44,5 +46,17 @@ public class DeterminantTest {
         assertTrue(Math.abs(det.execute(container, A).getValue() - 94.0) < 1e-10);
         assertTrue(Math.abs(det.execute(container, B).getValue() - 1.0) < 1e-10);
         assertTrue(Math.abs(det.execute(container, C).getValue() - 0.0) < 1e-10);
+    }
+
+    @Test
+    public void verifyTest() {
+        MatrixVariable m = new MatrixVariable(new double[][] {{0,1},{1,0}});
+        Variable<double[][]> arr1[] = new Variable[] {m};
+        Variable<double[][]> arr2[] = new Variable[] {m,m};
+        Variable<String> arr3[] = new Variable[] {new FunctionVariable("sin(x)")};
+
+        assertTrue(new Determinant().verfiy(arr1));
+        assertFalse(new Determinant().verfiy(arr2));
+        assertFalse(new Determinant().verfiy(arr3));
     }
 }

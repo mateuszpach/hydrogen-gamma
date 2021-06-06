@@ -1,10 +1,15 @@
 import static org.junit.jupiter.api.Assertions.*;
 
+import model.Variable;
+import model.modules.Determinant;
 import model.modules.LinearSystemSolver;
 import model.modules.TilesContainer;
 import model.modules.utils.LinearAlgebra;
+import model.variables.FunctionVariable;
 import model.variables.MatrixVariable;
 import org.junit.jupiter.api.Test;
+
+import javax.sound.sampled.Line;
 
 
 public class LinearSystemSolverTest {
@@ -46,5 +51,18 @@ public class LinearSystemSolverTest {
         for (int i = 0; i < 3; i++) {
             assertTrue(Math.abs(x.get(i, 0) - sol2.get(i, 0)) < 1e-10);
         }
+    }
+
+
+    @Test
+    public void verifyTest() {
+        MatrixVariable m = new MatrixVariable(new double[][] {{0,1},{1,0}});
+        Variable<double[][]> arr1[] = new Variable[] {m};
+        Variable<double[][]> arr2[] = new Variable[] {m,m};
+        Variable<String> arr3[] = new Variable[] {new FunctionVariable("sin(x)")};
+
+        assertFalse(new LinearSystemSolver().verfiy(arr1));
+        assertTrue(new LinearSystemSolver().verfiy(arr2));
+        assertFalse(new LinearSystemSolver().verfiy(arr3));
     }
 }

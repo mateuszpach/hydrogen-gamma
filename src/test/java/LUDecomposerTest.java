@@ -1,8 +1,11 @@
 import static org.junit.jupiter.api.Assertions.*;
 
+import model.Variable;
+import model.modules.Determinant;
 import model.modules.LUDecomposer;
 import model.modules.TilesContainer;
 import model.modules.utils.LinearAlgebra;
+import model.variables.FunctionVariable;
 import model.variables.MatrixVariable;
 import org.junit.jupiter.api.Test;
 
@@ -64,4 +67,16 @@ public class LUDecomposerTest {
         assertEquals(expectedU3, lu3.second);
     }
     */
+
+    @Test
+    public void verifyTest() {
+        MatrixVariable m = new MatrixVariable(new double[][] {{0,1},{1,0}});
+        Variable<double[][]> arr1[] = new Variable[] {m};
+        Variable<double[][]> arr2[] = new Variable[] {m,m};
+        Variable<String> arr3[] = new Variable[] {new FunctionVariable("sin(x)")};
+
+        assertTrue(new LUDecomposer().verfiy(arr1));
+        assertFalse(new LUDecomposer().verfiy(arr2));
+        assertFalse(new LUDecomposer().verfiy(arr3));
+    }
 }
