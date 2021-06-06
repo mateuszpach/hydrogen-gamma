@@ -2,11 +2,11 @@ package vartiles;
 
 import model.variables.MatrixVariable;
 
-public class MatrixTileMaker extends DefaultTileMaker {
+public class MatrixTile extends DefaultTile {
 
     private MatrixVariable matrix;
 
-    public MatrixTileMaker(MatrixVariable mat) {
+    public MatrixTile(MatrixVariable mat) {
         matrix = mat;
     }
 

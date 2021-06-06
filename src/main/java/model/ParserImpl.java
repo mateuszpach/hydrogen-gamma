@@ -16,7 +16,7 @@ import static java.lang.Math.min;
 
 public class ParserImpl implements Parser {
     public Map<String, VarBox> varBoxes;
-    private TileMakersContainer container;
+    private TilesContainer container;
 
     public Map<String, String> modules;
 
@@ -26,14 +26,14 @@ public class ParserImpl implements Parser {
     }
 
     @Override
-    public TileMakersContainer parse(String variables, String expression) {
-        this.container = new TileMakersContainerImpl();
+    public TilesContainer parse(String variables, String expression) {
+        this.container = new TilesContainerImpl();
         if (variables.equals("") && expression.equals(""))
             return this.container;
         String msg;
         if ((msg = this.load(variables, expression)) != null) {
-            this.container = new TileMakersContainerImpl();
-            this.container.addTileMaker(new comunicate(msg).setLabel("Parsing error"));
+            this.container = new TilesContainerImpl();
+            this.container.addTile(new comunicate(msg).setLabel("Parsing error"));
         }
         return this.container;
     }
@@ -56,7 +56,7 @@ public class ParserImpl implements Parser {
         }
         for (String key : varBoxes.keySet()) {
             System.out.println("variable:" + key + " " + varBoxes.get(key).getVar().getValue());
-            this.container.addTileMaker(new comunicate(varBoxes.get(key).getVar().getValue().toString()).setLabel(key));
+            this.container.addTile(new comunicate(varBoxes.get(key).getVar().getValue().toString()).setLabel(key));
         }
         for (String key : futureVariables.keySet()) {
             System.out.println("operation:" + key + " " + futureVariables.get(key).first);
@@ -68,7 +68,7 @@ public class ParserImpl implements Parser {
             for (String i : futureVariables.get(key).second)
                 tmp = tmp + i + ',';
             tmp = tmp.substring(0, tmp.length() - 1) + ')';
-            this.container.addTileMaker(new comunicate(key + " : " + tmp).setLabel(key));
+            this.container.addTile(new comunicate(key + " : " + tmp).setLabel(key));
         }
         return null;
     }
@@ -156,7 +156,7 @@ public class ParserImpl implements Parser {
         }
     }
 
-    private class comunicate extends DefaultTileMaker {
+    private class comunicate extends DefaultTile {
         String msg = "";
 
         comunicate(String msg) {

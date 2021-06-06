@@ -1,9 +1,8 @@
 package controllers;
 
-import model.TileMakersContainer;
+import model.TilesContainer;
 import spark.ModelAndView;
 import spark.template.thymeleaf.ThymeleafTemplateEngine;
-import vartiles.TileMaker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,11 +44,11 @@ public class QueryController {
             else
                 expression = expression.replaceAll(regex, "");
 
-            TileMakersContainer container = parser.parse(parameters, expression);
+            TilesContainer container = parser.parse(parameters, expression);
 
             ArrayList<Tile> tiles = new ArrayList<>();
-            for (TileMaker tileMaker : container.getTileMakers()) {
-                tiles.add(new Tile(tileMaker.getContent(), tileMaker.getLabel()));
+            for (vartiles.Tile tile : container.getTiles()) {
+                tiles.add(new Tile(tile.getContent(), tile.getLabel()));
             }
 
             Map<String, Object> model = new HashMap<>();

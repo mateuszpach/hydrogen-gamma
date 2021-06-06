@@ -2,11 +2,11 @@ package vartiles;
 
 import model.variables.FunctionVariable;
 
-public class FunctionTileMaker extends DefaultTileMaker {
+public class FunctionTile extends DefaultTile {
 
     private FunctionVariable function;
 
-    public FunctionTileMaker(FunctionVariable func) {
+    public FunctionTile(FunctionVariable func) {
         function = func;
     }
 

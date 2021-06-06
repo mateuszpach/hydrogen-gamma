@@ -1,7 +1,7 @@
 package controllers;
 
-import model.TileMakersContainer;
+import model.TilesContainer;
 
 public interface Parser {
-    TileMakersContainer parse(String variables, String expression);
+    TilesContainer parse(String variables, String expression);
 }
