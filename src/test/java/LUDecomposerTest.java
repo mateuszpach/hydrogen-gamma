@@ -3,11 +3,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import model.Variable;
 import model.modules.Determinant;
 import model.modules.LUDecomposer;
-import model.modules.TilesContainer;
+import model.TilesContainer;
 import model.modules.utils.LinearAlgebra;
 import model.variables.FunctionVariable;
 import model.variables.MatrixVariable;
 import org.junit.jupiter.api.Test;
+import vartiles.Tile;
+
+import java.util.ArrayList;
 
 
 public class LUDecomposerTest {
@@ -19,7 +22,10 @@ public class LUDecomposerTest {
         double[][] c = {{1.0}, {1.0}};
         TilesContainer container = new TilesContainer() {
             @Override
-            public void storeTile() {}
+            public void addTile(Tile tile) { }
+
+            @Override
+            public ArrayList<Tile> getTiles() { return null; }
         };
 
         LUDecomposer lu = new LUDecomposer();

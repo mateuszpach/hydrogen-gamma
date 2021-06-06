@@ -1,8 +1,10 @@
 import model.modules.NumberAdder;
-import model.modules.TilesContainer;
+import model.TilesContainer;
 import org.junit.jupiter.api.Test;
 import model.variables.NumericVariable;
+import vartiles.Tile;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,8 +16,16 @@ public class NumbersTest {
     @Test
     void binaryAdd() {
         TilesContainer container = new TilesContainer() {
+
             @Override
-            public void storeTile() {}
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
+            }
         };
         double aD = rand.nextDouble();
         NumericVariable aV = new NumericVariable(aD);
@@ -29,8 +39,16 @@ public class NumbersTest {
     void emptyAdd() {
         //pretty useless, but it is a certain corner case
         TilesContainer container = new TilesContainer() {
+
             @Override
-            public void storeTile() {}
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
+            }
         };
         assertEquals(0d, add.execute(container).getValue());
     }
@@ -39,8 +57,15 @@ public class NumbersTest {
     void chainAdd() {
         int testSize = 1500;
         TilesContainer container = new TilesContainer() {
+
             @Override
-            public void storeTile() {
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
             }
         };
 

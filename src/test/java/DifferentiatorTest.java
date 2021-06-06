@@ -1,10 +1,13 @@
 import model.Variable;
 import model.modules.Determinant;
 import model.modules.Differentiator;
-import model.modules.TilesContainer;
+import model.TilesContainer;
 import model.variables.MatrixVariable;
 import org.junit.jupiter.api.Test;
 import model.variables.FunctionVariable;
+import vartiles.Tile;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,7 +23,13 @@ public class DifferentiatorTest {
         FunctionVariable f5 = new FunctionVariable("x");
         TilesContainer container = new TilesContainer() {
             @Override
-            public void storeTile() {
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
             }
         };
 
@@ -42,7 +51,14 @@ public class DifferentiatorTest {
         FunctionVariable f5 = new FunctionVariable("--x");
         TilesContainer container = new TilesContainer() {
             @Override
-            public void storeTile() {}
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
+            }
         };
 
         Differentiator diff = new Differentiator();
@@ -63,7 +79,13 @@ public class DifferentiatorTest {
         FunctionVariable f5 = new FunctionVariable("x+x");
         TilesContainer container = new TilesContainer() {
             @Override
-            public void storeTile() {
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
             }
         };
 
@@ -85,7 +107,13 @@ public class DifferentiatorTest {
         FunctionVariable f5 = new FunctionVariable("e^(x)/sin(x)");
         TilesContainer container = new TilesContainer() {
             @Override
-            public void storeTile() {
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
             }
         };
 
@@ -106,8 +134,15 @@ public class DifferentiatorTest {
         FunctionVariable f4 = new FunctionVariable("(((sin(x)))/((cos(x)))+(x))");
         FunctionVariable f5 = new FunctionVariable("((((((e^(x))))+(x))))");
         TilesContainer container = new TilesContainer() {
+
             @Override
-            public void storeTile() {
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
             }
         };
 
@@ -128,8 +163,15 @@ public class DifferentiatorTest {
         FunctionVariable f4 = new FunctionVariable("x^(0)");
         FunctionVariable f5 = new FunctionVariable("sin(x)*(-5*x^(2))");
         TilesContainer container = new TilesContainer() {
+
             @Override
-            public void storeTile() {
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
             }
         };
 
@@ -150,8 +192,15 @@ public class DifferentiatorTest {
         FunctionVariable f4 = new FunctionVariable("-4*cos(x)");
         FunctionVariable f5 = new FunctionVariable("x/10");
         TilesContainer container = new TilesContainer() {
+
             @Override
-            public void storeTile() {
+            public void addTile(Tile tile) {
+
+            }
+
+            @Override
+            public ArrayList<Tile> getTiles() {
+                return null;
             }
         };
 
