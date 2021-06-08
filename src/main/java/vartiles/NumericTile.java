@@ -12,6 +12,6 @@ public class NumericTile extends DefaultTile {
 
     @Override
     public String getContent() {
-        return '$' + number.getValue().toString() + '$'; // TODO: change to proper format
+        return '$' + number.getValue().toString() + '$';
     }
 }

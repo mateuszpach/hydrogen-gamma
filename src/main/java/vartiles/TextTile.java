@@ -12,6 +12,6 @@ public class TextTile extends DefaultTile {
 
     @Override
     public String getContent() {
-        return '$' + text.getValue() + '$'; // TODO: change to proper format
+        return "$\\text{" + text.getValue() + "}$";
     }
 }

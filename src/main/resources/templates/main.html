@@ -1,20 +1,52 @@
 <!DOCTYPE html>
 <html lang="en" th:fragment="layout (title, content)" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title th:replace="${title}">Layout Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!--    <link rel='shortcut icon' type='image/x-icon' href=' {{ url_for('static', filename='favicon.ico') }}'/>-->
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/css/bootstrap-select.min.css"
+          rel="stylesheet"/>
+
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
+          integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
+          crossorigin="anonymous"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{main.css}">
+
+    <!-- MathJax JS -->
     <script type="text/javascript" id="MathJax-conf"
             src="js/mathjaxconf.js">
     </script>
     <script type="text/javascript" id="MathJax-script" async
             src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
     </script>
+
+    <title th:replace="${title}">Hydrogen Gamma</title>
 </head>
 <body>
-<h1>Hydrogen Gamma</h1>
-<div th:replace="${content}">
-    <p>Layout content</p>
-</div>
+<header class="site-header">
+    <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-success mb-4">
+        <div class="container">
+            <a class="navbar-brand mr-4" href="/">Hydrogen Gamma</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
+                    aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+</header>
+<main role="main" class="container top-100">
+    <div th:replace="${content}">
+        <p>Layout content</p>
+    </div>
+</main>
 <footer>
 </footer>
 </body>

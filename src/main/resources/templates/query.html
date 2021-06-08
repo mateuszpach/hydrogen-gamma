@@ -5,21 +5,38 @@
 </head>
 <body>
 <section>
-    <form action="query" method="get">
-        <label>Parameters:</label>
-        <input type="text" field="params" name="params"/>
-        <label>Expression:</label>
-        <input type="text" field="expr" name="expr"/>
-        <button type="submit">Calculate</button>
-    </form>
+    <div class="card border-success mb-4">
+        <div class="card-body">
+            <form method="get" action="query">
+                <legend class="border-bottom mb-4">Input</legend>
+                <fieldset class="form-group">
+                    <div class="form-group">
+                        <label for="params">Parameters</label>
+                        <textarea class="form-control" id="params" rows="3" name="params"
+                                  placeholder="x=1; y=[[0,1],[1,2]]; z=&quot;lorem ipsum&quot;; f=&quot;sin(x)&quot;;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="params">Expression</label>
+                        <textarea class="form-control" id="expr" rows="3" name="expr"
+                                  placeholder="f(x)^2/2*derivative(f)(x)"></textarea>
+                    </div>
+                </fieldset>
+                <div class="form-group d-flex justify-content-end">
+                    <button class="btn btn-success" type="submit">Compute</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!--/*@thymesVar id="tiles" type="java.util.ArrayList<controllers.QueryController.Tile>"*/-->
     <!--/*@thymesVar id="tile" type="controllers.QueryController.Tile"*/-->
-    <div th:each="tile : ${tiles}" style="border:1px solid black; padding: 20px; margin: 5px;">
-
-        <!--/*@thymesVar id="label" type="java.lang.String"*/-->
-        <h3 th:text="${tile.label}"></h3>
-        <!--/*@thymesVar id="content" type="java.lang.String"*/-->
-        <h3 th:text="${tile.content}"></h3>
+    <div th:each="tile : ${tiles}" class="card border-success mt-1 mb-1">
+        <div class="card-body">
+            <!--/*@thymesVar id="label" type="java.lang.String"*/-->
+            <h5 class="border-bottom mb-4" th:text="${tile.label}"></h5>
+            <!--/*@thymesVar id="content" type="java.lang.String"*/-->
+            <p th:text="${tile.content}"></p>
+        </div>
     </div>
 </section>
 </body>
