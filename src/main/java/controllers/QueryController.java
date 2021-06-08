@@ -5,6 +5,7 @@ import spark.ModelAndView;
 import spark.template.thymeleaf.ThymeleafTemplateEngine;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +51,7 @@ public class QueryController {
             for (vartiles.Tile tile : container.getTiles()) {
                 tiles.add(new Tile(tile.getContent(), tile.getLabel()));
             }
+            Collections.reverse(tiles);
 
             Map<String, Object> model = new HashMap<>();
             model.put("tiles", tiles);

@@ -17,8 +17,8 @@ public class ParserImplDummy implements Parser {
         t2.setLabel("C*B");
         double a[][] = {{1, 0, 1}, {0, 1, 1}, {1, 0, 1}};
         DefaultTile t3 = new MatrixTile(new MatrixVariable(a));
-        t3.setLabel("A+B^n");
-        DefaultTile t4 = new FunctionTile(new FunctionVariable("\\sin{x}"));
+        t3.setLabel("A+B^n: \\text{substitution #1}");
+        DefaultTile t4 = new FunctionTile(new FunctionVariable("(e^{x}-sin(x))-x+\\ln{(x)}"));
         t4.setLabel("A+B");
 
         container.addTile(t1);
