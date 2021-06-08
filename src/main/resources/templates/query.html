@@ -13,12 +13,13 @@
                     <div class="form-group">
                         <label for="params">Parameters</label>
                         <textarea class="form-control" id="params" rows="3" name="params"
-                                  placeholder="x=1; y=[[0,1],[1,2]]; z=&quot;lorem ipsum&quot;; f=&quot;sin(x)&quot;;"></textarea>
+                                  placeholder="x=1.0; y=[0,1/1,2]; z=&quot;lorem ipsum&quot;; f=(sin(x));"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="params">Expression</label>
                         <textarea class="form-control" id="expr" rows="3" name="expr"
-                                  placeholder="f(x)^2/2*derivative(f)(x)"></textarea>
+                                  placeholder="f^2/2*derivative(f)"></textarea>
+                        <!-- yeah, sure. good luck with that. -->
                     </div>
                 </fieldset>
                 <div class="form-group d-flex justify-content-end">

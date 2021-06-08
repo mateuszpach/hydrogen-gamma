@@ -1,5 +1,4 @@
 import model.Variable;
-import model.modules.Determinant;
 import model.modules.Differentiator;
 import model.TilesContainer;
 import model.variables.MatrixVariable;
@@ -216,12 +215,12 @@ public class DifferentiatorTest {
     @Test
     public void verifyTest() {
         FunctionVariable f = new FunctionVariable("cos(x)");
-        Variable<String> arr1[] = new Variable[] {f};
-        Variable<String> arr2[] = new Variable[] {f,f};
-        Variable<double[][]> arr3[] = new Variable[] {new MatrixVariable(new double[][] {{0}})};
+        Variable<String> arr1[] = new Variable[]{f};
+        Variable<String> arr2[] = new Variable[]{f, f};
+        Variable<double[][]> arr3[] = new Variable[]{new MatrixVariable(new double[][]{{0}})};
 
-        assertTrue(new Differentiator().verfiy(arr1));
-        assertFalse(new Differentiator().verfiy(arr2));
-        assertFalse(new Differentiator().verfiy(arr3));
+        assertTrue(new Differentiator().verify(arr1));
+        assertFalse(new Differentiator().verify(arr2));
+        assertFalse(new Differentiator().verify(arr3));
     }
 }

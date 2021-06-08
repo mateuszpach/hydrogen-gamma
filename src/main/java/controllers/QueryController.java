@@ -51,7 +51,7 @@ public class QueryController {
             for (vartiles.Tile tile : container.getTiles()) {
                 tiles.add(new Tile(tile.getContent(), tile.getLabel()));
             }
-            Collections.reverse(tiles);
+            Collections.reverse(tiles);// why?
 
             Map<String, Object> model = new HashMap<>();
             model.put("tiles", tiles);

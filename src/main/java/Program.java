@@ -1,5 +1,6 @@
 import controllers.Parser;
 import controllers.QueryController;
+import model.ParserImpl;
 import model.ParserImplDummy;
 import org.apache.log4j.PropertyConfigurator;
 import spark.template.thymeleaf.ThymeleafTemplateEngine;
@@ -14,7 +15,7 @@ class Program {
         staticFiles.location("/static");
 
 //        Parser parser = new ParserImpl();
-        Parser parser = new ParserImplDummy();
+        Parser parser = new ParserImpl();
         ThymeleafTemplateEngine templateEngine = new ThymeleafTemplateEngine();
         QueryController queryController = new QueryController(templateEngine, parser);
     }
