@@ -3,6 +3,7 @@ package model.modules;
 import model.Module;
 import model.TilesContainer;
 import model.Variable;
+import model.modules.utils.Functions;
 import utils.Pair;
 import model.variables.FunctionVariable;
 import vartiles.FunctionTile;
@@ -85,10 +86,10 @@ public class Differentiator implements Module<FunctionVariable> {
         if (!correctOperators(formula))
             throw new InvalidFormulaException(formula);
 
-        Pair<ArrayList<String>, ArrayList<Character>> additive = findSubcomponents(formula, "+-");
+        Pair<ArrayList<String>, ArrayList<Character>> additive = Functions.findSubcomponents(formula, "+-");
 
         if (additive.second.isEmpty()) {    // multiplicative
-            Pair<ArrayList<String>, ArrayList<Character>> multiplicative = findSubcomponents(formula, "*/");
+            Pair<ArrayList<String>, ArrayList<Character>> multiplicative = Functions.findSubcomponents(formula, "*/");
             if (multiplicative.second.isEmpty())
                 throw new DerivativeNotKnownException(formula);
             ArrayList<String> components = multiplicative.first;
@@ -156,31 +157,6 @@ public class Differentiator implements Module<FunctionVariable> {
     @Override
     public boolean verfiy(Variable<?>... args) {
         return args.length == 1 && args[0].getClass() == FunctionVariable.class;
-    }
-
-    private static Pair<ArrayList<String>, ArrayList<Character>> findSubcomponents(String formula, String searchedOpers) {
-        ArrayList<String> components = new ArrayList<>();
-        ArrayList<Character> operations = new ArrayList<>();
-        int opened = 0;
-
-        if (formula.charAt(0) == '(')
-            opened++;
-
-        int prev = 0;
-        for (int i = 1; i < formula.length(); i++) {
-            if (formula.charAt(i) == '(')
-                opened++;
-            if (formula.charAt(i) == ')')
-                opened--;
-            if (searchedOpers.indexOf(formula.charAt(i)) != -1 && opened == 0) {
-                components.add(formula.substring(prev, i));
-                operations.add(formula.charAt(i));
-                prev = i + 1;
-            }
-        }
-
-        components.add(formula.substring(prev, formula.length()));
-        return new Pair<>(components, operations);
     }
 
     // TODO
