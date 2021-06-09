@@ -68,13 +68,13 @@ public class DeterminantTest {
 
     @Test
     public void verifyTest() {
-        MatrixVariable m = new MatrixVariable(new double[][] {{0,1},{1,0}});
-        Variable<double[][]> arr1[] = new Variable[] {m};
-        Variable<double[][]> arr2[] = new Variable[] {m,m};
-        Variable<String> arr3[] = new Variable[] {new FunctionVariable("sin(x)")};
+        MatrixVariable m = new MatrixVariable(new double[][]{{0, 1}, {1, 0}});
+        Variable<double[][]> arr1[] = new Variable[]{m};
+        Variable<double[][]> arr2[] = new Variable[]{m, m};
+        Variable<String> arr3[] = new Variable[]{new FunctionVariable("sin(x)")};
 
-        assertTrue(new Determinant().verfiy(arr1));
-        assertFalse(new Determinant().verfiy(arr2));
-        assertFalse(new Determinant().verfiy(arr3));
+        assertTrue(new Determinant().verify(arr1));
+        assertFalse(new Determinant().verify(arr2));
+        assertFalse(new Determinant().verify(arr3));
     }
 }

@@ -1,7 +1,6 @@
 import static org.junit.jupiter.api.Assertions.*;
 
 import model.Variable;
-import model.modules.Determinant;
 import model.modules.LinearSystemSolver;
 import model.TilesContainer;
 import model.modules.utils.LinearAlgebra;
@@ -10,7 +9,6 @@ import model.variables.MatrixVariable;
 import org.junit.jupiter.api.Test;
 import vartiles.Tile;
 
-import javax.sound.sampled.Line;
 import java.util.ArrayList;
 
 
@@ -74,13 +72,13 @@ public class LinearSystemSolverTest {
 
     @Test
     public void verifyTest() {
-        MatrixVariable m = new MatrixVariable(new double[][] {{0,1},{1,0}});
-        Variable<double[][]> arr1[] = new Variable[] {m};
-        Variable<double[][]> arr2[] = new Variable[] {m,m};
-        Variable<String> arr3[] = new Variable[] {new FunctionVariable("sin(x)")};
+        MatrixVariable m = new MatrixVariable(new double[][]{{0, 1}, {1, 0}});
+        Variable<double[][]> arr1[] = new Variable[]{m};
+        Variable<double[][]> arr2[] = new Variable[]{m, m};
+        Variable<String> arr3[] = new Variable[]{new FunctionVariable("sin(x)")};
 
-        assertFalse(new LinearSystemSolver().verfiy(arr1));
-        assertTrue(new LinearSystemSolver().verfiy(arr2));
-        assertFalse(new LinearSystemSolver().verfiy(arr3));
+        assertFalse(new LinearSystemSolver().verify(arr1));
+        assertTrue(new LinearSystemSolver().verify(arr2));
+        assertFalse(new LinearSystemSolver().verify(arr3));
     }
 }

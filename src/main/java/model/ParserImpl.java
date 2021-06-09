@@ -1,6 +1,7 @@
 package model;
 
 import controllers.Parser;
+import model.modules.NumberOperations;
 import model.variables.NumericVariable;
 import model.variables.TextVariable;
 import utils.Pair;
@@ -8,20 +9,35 @@ import model.variables.MatrixVariable;
 import model.variables.FunctionVariable;
 import vartiles.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static java.lang.Math.min;
 
+// it can't be run in parallel. Should it though? Never have it been mentioned in this project, even once
+//
+//On the topic of more steps in interface, it makes parser depend on types returned by those steps and prevents from finding different ways of parsing
+//also there would be a lot thing to return/pass that's another reason to let parser use it's internal state in calculations
 public class ParserImpl implements Parser {
-    public Map<String, VarBox> varBoxes;
+    public Map<String, Variable<?>> varBoxes;
     private TilesContainer container;
 
-    public Map<String, String> modules;
+    public Map<String, ArrayList<Module<?>>> modules;
 
     public ParserImpl() {
-        modules = new HashMap<>();
+        modules = new TreeMap<>();
+        ArrayList<ModuleSet> moduleSets = new ArrayList<>();
+        moduleSets.add(new NumberOperations());
+        for (ModuleSet moduleSet : moduleSets) {
+            ArrayList<Pair<String, Module<?>>> mods = moduleSet.getModules();
+            for (Pair<String, Module<?>> mod : mods) {
+                if (modules.containsKey(mod.first)) {
+                    modules.get(mod.first).add(mod.second);
+                } else {
+                    modules.put(mod.first, new ArrayList<>());
+                    modules.get(mod.first).add(mod.second);
+                }
+            }
+        }
         //some module loader would be appreciated
     }
 
@@ -31,9 +47,25 @@ public class ParserImpl implements Parser {
         if (variables.equals("") && expression.equals(""))
             return this.container;
         String msg;
+        varBoxes = new TreeMap<>();
+        futureVariables = new TreeMap<>();
+        this.futureIndex = 0;
         if ((msg = this.load(variables, expression)) != null) {
             this.container = new TilesContainerImpl();
-            this.container.addTile(new comunicate(msg).setLabel("Parsing error"));
+            this.container.addTile(new communicate(msg).setLabel("Parsing error"));
+            return this.container;
+        }
+        Set<String> keys = varBoxes.keySet();
+        String[] aKeys = keys.toArray(new String[keys.size()]);
+        Collections.reverse(Arrays.asList(aKeys));
+        for (String key : aKeys) {
+            System.out.println("variable:" + key + " " + varBoxes.get(key).getValue());
+            this.container.addTile(new communicate(varBoxes.get(key).getValue().toString()).setLabel(key));
+        }//after loading print variables
+        if ((msg = this.compute()) != null) {
+            this.container = new TilesContainerImpl();
+            this.container.addTile(new communicate(msg).setLabel("Calculating error"));
+            return this.container;
         }
         return this.container;
     }
@@ -45,8 +77,8 @@ public class ParserImpl implements Parser {
         //no # allowed, also remove whitespace
         varDefinition = varDefinition.replaceAll("\\s+", "").replaceAll("#", "");
         operation = operation.replaceAll("\\s+", "").replaceAll("#", "");
-        varBoxes = new HashMap<>();
-        futureVariables = new HashMap<>();
+        varBoxes = new TreeMap<>();
+        futureVariables = new TreeMap<>();
         this.futureIndex = 0;
         try {
             this.parseVariables(varDefinition);
@@ -54,46 +86,54 @@ public class ParserImpl implements Parser {
         } catch (ParsingException e) {
             return e.msg;
         }
-        for (String key : varBoxes.keySet()) {
-            System.out.println("variable:" + key + " " + varBoxes.get(key).getVar().getValue());
-            this.container.addTile(new comunicate(varBoxes.get(key).getVar().getValue().toString()).setLabel(key));
-        }
-        for (String key : futureVariables.keySet()) {
-            System.out.println("operation:" + key + " " + futureVariables.get(key).first);
-            System.out.print(" -----> ");
-            for (String a : futureVariables.get(key).second)
-                System.out.print(a + " ");
-            System.out.println();
-            String tmp = futureVariables.get(key).first + " ( ";
-            for (String i : futureVariables.get(key).second)
-                tmp = tmp + i + ',';
-            tmp = tmp.substring(0, tmp.length() - 1) + ')';
-            this.container.addTile(new comunicate(key + " : " + tmp).setLabel(key));
-        }
         return null;
     }
 
-    public void compute() {
-        //here goes some kind of switch that computes #0,#1,#2, ... and returns the last one
-        //why not yet implemented? model.modules are still written in somewhat random fashion
-        //from #0 to <futureIndex
+    public String compute() {
+        int lastVar = futureIndex;
+        futureIndex = 0;
+        for (int i = 0; i < lastVar; ++i) {
+            String varName = getSubstitutionName(i);
+            Pair<String, ArrayList<String>> recipe = futureVariables.get(varName);
+            String operation = recipe.first + "(";
+            Variable<?>[] components = new Variable[recipe.second.size()];
+            for (int j = 0; j < recipe.second.size(); ++j) {
+                String var = recipe.second.get(j);
+                if (varBoxes.containsKey(var)) {
+                    components[j] = varBoxes.get(var);
+                    operation = operation + var + ',';
+                } else {
+                    return "Could not find variable " + var + "when computing #" + i + "\n";
+                }
+            }
+            operation = operation.substring(0, operation.length() - 1) + ")=";
+            for (Module<?> module : modules.get(recipe.first)) {
+                if (module.verify(components)) {
+                    Variable<?> got = module.execute(this.container, components);
+                    varBoxes.put(varName, got);
+                    operation = operation + got.getValue().toString() + "\n";
+                    this.container.addTile(new communicate(operation).setLabel(varName));
+                }
+            }
+        }
+        return null;
     }
 
     private void parseVariables(String varDefinition) {
         String[] vars = varDefinition.split(";");
         for (String a : vars) {
-            String[] b = a.split(":");
+            String[] b = a.split("=");
             if (b.length != 2)
                 throw new ParsingException("model.Variable definition must contain exactly one ':' character: " + a);
             if (b[1].charAt(0) == '\"') {//text
                 if (b[1].charAt(b[1].length() - 1) == '\"' && b[1].length() >= 2) {
-                    varBoxes.put(b[0], new VarBox(new TextVariable(b[1])));
+                    varBoxes.put(b[0], new TextVariable(b[1]));
                 } else
                     throw new ParsingException("Text variable definition must contain exactly two '\"' character at front and end: " + a);
             } else if (b[1].charAt(0) == '(') {//function
                 if (b[1].charAt(b[1].length() - 1) == ')') {
                     //TODO: consult whether parsing functionVariable requires further parsing or if it just accepts any string
-                    varBoxes.put(b[0], new VarBox(new FunctionVariable(b[1])));
+                    varBoxes.put(b[0], new FunctionVariable(b[1]));
                 } else
                     throw new ParsingException("Function variable definition must be within () characters: " + a);
             } else if (b[1].charAt(0) == '[') {//matrix
@@ -128,13 +168,13 @@ public class ParserImpl implements Parser {
                     for (int i = 0; i < matrix.size(); ++i)
                         for (int j = 0; j < rowSize; ++j)
                             dMatrix[i][j] = matrix.get(i).get(j);
-                    varBoxes.put(b[0], new VarBox(new MatrixVariable(dMatrix)));
+                    varBoxes.put(b[0], new MatrixVariable(dMatrix));
                 } else
                     throw new ParsingException("Matrix variable definition must be within [] characters: " + a);
             } else {//numeric
                 try {
                     double x = Double.parseDouble(b[1]);
-                    varBoxes.put(b[0], new VarBox(new NumericVariable(x)));
+                    varBoxes.put(b[0], new NumericVariable(x));
                 } catch (NumberFormatException e) {
                     throw new ParsingException(b[1] + " from definition " + a + " does not represent valid number");
                 }
@@ -156,10 +196,18 @@ public class ParserImpl implements Parser {
         }
     }
 
-    private class comunicate extends DefaultTile {
+    String getSubstitutionName() {
+        return getSubstitutionName(futureIndex++);
+    }
+
+    String getSubstitutionName(int index) {
+        return "#" + index;
+    }
+
+    private class communicate extends DefaultTile {
         String msg = "";
 
-        comunicate(String msg) {
+        communicate(String msg) {
             super();
             this.msg = msg;
         }
@@ -173,10 +221,6 @@ public class ParserImpl implements Parser {
         public String getContent() {
             return msg;
         }
-    }
-
-    String getSubstitutionName() {
-        return "#" + futureIndex++;
     }
 
     private String simplify(String query, ArrayList<String> list) {

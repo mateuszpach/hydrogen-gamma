@@ -19,7 +19,7 @@ public class Determinant implements Module<NumericVariable> {
     }
 
     @Override
-    public boolean verfiy(Variable<?>... args) {
+    public boolean verify(Variable<?>... args) {
         return args.length == 1 && args[0].getClass() == MatrixVariable.class;
     }
 
