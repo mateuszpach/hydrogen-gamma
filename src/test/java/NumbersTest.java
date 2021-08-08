@@ -1,11 +1,10 @@
 import model.TilesContainer;
 import model.modules.NumberOperations;
-import model.modules.TextAnalysis;
 import model.variables.FunctionVariable;
 import model.variables.MatrixVariable;
+import model.variables.NumericVariable;
 import model.variables.TextVariable;
 import org.junit.jupiter.api.Test;
-import model.variables.NumericVariable;
 import vartiles.Tile;
 
 import java.util.ArrayList;
