@@ -25,15 +25,15 @@ public class TableTile extends DefaultTile {
     @Override
     public String getContent() {
         StringBuilder content = new StringBuilder();
-        content.append("<table>");
+        content.append("<table class=\"table table-bordered w-auto table-non-fluid\"><tbody>");
         for (String[] strings : table) {
             content.append("<tr>");
             for (String string : strings) {
-                content.append("<th>" + string + "</th>");
+                content.append("<td>" + string + "</td>");
             }
             content.append("</tr>");
         }
-        content.append("</table>");
+        content.append("</tbody></table>");
         return content.toString();
     }
 }

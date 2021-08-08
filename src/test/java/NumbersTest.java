@@ -1,5 +1,6 @@
 import model.TilesContainer;
-import model.modules.NumberOperations;
+import model.modules.NumberAdd;
+import model.modules.NumberMul;
 import model.variables.FunctionVariable;
 import model.variables.MatrixVariable;
 import model.variables.NumericVariable;
@@ -14,8 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class NumbersTest {
     Random rand = new Random();
-    NumberOperations.NumberAdd add = new NumberOperations.NumberAdd();
-    NumberOperations.NumberMulti mul = new NumberOperations.NumberMulti();
+    NumberAdd add = NumberAdd.INSTANCE;
+    NumberMul mul = NumberMul.INSTANCE;
     TilesContainer container = new TilesContainer() {
 
         @Override

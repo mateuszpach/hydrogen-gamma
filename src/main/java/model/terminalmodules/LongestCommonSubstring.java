@@ -8,7 +8,8 @@ import vartiles.TableTile;
 
 import java.util.ArrayList;
 
-public class LongestCommonSubstring implements TerminalModule {
+public enum LongestCommonSubstring implements TerminalModule {
+    INSTANCE;
 
     @Override
     public void execute(TilesContainer container, Variable<?>... args) {

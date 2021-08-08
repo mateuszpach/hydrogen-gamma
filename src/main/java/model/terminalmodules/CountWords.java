@@ -9,7 +9,8 @@ import vartiles.TableTile;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class CountWords implements TerminalModule {
+public enum CountWords implements TerminalModule {
+    INSTANCE;
 
     @Override
     public void execute(TilesContainer container, Variable<?>... args) {
