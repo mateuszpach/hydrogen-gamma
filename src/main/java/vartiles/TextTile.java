@@ -6,8 +6,8 @@ public class TextTile extends DefaultTile {
 
     private TextVariable text;
 
-    public TextTile(TextVariable txt) {
-        text = txt;
+    public TextTile(TextVariable text) {
+        this.text = text;
     }
 
     @Override
