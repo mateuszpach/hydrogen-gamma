@@ -14,7 +14,6 @@ class Program {
 
         staticFiles.location("/static");
 
-//        Parser parser = new ParserImpl();
         Parser parser = new ParserImpl();
         ThymeleafTemplateEngine templateEngine = new ThymeleafTemplateEngine();
         QueryController queryController = new QueryController(templateEngine, parser);
