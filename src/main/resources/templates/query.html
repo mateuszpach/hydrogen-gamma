@@ -36,7 +36,7 @@
             <!--/*@thymesVar id="label" type="java.lang.String"*/-->
             <h5 class="border-bottom mb-4" th:text="${tile.label}"></h5>
             <!--/*@thymesVar id="content" type="java.lang.String"*/-->
-            <p th:text="${tile.content}"></p>
+            <p th:utext="${tile.content}"></p>
         </div>
     </div>
 </section>

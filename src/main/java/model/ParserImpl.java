@@ -1,13 +1,12 @@
 package model;
 
 import controllers.Parser;
-import model.modules.NumberOperations;
+import model.variables.FunctionVariable;
+import model.variables.MatrixVariable;
 import model.variables.NumericVariable;
 import model.variables.TextVariable;
 import utils.Pair;
-import model.variables.MatrixVariable;
-import model.variables.FunctionVariable;
-import vartiles.*;
+import vartiles.DefaultTile;
 
 import java.util.*;
 
@@ -21,24 +20,7 @@ public class ParserImpl implements Parser {
     public Map<String, Variable<?>> varBoxes;
     private TilesContainer container;
 
-    public Map<String, ArrayList<Module<?>>> modules;
-
     public ParserImpl() {
-        modules = new TreeMap<>();
-        ArrayList<ModuleSet> moduleSets = new ArrayList<>();
-        moduleSets.add(new NumberOperations());
-        for (ModuleSet moduleSet : moduleSets) {
-            ArrayList<Pair<String, Module<?>>> mods = moduleSet.getModules();
-            for (Pair<String, Module<?>> mod : mods) {
-                if (modules.containsKey(mod.first)) {
-                    modules.get(mod.first).add(mod.second);
-                } else {
-                    modules.put(mod.first, new ArrayList<>());
-                    modules.get(mod.first).add(mod.second);
-                }
-            }
-        }
-        //some module loader would be appreciated
     }
 
     @Override
@@ -95,26 +77,41 @@ public class ParserImpl implements Parser {
         for (int i = 0; i < lastVar; ++i) {
             String varName = getSubstitutionName(i);
             Pair<String, ArrayList<String>> recipe = futureVariables.get(varName);
-            String operation = recipe.first + "(";
+
             Variable<?>[] components = new Variable[recipe.second.size()];
             for (int j = 0; j < recipe.second.size(); ++j) {
                 String var = recipe.second.get(j);
                 if (varBoxes.containsKey(var)) {
                     components[j] = varBoxes.get(var);
-                    operation = operation + var + ',';
                 } else {
                     return "Could not find variable " + var + "when computing #" + i + "\n";
                 }
             }
-            operation = operation.substring(0, operation.length() - 1) + ")=";
-            for (Module<?> module : modules.get(recipe.first)) {
-                if (module.verify(components)) {
-                    Variable<?> got = module.execute(this.container, components);
-                    varBoxes.put(varName, got);
-                    operation = operation + got.getValue().toString() + "\n";
-                    this.container.addTile(new communicate(operation).setLabel(varName));
-                }
-            }
+
+            EnumSet.allOf(Modules.class)
+                    .stream()
+                    .filter(x -> x.name.equals(recipe.first))
+                    .forEach(x -> {
+                        Module<?> module = x.module;
+                        if (module.verify(components)) {
+                            Variable<?> got = module.execute(this.container, components);
+                            varBoxes.put(varName, got);
+                            String result = String.format("%s(%s)=%s\n",
+                                    recipe.first,
+                                    String.join(",", recipe.second),
+                                    got.getValue().toString());
+                            this.container.addTile(new communicate(result).setLabel(varName));
+                        }
+                    });
+
+            EnumSet.allOf(TerminalModules.class)
+                    .stream()
+                    .filter(x -> x.name.equals(recipe.first))
+                    .forEach(x -> {
+                        if (x.module.verify(components)) {
+                            x.module.execute(this.container, components);
+                        }
+                    });
         }
         return null;
     }
@@ -188,7 +185,7 @@ public class ParserImpl implements Parser {
     }
 
     public static class ParsingException extends IllegalArgumentException {
-        String msg = "";
+        String msg;
 
         public ParsingException(String s) {
             super(s);
@@ -205,7 +202,7 @@ public class ParserImpl implements Parser {
     }
 
     private class communicate extends DefaultTile {
-        String msg = "";
+        String msg;
 
         communicate(String msg) {
             super();
