@@ -1,11 +1,18 @@
 package model;
 
-import model.modules.NumberAddition;
-import model.modules.NumberMultiplication;
+import model.modules.*;
+import model.terminalmodules.LUDecomposer;
 
 public enum Modules {
-    NUMBER_ADD("+", NumberAddition.INSTANCE),
-    NUMBER_MUL("*", NumberMultiplication.INSTANCE);
+    DETERMINANT("determinant", new Determinant()),
+    DERIVATIVE("derivative", new Differentiator()),
+    LEVENSHTEIN_DIST("levenshtein", new LevenshteinDistance()),
+    LINEAR_SYSTEM("solve", new LinearSystemSolver()),
+    MATRIX_ADD("+", new MatrixAddition()),
+    MATRIX_MUL("*", new MatrixMultiplication()),
+    MATRIX_SCALE("*", new MatrixScalar()),
+    NUMBER_ADD("+", new NumberAddition()),
+    NUMBER_MUL("*", new NumberMultiplication());
 
     String name;
     Module<?> module;

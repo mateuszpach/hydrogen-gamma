@@ -1,7 +1,7 @@
 import static org.junit.jupiter.api.Assertions.*;
 
 import model.Variable;
-import model.modules.LUDecomposer;
+import model.terminalmodules.LUDecomposer;
 import model.TilesContainer;
 import model.modules.utils.LinearAlgebra;
 import model.variables.FunctionVariable;

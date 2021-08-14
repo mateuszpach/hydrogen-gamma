@@ -6,8 +6,7 @@ import model.Variable;
 import model.variables.MatrixVariable;
 import model.variables.NumericVariable;
 
-public enum MatrixScalar implements Module<MatrixVariable> {
-    INSTANCE;
+public class MatrixScalar implements Module<MatrixVariable> {
 
     @Override
     public MatrixVariable execute(TilesContainer container, Variable<?>... args) {
