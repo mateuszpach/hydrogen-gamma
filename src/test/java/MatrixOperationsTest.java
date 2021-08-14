@@ -6,6 +6,7 @@ import model.variables.NumericVariable;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MatrixOperationsTest {
+
     @Test
     void multiplication() {
         MatrixVariable A = new MatrixVariable(new double[][]{{1, -2}, {-3, 4}, {5, -6}});

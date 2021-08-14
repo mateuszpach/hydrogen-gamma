@@ -9,6 +9,7 @@ import utils.Pair;
 import vartiles.DefaultTile;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Math.min;
 
@@ -17,90 +18,82 @@ import static java.lang.Math.min;
 //On the topic of more steps in interface, it makes parser depend on types returned by those steps and prevents from finding different ways of parsing
 //also there would be a lot thing to return/pass that's another reason to let parser use it's internal state in calculations
 public class ParserImpl implements Parser {
-    public Map<String, Variable<?>> varBoxes;
-    private TilesContainer container;
 
     public ParserImpl() {
     }
 
     @Override
-    public TilesContainer parse(String variables, String expression) {
-        this.container = new TilesContainerImpl();
+    public TilesContainer parse(String variables, String expression) { // runs load and compute session with error handling and tile building
+        ParserImplState state = new ParserImplState();
         if (variables.equals("") && expression.equals(""))
-            return this.container;
+            return state.container;
         String msg;
-        varBoxes = new TreeMap<>();
-        futureVariables = new TreeMap<>();
-        this.futureIndex = 0;
-        if ((msg = this.load(variables, expression)) != null) {
-            this.container = new TilesContainerImpl();
-            this.container.addTile(new communicate(msg).setLabel("Parsing error"));
-            return this.container;
+        if ((msg = this.load(variables, expression, state)) != null) {
+            state.container = new TilesContainerImpl();
+            state.container.addTile(new communicate(msg).setLabel("Parsing error"));
+            return state.container;
         }
-        Set<String> keys = varBoxes.keySet();
+        Set<String> keys = state.varBoxes.keySet();
         String[] aKeys = keys.toArray(new String[keys.size()]);
         Collections.reverse(Arrays.asList(aKeys));
         for (String key : aKeys) {
-            System.out.println("variable:" + key + " " + varBoxes.get(key).getValue());
-            this.container.addTile(new communicate(varBoxes.get(key).getValue().toString()).setLabel(key));
+            System.out.println("variable:" + key + " " + state.varBoxes.get(key).getValue());
+            state.container.addTile(new communicate(state.varBoxes.get(key).getValue().toString()).setLabel(key));
         }//after loading print variables
-        if ((msg = this.compute()) != null) {
-            this.container = new TilesContainerImpl();
-            this.container.addTile(new communicate(msg).setLabel("Calculating error"));
-            return this.container;
+
+        if ((msg = this.compute(state)) != null) {
+            state.container = new TilesContainerImpl();
+            state.container.addTile(new communicate(msg).setLabel("Calculating error"));
+            return state.container;
         }
-        return this.container;
+        return state.container;
     }
 
-    public Map<String, Pair<String, ArrayList<String>>> futureVariables;
-    int futureIndex;
 
-    public String load(String varDefinition, String operation) {
+    public String load(String varDefinition, String operation, ParserImplState state) {
         //no # allowed, also remove whitespace
         varDefinition = varDefinition.replaceAll("\\s+", "").replaceAll("#", "");
         operation = operation.replaceAll("\\s+", "").replaceAll("#", "");
-        varBoxes = new TreeMap<>();
-        futureVariables = new TreeMap<>();
-        this.futureIndex = 0;
         try {
-            this.parseVariables(varDefinition);
-            this.simplifyOperation(operation);
+            this.parseVariables(varDefinition, state);
+            this.simplifyOperation(operation, state);
         } catch (ParsingException e) {
             return e.msg;
         }
         return null;
     }
 
-    public String compute() {
-        int lastVar = futureIndex;
-        futureIndex = 0;
+    public String compute(ParserImplState state) {
+        int lastVar = state.futureIndex;
+        state.futureIndex = 0;
         for (int i = 0; i < lastVar; ++i) {
             String varName = getSubstitutionName(i);
-            Pair<String, ArrayList<String>> recipe = futureVariables.get(varName);
+            Pair<String, ArrayList<String>> recipe = state.futureVariables.get(varName);
 
             Variable<?>[] components = new Variable[recipe.second.size()];
             for (int j = 0; j < recipe.second.size(); ++j) {
                 String var = recipe.second.get(j);
-                if (varBoxes.containsKey(var)) {
-                    components[j] = varBoxes.get(var);
+                if (state.varBoxes.containsKey(var)) {
+                    components[j] = state.varBoxes.get(var);
                 } else {
                     return "Could not find variable " + var + "when computing #" + i + "\n";
                 }
             }
-
+            AtomicBoolean foundModule = new AtomicBoolean(false); // needs to be non-primitive type to work in lambda
             EnumSet.allOf(Modules.class)
                     .stream()
                     .filter(x -> x.name.equals(recipe.first))
-                    .forEach(x -> {
+                    .forEach((x) -> {
                         Module<?> module = x.module;
-                        if (module.verify(components)) {
-                            Variable<?> got = module.execute(this.container, components);
-                            varBoxes.put(varName, got);
+                        if (module.verify(components) && !foundModule.get()) {
+                            Variable<?> got = module.execute(state.container, components);
+                            state.varBoxes.put(varName, got);
                             String result = String.format("%s(%s)=%s\n",
                                     recipe.first,
                                     String.join(",", recipe.second),
                                     got.getValue().toString());
-                            this.container.addTile(new communicate(result).setLabel(varName));
+                            state.container.addTile(new communicate(result).setLabel(varName));
+                            foundModule.set(true);
                         }
                     });
 
@@ -108,15 +101,19 @@ public class ParserImpl implements Parser {
                     .stream()
                     .filter(x -> x.name.equals(recipe.first))
                     .forEach(x -> {
-                        if (x.module.verify(components)) {
-                            x.module.execute(this.container, components);
+                        if (x.module.verify(components) && !foundModule.get()) {
+                            x.module.execute(state.container, components);
+                            foundModule.set(true);
                         }
                     });
+            if (!foundModule.get()) {
+                return "Couldn't find possible operation associated with " + recipe.first + " to obtain " + varName + "\n";
+            }
         }
         return null;
     }
 
-    private void parseVariables(String varDefinition) {
+    private void parseVariables(String varDefinition, ParserImplState state) {
         String[] vars = varDefinition.split(";");
         for (String a : vars) {
             String[] b = a.split("=");
@@ -124,13 +121,13 @@ public class ParserImpl implements Parser {
                 throw new ParsingException("model.Variable definition must contain exactly one ':' character: " + a);
             if (b[1].charAt(0) == '\"') {//text
                 if (b[1].charAt(b[1].length() - 1) == '\"' && b[1].length() >= 2) {
-                    varBoxes.put(b[0], new TextVariable(b[1]));
+                    state.varBoxes.put(b[0], new TextVariable(b[1]));
                 } else
                     throw new ParsingException("Text variable definition must contain exactly two '\"' character at front and end: " + a);
             } else if (b[1].charAt(0) == '(') {//function
                 if (b[1].charAt(b[1].length() - 1) == ')') {
                     //TODO: consult whether parsing functionVariable requires further parsing or if it just accepts any string
-                    varBoxes.put(b[0], new FunctionVariable(b[1]));
+                    state.varBoxes.put(b[0], new FunctionVariable(b[1]));
                 } else
                     throw new ParsingException("Function variable definition must be within () characters: " + a);
             } else if (b[1].charAt(0) == '[') {//matrix
@@ -165,13 +162,13 @@ public class ParserImpl implements Parser {
                     for (int i = 0; i < matrix.size(); ++i)
                         for (int j = 0; j < rowSize; ++j)
                             dMatrix[i][j] = matrix.get(i).get(j);
-                    varBoxes.put(b[0], new MatrixVariable(dMatrix));
+                    state.varBoxes.put(b[0], new MatrixVariable(dMatrix));
                 } else
                     throw new ParsingException("Matrix variable definition must be within [] characters: " + a);
             } else {//numeric
                 try {
                     double x = Double.parseDouble(b[1]);
-                    varBoxes.put(b[0], new NumericVariable(x));
+                    state.varBoxes.put(b[0], new NumericVariable(x));
                 } catch (NumberFormatException e) {
                     throw new ParsingException(b[1] + " from definition " + a + " does not represent valid number");
                 }
@@ -179,9 +176,9 @@ public class ParserImpl implements Parser {
         }
     }
 
-    private void simplifyOperation(String operation) {
+    private void simplifyOperation(String operation, ParserImplState state) {
         ArrayList<String> list = new ArrayList<>();
-        simplify(operation, list);
+        simplify(operation, list, state);
     }
 
     public static class ParsingException extends IllegalArgumentException {
@@ -193,8 +190,8 @@ public class ParserImpl implements Parser {
         }
     }
 
-    String getSubstitutionName() {
-        return getSubstitutionName(futureIndex++);
+    String getSubstitutionName(ParserImplState state) {
+        return getSubstitutionName(state.futureIndex++);
     }
 
     String getSubstitutionName(int index) {
@@ -220,18 +217,18 @@ public class ParserImpl implements Parser {
         }
     }
 
-    private String simplify(String query, ArrayList<String> list) {
+    private String simplify(String query, ArrayList<String> list, ParserImplState state) {
         char[] chars = query.toCharArray();
         int i = 0;
         while (i < query.length()) {
             if (chars[i] == '(') {//a bit like ,
                 String operation = query.substring(0, i);
                 ArrayList<String> myVars = new ArrayList<>();
-                query = simplify(query.substring(min(i + 1, query.length())), myVars);
-                String varName = getSubstitutionName();
-                futureVariables.put(varName, new Pair<>(operation, myVars));
+                query = simplify(query.substring(min(i + 1, query.length())), myVars, state);
+                String varName = getSubstitutionName(state);
+                state.futureVariables.put(varName, new Pair<>(operation, myVars));
                 list.add(varName);
-                return simplify(query, list);
+                return simplify(query, list, state);
             } else if (chars[i] == ')') {//go up, and substitute
                 String var = query.substring(0, i);
                 if (var.length() > 0)
@@ -251,7 +248,7 @@ public class ParserImpl implements Parser {
                 else {
                     query = query.substring(i + 1);
                 }
-                return simplify(query, list);
+                return simplify(query, list, state);
             }
             ++i;
         }
