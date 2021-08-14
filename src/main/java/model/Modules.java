@@ -1,11 +1,11 @@
 package model;
 
-import model.modules.NumberAdd;
-import model.modules.NumberMul;
+import model.modules.NumberAddition;
+import model.modules.NumberMultiplication;
 
 public enum Modules {
-    NUMBER_ADD("+", NumberAdd.INSTANCE),
-    NUMBER_MUL("*", NumberMul.INSTANCE);
+    NUMBER_ADD("+", NumberAddition.INSTANCE),
+    NUMBER_MUL("*", NumberMultiplication.INSTANCE);
 
     String name;
     Module<?> module;
