@@ -5,14 +5,14 @@ import model.TilesContainer;
 import model.Variable;
 import model.variables.NumericVariable;
 
-public enum NumberMul implements Module<NumericVariable> {
+public enum NumberAddition implements Module<NumericVariable> {
     INSTANCE;
 
     @Override
     public NumericVariable execute(TilesContainer container, Variable<?>... args) {
-        double sum = 1d;
+        double sum = 0d;
         for (Variable<?> arg : args) {
-            sum *= ((NumericVariable) arg).getValue();
+            sum += ((NumericVariable) arg).getValue();
         }
         return new NumericVariable(sum);
     }
