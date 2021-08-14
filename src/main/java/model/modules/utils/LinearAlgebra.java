@@ -131,5 +131,10 @@ public interface LinearAlgebra {
         A[j] = temp;
     }
 
-    class MatrixNotSquareException extends RuntimeException {}
+    class MatrixNotSquareException extends ModuleException {
+        @Override
+        public String toString() {
+            return "Matrix is not square but an operation requires it to be so.";
+        }
+    }
 }
