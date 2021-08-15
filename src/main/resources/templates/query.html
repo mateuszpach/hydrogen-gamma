@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html th:replace="~{main :: layout(~{::title}, ~{::section})}">
+<html th:replace="~{/templates/main.html :: layout(~{::title}, ~{::section})}">
 <head>
     <title>Hydrogen Gamma</title>
 </head>
@@ -29,8 +29,8 @@
         </div>
     </div>
 
-    <!--/*@thymesVar id="tiles" type="java.util.ArrayList<controllers.QueryController.Tile>"*/-->
-    <!--/*@thymesVar id="tile" type="controllers.QueryController.Tile"*/-->
+    <!--/*@thymesVar id="tiles" type="java.util.ArrayList<controllers.QueryRoutes.Tile>"*/-->
+    <!--/*@thymesVar id="tile" type="controllers.QueryRoutes.Tile"*/-->
     <div th:each="tile : ${tiles}" class="card border-success mt-1 mb-1">
         <div class="card-body">
             <!--/*@thymesVar id="label" type="java.lang.String"*/-->
