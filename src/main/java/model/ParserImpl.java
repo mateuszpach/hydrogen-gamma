@@ -1,6 +1,7 @@
 package model;
 
 import controllers.Parser;
+import model.modules.utils.ModuleException;
 import model.variables.FunctionVariable;
 import model.variables.MatrixVariable;
 import model.variables.NumericVariable;
@@ -41,10 +42,11 @@ public class ParserImpl implements Parser {
             state.container.addTile(new communicate(state.varBoxes.get(key).getValue().toString()).setLabel(key));
         }//after loading print variables
 
-        if ((msg = this.compute(state)) != null) {
+        try {
+            this.compute(state);
+        } catch (ModuleException exception) {
             state.container = new TilesContainerImpl();
-            state.container.addTile(new communicate(msg).setLabel("Calculating error"));
-            return state.container;
+            state.container.addTile(new communicate(exception.toString()).setLabel("Module error"));
         }
         return state.container;
     }
@@ -63,7 +65,7 @@ public class ParserImpl implements Parser {
         return null;
     }
 
-    public String compute(ParserImplState state) {
+    public void compute(ParserImplState state) {
         int lastVar = state.futureIndex;
         state.futureIndex = 0;
         for (int i = 0; i < lastVar; ++i) {
@@ -76,7 +78,11 @@ public class ParserImpl implements Parser {
                 if (state.varBoxes.containsKey(var)) {
                     components[j] = state.varBoxes.get(var);
                 } else {
-                    return "Could not find variable " + var + "when computing #" + i + "\n";
+                    state.container = new TilesContainerImpl();
+                    state.container.addTile(new communicate(
+                            "Could not find variable " + var + "when computing #" + i + "\n"
+                    ).setLabel("Calculating error"));
+                    return;
                 }
             }
             AtomicBoolean foundModule = new AtomicBoolean(false); // needs to be non-primitive type to work in lambda
@@ -107,10 +113,14 @@ public class ParserImpl implements Parser {
                         }
                     });
             if (!foundModule.get()) {
-                return "Couldn't find possible operation associated with " + recipe.first + " to obtain " + varName + "\n";
+                state.container = new TilesContainerImpl();
+                state.container.addTile(new communicate(
+                        "Couldn't find possible operation associated with " + recipe.first + " to obtain " + varName + "\n"
+                ).setLabel("Calculating error"));
+                return;
             }
         }
-        return null;
+        return;
     }
 
     private void parseVariables(String varDefinition, ParserImplState state) {

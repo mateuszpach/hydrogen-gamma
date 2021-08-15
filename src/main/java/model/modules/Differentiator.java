@@ -4,35 +4,15 @@ import model.Module;
 import model.TilesContainer;
 import model.Variable;
 import model.modules.utils.Functions;
+import model.modules.utils.ModuleException;
 import utils.Pair;
 import model.variables.FunctionVariable;
-import vartiles.FunctionTile;
 import vartiles.factories.FunctionTileFactory;
 
 import java.util.ArrayList;
 import java.util.Stack;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 public class Differentiator implements Module<FunctionVariable> {
-
-    public static TreeMap<String, String> knownDerivatives = new TreeMap<>();
-    public static TreeSet<Character> knownOperators = new TreeSet<>();
-
-    static {
-        knownDerivatives.put("sin(x)", "cos(x)");
-        knownDerivatives.put("cos(x)", "(-sin(x))");
-        knownDerivatives.put("e^(x)", "e^(x)");
-        knownDerivatives.put("x", "1");
-        knownDerivatives.put("1", "0");
-        knownDerivatives.put("0", "0");
-        knownDerivatives.put("ln(x)", "1/x");
-
-        knownOperators.add('+');
-        knownOperators.add('-');
-        knownOperators.add('*');
-        knownOperators.add('/');
-    }
 
     @Override
     public FunctionVariable execute(TilesContainer container, Variable<?>... args) {
@@ -56,7 +36,7 @@ public class Differentiator implements Module<FunctionVariable> {
 
         if (formula.charAt(0) == '-') {
             negative = true;
-            formula = formula.substring(1, formula.length());
+            formula = formula.substring(1);
         }
         formula = removeParentheses(formula);
 
@@ -64,7 +44,7 @@ public class Differentiator implements Module<FunctionVariable> {
 
         if (isTrivial(formula)) {
             done = true;
-            derivativeFormula.append(knownDerivatives.get(formula));
+            derivativeFormula.append(Functions.knownDerivatives.get(formula));
         }
         else if (isPoly(formula)) {
             done = true;
@@ -197,7 +177,7 @@ public class Differentiator implements Module<FunctionVariable> {
     }
 
     private static boolean isTrivial(String formula) {
-        return knownDerivatives.containsKey(formula);
+        return Functions.knownDerivatives.containsKey(formula);
     }
 
     private static boolean isConstant(String formula) {
@@ -213,16 +193,16 @@ public class Differentiator implements Module<FunctionVariable> {
     private static boolean isPoly(String formula) {
         if (formula.length() < 5)
             return false;
-        return formula.substring(0, 3).equals("x^(") && formula.charAt(formula.length() - 1) == ')' &&
+        return formula.startsWith("x^(") && formula.charAt(formula.length() - 1) == ')' &&
                 isConstant(formula.substring(3, formula.length() - 1));
     }
 
     private static String polyDeriv(String poly) {
         int i = 0;
         StringBuilder deriv = new StringBuilder();
-        Double num = Double.parseDouble(poly.substring(3, poly.length() - 1));
-        Double newPow = num - 1;
-        return num.toString() + "*" + "x^(" + newPow + ")";
+        double num = Double.parseDouble(poly.substring(3, poly.length() - 1));
+        double newPow = num - 1;
+        return num + "*" + "x^(" + newPow + ")";
     }
 
     private static ArrayList<Integer> operatorsPositions(String formula) {
@@ -234,7 +214,7 @@ public class Differentiator implements Module<FunctionVariable> {
             if (formula.charAt(i) == ')')
                 opened--;
 
-            if (knownOperators.contains(formula.charAt(i)) && opened == 0)
+            if (Functions.knownOperators.contains(formula.charAt(i)) && opened == 0)
                 operators.add(i);
         }
 
@@ -242,33 +222,33 @@ public class Differentiator implements Module<FunctionVariable> {
     }
 
     private static boolean correctOperators(String formula) {
-        if (formula.charAt(0) == '*' || formula.charAt(0) == '/' || knownOperators.contains(formula.charAt(formula.length() - 1)))
+        if (formula.charAt(0) == '*' || formula.charAt(0) == '/' || Functions.knownOperators.contains(formula.charAt(formula.length() - 1)))
             return false;
 
         for (int i = 0; i < formula.length() - 1; i++)
-            if (knownOperators.contains(formula.charAt(i)) && knownOperators.contains(formula.charAt(i + 1)))
+            if (Functions.knownOperators.contains(formula.charAt(i)) && Functions.knownOperators.contains(formula.charAt(i + 1)))
                 return false;
         return true;
     }
 
-    public static class DerivativeNotKnownException extends RuntimeException {
+    public static class DerivativeNotKnownException extends ModuleException {
         private final String formula;
         DerivativeNotKnownException(String form) {
             formula = form;
         }
         @Override
         public String toString() {
-            return formula;
+            return "Couldn't find a derivative for function: " + formula;
         }
     }
-    public static class InvalidFormulaException extends RuntimeException {
+    public static class InvalidFormulaException extends ModuleException {
         private final String formula;
         InvalidFormulaException(String form) {
             formula = form;
         }
         @Override
         public String toString() {
-            return formula;
+            return "Function formula is invalid: " + formula;
         }
     }
 }

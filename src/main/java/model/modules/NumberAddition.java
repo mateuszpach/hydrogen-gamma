@@ -5,8 +5,7 @@ import model.TilesContainer;
 import model.Variable;
 import model.variables.NumericVariable;
 
-public enum NumberAddition implements Module<NumericVariable> {
-    INSTANCE;
+public class NumberAddition implements Module<NumericVariable> {
 
     @Override
     public NumericVariable execute(TilesContainer container, Variable<?>... args) {

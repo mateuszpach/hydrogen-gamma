@@ -15,8 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class NumbersTest {
     Random rand = new Random();
-    NumberAddition add = NumberAddition.INSTANCE;
-    NumberMultiplication mul = NumberMultiplication.INSTANCE;
+    NumberAddition add = new NumberAddition();
+    NumberMultiplication mul = new NumberMultiplication();
     TilesContainer container = new TilesContainer() {
 
         @Override

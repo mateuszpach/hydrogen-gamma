@@ -5,8 +5,7 @@ import model.TilesContainer;
 import model.Variable;
 import model.variables.NumericVariable;
 
-public enum NumberMultiplication implements Module<NumericVariable> {
-    INSTANCE;
+public class NumberMultiplication implements Module<NumericVariable> {
 
     @Override
     public NumericVariable execute(TilesContainer container, Variable<?>... args) {

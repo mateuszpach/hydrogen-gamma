@@ -1,6 +1,7 @@
-package model.modules;
+package model.terminalmodules;
 
 import model.Module;
+import model.TerminalModule;
 import model.TilesContainer;
 import model.Variable;
 import model.modules.utils.LinearAlgebra;
@@ -8,17 +9,13 @@ import model.variables.MatrixVariable;
 import utils.Pair;
 import vartiles.factories.MatrixTileFactory;
 
-import javax.sound.sampled.Line;
-
-public class LUDecomposer implements Module<MatrixVariable> {
+public class LUDecomposer implements TerminalModule {
 
     @Override
-    public MatrixVariable execute(TilesContainer container, Variable<?>... args) {
-        // in future kafel should be stored
+    public void execute(TilesContainer container, Variable<?>... args) {
         Pair<MatrixVariable, MatrixVariable> lu = decompositionLU((MatrixVariable) args[0]);
         container.addTile(new MatrixTileFactory().get(lu.first, "L"));
         container.addTile(new MatrixTileFactory().get(lu.second, "U"));
-        return null;
     }
 
     // given A finds matrices L and U such that LU = A, L is lower triangular and U is upper triangular
@@ -35,7 +32,7 @@ public class LUDecomposer implements Module<MatrixVariable> {
             LinearAlgebra.performGaussElimStep(L, U, i);
         }
 
-        return new Pair<MatrixVariable, MatrixVariable>(new MatrixVariable(L), new MatrixVariable(U));
+        return new Pair<>(new MatrixVariable(L), new MatrixVariable(U));
     }
 
     @Override

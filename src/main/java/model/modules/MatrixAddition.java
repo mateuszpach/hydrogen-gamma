@@ -5,8 +5,7 @@ import model.TilesContainer;
 import model.Variable;
 import model.variables.MatrixVariable;
 
-public enum MatrixAddition implements Module<MatrixVariable> {
-    INSTANCE;
+public class MatrixAddition implements Module<MatrixVariable> {
 
     @Override
     public MatrixVariable execute(TilesContainer container, Variable<?>... args) {
