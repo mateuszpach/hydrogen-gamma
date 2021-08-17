@@ -73,8 +73,6 @@ public class MatrixVariableTest {
     void differentMatricesNotEqual() {
         MatrixVariable A = new MatrixVariable(new double[][]{{1e-20, -2.0}, {1e100, -3e100}});
         MatrixVariable B = new MatrixVariable(new double[][]{{-1e-20, -2.0}, {1e100, -3e100}});
-        System.out.println(A.get(0, 0));
-        System.out.println(B.get(0, 0));
 
         assertNotEquals(A, B);
         assertNotEquals(B, A);
