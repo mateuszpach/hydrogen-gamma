@@ -1,17 +1,15 @@
 import model.ParserImpl;
 import model.ParserImplState;
 import model.VarBox;
+import model.variables.FunctionVariable;
+import model.variables.MatrixVariable;
+import model.variables.NumericVariable;
+import model.variables.TextVariable;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ParserImplTest {
-    // No longer loads modules ?
-  /*@Test
-    void loadsModulesSuccessfully() {
-        ParserImpl parser = null;
-        assertDoesNotThrow(ParserImpl::new);
-    }*/
 
     @Test
     void removeWhitespaceAndHashtags() {
@@ -31,6 +29,8 @@ public class ParserImplTest {
         ParserImplState state = new ParserImplState();
         //returns message on throw (to parser to print status for user)
         assertNotNull(parser.load("a;1", "", state));
+        state = new ParserImplState();
+        assertNotNull(parser.load("1a;1", "", state));
         state = new ParserImplState();
         assertNotNull(parser.load("a=\"", "", state));
         state = new ParserImplState();
@@ -62,6 +62,35 @@ public class ParserImplTest {
         assertDoesNotThrow(() -> parser.load("a=1;b=-1;c=1.1;d=-1.1;e=\"\";f=\"\"\";g=(1);h=(1,-1,1.1,-1.1);i=[1];j=[1/-1/1.1/-1.1];k=[1,-1/1.1,-1.1];l=[1,-1,1.1,-1.1]", "", state));
         //TODO: extend this test
         assertEquals(state.varBoxes.size(), 12);
+        assertEquals(state.varBoxes.get("a").getValue(), 1d);
+        assertEquals(state.varBoxes.get("b").getValue(), -1d);
+        assertEquals(state.varBoxes.get("c").getValue(), 1.1d);
+        assertEquals(state.varBoxes.get("d").getValue(), -1.1d);
+        assertEquals(state.varBoxes.get("e").getValue(), (""));
+        assertEquals(state.varBoxes.get("f").getValue(), ("\""));
+        assertEquals(state.varBoxes.get("g").getValue(), ("(1)"));
+        assertEquals(state.varBoxes.get("h").getValue(), ("(1,-1,1.1,-1.1)"));
+        assertEquals(state.varBoxes.get("i"), new MatrixVariable(new double[][]{{1}}));
+        assertEquals(state.varBoxes.get("j"), new MatrixVariable(new double[][]{{1}, {-1}, {1.1}, {-1.1}}));
+        assertEquals(state.varBoxes.get("k"), new MatrixVariable(new double[][]{{1, -1}, {1.1, -1.1}}));
+        assertEquals(state.varBoxes.get("l"), new MatrixVariable(new double[][]{{1, -1, 1.1, -1.1}}));
+    }
+
+    @Test
+    void replaceConstants() {
+        ParserImpl parser = new ParserImpl();
+        ParserImplState state = new ParserImplState();
+        ParserImplState finalState = new ParserImplState();
+        assertDoesNotThrow(() -> parser.load("", "1,1.1,-1,-1.1,--1,---1,--1.1,---1.1", state));
+        assertEquals(state.varBoxes.size(), 4);
+        assertEquals(state.varBoxes.get("##1.0").getValue(), 1d);
+        assertEquals(state.varBoxes.get("##-1.0").getValue(), -1d);
+        assertEquals(state.varBoxes.get("##1.1").getValue(), 1.1d);
+        assertEquals(state.varBoxes.get("##-1.1").getValue(), -1.1d);
+        assertDoesNotThrow(() -> parser.load("", "-,--,---,-1..1", finalState));
+        assertEquals(finalState.varBoxes.size(), 2);
+        assertEquals(finalState.varBoxes.get("##1.0").getValue(), 1d);
+        assertEquals(finalState.varBoxes.get("##-1.0").getValue(), -1d);
     }
 
     @Test

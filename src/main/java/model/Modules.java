@@ -13,7 +13,8 @@ public enum Modules {
     MATRIX_SCALE("*", new MatrixScalar()),
     NUMBER_ADD("+", new NumberAddition()),
     NUMBER_MUL("*", new NumberMultiplication());
-
+    // TODO: add stuff here
+    // so constant values in expression enforce some new rules about module calling names: 1. don't make "--", it will be resolved to ""; 2. don't use numeric values or I'll replace them
     String name;
     Module<?> module;
 
