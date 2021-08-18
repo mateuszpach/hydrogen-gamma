@@ -11,8 +11,8 @@ public enum TerminalModules {
     LU_DECOMPOSITION("lu", new LUDecomposer()),
     LONGEST_COMMON_SUBSTRING("lcs", new LongestCommonSubstring());
 
-    String name;
-    TerminalModule module;
+    public final String name;
+    public final TerminalModule module;
 
     TerminalModules(String name, TerminalModule module) {
         this.name = name;

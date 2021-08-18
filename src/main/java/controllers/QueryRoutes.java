@@ -2,7 +2,7 @@ package controllers;
 
 import io.javalin.Javalin;
 import io.javalin.http.Handler;
-import model.ParserImpl;
+import model.ParserFactory;
 import model.TilesContainer;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class QueryRoutes {
         else
             expression = expression.replaceAll(regex, "");
 
-        Parser parser = new ParserImpl();
+        Parser parser = ParserFactory.getParser(ParserFactory.ParserType.STANDARD);
         TilesContainer container = parser.parse(parameters, expression);
 
         ArrayList<Tile> tiles = new ArrayList<>();

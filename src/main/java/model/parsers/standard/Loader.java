@@ -1,63 +1,24 @@
-package model;
+package model.parsers.standard;
 
-import controllers.Parser;
-import model.modules.utils.ModuleException;
 import model.variables.FunctionVariable;
 import model.variables.MatrixVariable;
 import model.variables.NumericVariable;
 import model.variables.TextVariable;
 import utils.Pair;
-import vartiles.DefaultTile;
 
-import java.text.ParseException;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.ArrayList;
 
 import static java.lang.Math.min;
 
-// it can't be run in parallel. Should it though? Never have it been mentioned in this project, even once
-//
-//On the topic of more steps in interface, it makes parser depend on types returned by those steps and prevents from finding different ways of parsing
-//also there would be a lot thing to return/pass that's another reason to let parser use it's internal state in calculations
-public class ParserImpl implements Parser {
+public class Loader {
 
-    public ParserImpl() {
-    }
-
-    @Override
-    public TilesContainer parse(String variables, String expression) { // runs load and compute session with error handling and tile building
-        ParserImplState state = new ParserImplState();
-        if (variables.equals("") && expression.equals(""))
-            return state.container;
-        String msg;
-        if ((msg = this.load(variables, expression, state)) != null) {
-            state.container = new TilesContainerImpl();
-            state.container.addTile(new communicate(msg).setLabel("Parsing error"));
-            return state.container;
-        }
-        Set<String> keys = state.varBoxes.keySet();
-        String[] aKeys = keys.toArray(new String[keys.size()]);
-        Collections.reverse(Arrays.asList(aKeys));
-        for (String key : aKeys) {
-            System.out.println("variable:" + key + " " + state.varBoxes.get(key).getValue());
-            state.container.addTile(new communicate(state.varBoxes.get(key).getValue().toString()).setLabel(key));
-        }//after loading print variables
-
-        try {
-            this.compute(state);
-        } catch (ModuleException exception) {
-            state.container = new TilesContainerImpl();
-            state.container.addTile(new communicate(exception.toString()).setLabel("Module error"));
-        }
-        return state.container;
-    }
     //TODO: divide into smaller classes/functions (load, compute -> "inner" class)
     //TODO: terminal module, print stuff (identity function)
     //: infix, don't start  variable with digit, parse numeric constants
     //TODO: replace #n in label with nested formula
     //TODO: try not to remove whitespace from within text variables (or don't 'cause controlling these is vital)
 
-    public String load(String varDefinition, String operation, ParserImplState state) {
+    public String load(String varDefinition, String operation, State state) {
         //no # allowed, also remove whitespace
         varDefinition = varDefinition.replaceAll("\\s+", "").replaceAll("#", "");
         operation = operation.replaceAll("\\s+", "").replaceAll("#", "") + ")";
@@ -72,7 +33,7 @@ public class ParserImpl implements Parser {
         return null;
     }
 
-    private String replaceConstants(String operation, ParserImplState state) {// seems like highly explosive one
+    private String replaceConstants(String operation, State state) {// seems like highly explosive one
         String output = "";
         char[] ins = operation.toCharArray();
         for (int i = 0; i < ins.length; ++i) {//resolve double -
@@ -116,64 +77,7 @@ public class ParserImpl implements Parser {
         return output;
     }
 
-    public void compute(ParserImplState state) {
-        int lastVar = state.futureIndex;
-        state.futureIndex = 0;
-        for (int i = 0; i < lastVar; ++i) {
-            String varName = getSubstitutionName(i);
-            Pair<String, ArrayList<String>> recipe = state.futureVariables.get(varName);
-
-            Variable<?>[] components = new Variable[recipe.second.size()];
-            for (int j = 0; j < recipe.second.size(); ++j) {
-                String var = recipe.second.get(j);
-                if (state.varBoxes.containsKey(var)) {
-                    components[j] = state.varBoxes.get(var);
-                } else {
-                    state.container = new TilesContainerImpl();
-                    state.container.addTile(new communicate(
-                            "Could not find variable " + var + "when computing #" + i + "\n"
-                    ).setLabel("Calculating error"));
-                    return;
-                }
-            }
-            AtomicBoolean foundModule = new AtomicBoolean(false); // needs to be non-primitive type to work in lambda
-            EnumSet.allOf(Modules.class)
-                    .stream()
-                    .filter(x -> x.name.equals(recipe.first))
-                    .forEach((x) -> {
-                        Module<?> module = x.module;
-                        if (module.verify(components) && !foundModule.get()) {
-                            Variable<?> got = module.execute(state.container, components);
-                            state.varBoxes.put(varName, got);
-                            String result = String.format("%s(%s)=%s\n",
-                                    recipe.first,
-                                    String.join(",", recipe.second),
-                                    got.getValue().toString());
-                            state.container.addTile(new communicate(result).setLabel(varName));
-                            foundModule.set(true);
-                        }
-                    });
-
-            EnumSet.allOf(TerminalModules.class)
-                    .stream()
-                    .filter(x -> x.name.equals(recipe.first))
-                    .forEach(x -> {
-                        if (x.module.verify(components) && !foundModule.get()) {
-                            x.module.execute(state.container, components);
-                            foundModule.set(true);
-                        }
-                    });
-            if (!foundModule.get()) {
-                state.container = new TilesContainerImpl();
-                state.container.addTile(new communicate(
-                        "Couldn't find possible operation associated with " + recipe.first + " to obtain " + varName + "\n"
-                ).setLabel("Calculating error"));
-                return;
-            }
-        }
-    }
-
-    private void parseVariables(String varDefinition, ParserImplState state) {
+    private void parseVariables(String varDefinition, State state) {
         if (varDefinition.length() == 0)
             return;
         String[] vars = varDefinition.split(";");
@@ -241,48 +145,12 @@ public class ParserImpl implements Parser {
         }
     }
 
-    private void simplifyOperation(String operation, ParserImplState state) {
+    private void simplifyOperation(String operation, State state) {
         ArrayList<String> list = new ArrayList<>();
         simplify(operation, list, state);
     }
 
-    public static class ParsingException extends IllegalArgumentException {
-        String msg;
-
-        public ParsingException(String s) {
-            super(s);
-            msg = s;
-        }
-    }
-
-    String getSubstitutionName(ParserImplState state) {
-        return getSubstitutionName(state.futureIndex++);
-    }
-
-    String getSubstitutionName(int index) {
-        return "#" + index;
-    }
-
-    private class communicate extends DefaultTile {
-        String msg;
-
-        communicate(String msg) {
-            super();
-            this.msg = msg;
-        }
-
-        @Override
-        public String getLabel() {
-            return this.label;
-        }
-
-        @Override
-        public String getContent() {
-            return msg;
-        }
-    }
-
-    private String simplify(String query, ArrayList<String> list, ParserImplState state) {
+    private String simplify(String query, ArrayList<String> list, State state) {
         char[] chars = query.toCharArray();
         int i = 0;
         while (i < query.length()) {
@@ -290,7 +158,7 @@ public class ParserImpl implements Parser {
                 String operation = query.substring(0, i);
                 ArrayList<String> myVars = new ArrayList<>();
                 query = simplify(query.substring(min(i + 1, query.length())), myVars, state);
-                String varName = getSubstitutionName(state);
+                String varName = state.getSubstitutionName();
                 state.futureVariables.put(varName, new Pair<>(operation, myVars));
                 list.add(varName);
                 return simplify(query, list, state);
@@ -319,6 +187,4 @@ public class ParserImpl implements Parser {
         }
         return "";
     }
-
-
 }
