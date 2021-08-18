@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class Computer {
     // TODO: split each matching to separate methods
-    public TilesContainer compute(State state) {
+    public void compute(State state) {
         int lastVar = state.futureIndex;
         state.futureIndex = 0;
         for (int i = 0; i < lastVar; ++i) {
@@ -23,10 +23,8 @@ public class Computer {
                 if (state.varBoxes.containsKey(var)) {
                     components[j] = state.varBoxes.get(var);
                 } else {
-                    state.container = new TilesContainerImpl();
-                    state.container.addTile(
-                            new InfoTile("Could not find variable " + var + "when computing #" + i + "\n",
-                                    "Calculating error"));
+                    state.msg = "Could not find variable " + var + "when computing #" + i + "\n";
+                    return;
                 }
             }
 
@@ -57,13 +55,10 @@ public class Computer {
                 continue;
             }
 
-            state.container = new TilesContainerImpl();
-            String info = String.format("Couldn't find possible operation associated with %s to obtain %s \n",
+            state.msg = String.format("Couldn't find possible operation associated with %s to obtain %s \n",
                     recipe.first,
                     varName);
-            state.container.addTile(new InfoTile(info, "Calculating error"));
+            return;
         }
-
-        return state.container;
     }
 }

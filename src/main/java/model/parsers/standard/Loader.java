@@ -18,40 +18,88 @@ public class Loader {
     //TODO: replace #n in label with nested formula
     //TODO: try not to remove whitespace from within text variables (or don't 'cause controlling these is vital)
 
-    public String load(String varDefinition, String operation, State state) {
+    public State load(String varDefinition, String operation) {
+        State state = new State();
         //no # allowed, also remove whitespace
         varDefinition = varDefinition.replaceAll("\\s+", "").replaceAll("#", "");
         operation = operation.replaceAll("\\s+", "").replaceAll("#", "") + ")";
         System.out.println("var:" + varDefinition + ": operation:" + operation + ":");
         try {
             this.parseVariables(varDefinition, state);
+            operation = fixSigns(operation);
             operation = this.replaceConstants(operation, state);
             this.simplifyOperation(operation, state);
         } catch (ParsingException e) {
-            return e.msg;
+            state.msg = e.msg;
         }
-        return null;
+        return state;
+    }
+
+    private String fixSigns(String operation) {
+        StringBuilder out;
+        System.out.println("pre fixing: " + operation);
+        boolean changed = true;
+        while (changed) {//seems dumb, might be dumb, is ineffective, BUT simple and bulletproof, when user input WON'T be too long
+            changed = false;
+            out = new StringBuilder();
+            char[] chars = operation.toCharArray();
+            for (int i = 1; i < chars.length; ++i) {
+                if (chars[i - 1] == '+' && chars[i] == '+') {
+                    chars[i - 1] = ' ';
+                    chars[i] = '+';
+                    changed = true;
+                } else if (chars[i - 1] == '+' && chars[i] == '-') {
+                    chars[i - 1] = ' ';
+                    chars[i] = '-';
+                    changed = true;
+                } else if (chars[i - 1] == '-' && chars[i] == '+') {
+                    chars[i - 1] = ' ';
+                    chars[i] = '-';
+                    changed = true;
+                } else if (chars[i - 1] == '-' && chars[i] == '-') {
+                    chars[i - 1] = ' ';
+                    chars[i] = '+';
+                    changed = true;
+                } else if (chars[i - 1] == '*' && chars[i] == '+') {
+                    chars[i - 1] = ' ';
+                    chars[i] = '*';
+                    changed = true;
+                } else if (chars[i - 1] == '/' && chars[i] == '+') {
+                    chars[i - 1] = ' ';
+                    chars[i] = '/';
+                    changed = true;
+                }
+            }
+            for (char x : chars) {
+                if (x != ' ')
+                    out.append(x);
+            }
+            operation = out.toString();
+        }
+        System.out.println("post fixing: " + operation);
+        return operation;
     }
 
     private String replaceConstants(String operation, State state) {// seems like highly explosive one
-        String output = "";
+        StringBuilder builder = new StringBuilder();
         char[] ins = operation.toCharArray();
         for (int i = 0; i < ins.length; ++i) {//resolve double -
             while (i < ins.length - 2 && ins[i] == '-' && ins[i + 1] == '-') {
                 i += 2;
             }
-            output += ins[i];
+            builder.append(ins[i]);
         }
-        operation = output;
+        operation = builder.toString();
         System.out.println("after removing --: " + operation);
         ins = operation.toCharArray();
-        output = "";
+        builder = new StringBuilder();
         for (int i = 0; i < ins.length; ++i) {
             if ((ins[i] <= '9' && ins[i] >= '0') || ins[i] == '-') {
                 int j = i;
                 boolean legit = false;
                 while (j < ins.length && operation.substring(i, j).matches("-?\\d*\\.?\\d*")) {
-                    if (ins[j] <= '9' && ins[j] >= '0') legit = true;
+                    if (ins[j] <= '9' && ins[j] >= '0')
+                        legit = true;
                     ++j;
                 }
                 j--;
@@ -60,21 +108,21 @@ public class Loader {
                     System.out.println("Suspected constant:" + constant + ": " + i + " " + j);
                     try {
                         double x = Double.parseDouble(constant);
-                        if (!state.varBoxes.containsKey("##" + x))
-                            state.varBoxes.put("##" + x, new NumericVariable(x));
-                        output += "##" + x;
+                        if (!state.varBoxes.containsKey(state.constantName(x)))
+                            state.varBoxes.put(state.constantName(x), new NumericVariable(x));
+                        builder.append(state.constantName(x));
                     } catch (Exception e) {
                         throw new ParsingException("could not process: " + constant + " as numeric constant\n");
                     }
                     i = j;
                 } else
                     j = i;
-                output += operation.substring(i, j);
+                builder.append(operation, i, j);
             }
-            output += ins[i];
+            builder.append(ins[i]);
         }
-        System.out.println("after replacing constants:" + output + ":");
-        return output;
+        System.out.println("after replacing constants:" + builder + ":");
+        return builder.toString();
     }
 
     private void parseVariables(String varDefinition, State state) {
@@ -188,3 +236,21 @@ public class Loader {
         return "";
     }
 }
+/*
+Solution:
+???
+Problem
+a=2
++(a++-(a),a+a*a/(a+a)*a,+(a+a*-a,-a))
+var:a=2: operation:+(a++-(a),a+a*a/(a+a)*a,+(a+a*-a,-a))):
+pre fixing: +(a++-(a),a+a*a/(a+a)*a,+(a+a*-a,-a)))
+post fixing: +(a-(a),a+a*a/(a+a)*a,+(a+a*-a,-a)))
+after removing --: +(a-(a),a+a*a/(a+a)*a,+(a+a*-a,-a)))
+after replacing constants:+(a-(a),a+a*a/(a+a)*a,+(a+a*-a,-a))):
+variable:a 2.0
+future: #0 = a- ( a )                  : a+(-(a)) => +(a,-(a)) V=???
+future: #1 = a+a*a/ ( a+a )            : a+a*a*(/(1,a+a))  =>a+*(a,a)*(/(1,+(a,a)))
+(if there was (a+a,a) would yield  a+a*a*(/(1,a+a,a)) and rightfully explode)
+future: #2 = + ( a+a*-a -a )           :
+future: #3 = + ( #0 #1 *a #2           :
+ */

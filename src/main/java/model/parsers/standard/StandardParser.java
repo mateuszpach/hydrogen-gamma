@@ -26,13 +26,13 @@ public class StandardParser implements Parser {
 
     @Override
     public TilesContainer parse(String variables, String expression) { // runs load and compute session with error handling and tile building
-        State state = new State();
+        State state = new State(); //just so it can return immediately on empty input
         if (variables.equals("") && expression.equals(""))
             return state.container;
-        String msg;
-        if ((msg = loader.load(variables, expression, state)) != null) {
+        state = loader.load(variables, expression);
+        if (state.msg != null) {
             state.container = new TilesContainerImpl();
-            state.container.addTile(new InfoTile(msg, "Parsing error"));
+            state.container.addTile(new InfoTile(state.msg, "Parsing error"));
             return state.container;
         }
         Set<String> keys = state.varBoxes.keySet();
@@ -42,12 +42,26 @@ public class StandardParser implements Parser {
             System.out.println("variable:" + key + " " + state.varBoxes.get(key).getValue());
             state.container.addTile(new InfoTile(state.varBoxes.get(key).getValue().toString(), key));
         }//after loading print variables
-
+        state.msg = null;
         try {
             computer.compute(state);
         } catch (ModuleException exception) {
             state.container = new TilesContainerImpl();
             state.container.addTile(new InfoTile(exception.toString(), "Module error"));
+        }
+        {
+            for (String key : state.futureVariables.keySet()) {
+                System.out.print("future: " + key + " = " + state.futureVariables.get(key).first + " ( ");
+                for (String name : state.futureVariables.get(key).second) {
+                    System.out.print(name + " ");
+                }
+                System.out.println(")");
+            }
+        }
+        if (state.msg != null) {
+            state.container = new TilesContainerImpl();
+            state.container.addTile(new InfoTile(state.msg, "Computing error"));
+            return state.container;
         }
         return state.container;
 

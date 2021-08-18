@@ -14,12 +14,14 @@ public class State {
     public TilesContainer container;
     public Map<String, Pair<String, ArrayList<String>>> futureVariables;
     int futureIndex;
+    public String msg;
 
     public State() {
         this.varBoxes = new TreeMap<>();
         this.futureVariables = new TreeMap<>();
         this.futureIndex = 0;
         this.container = new TilesContainerImpl();
+        this.msg = null;
     }
 
     public String getSubstitutionName() {
@@ -28,5 +30,9 @@ public class State {
 
     public String getSubstitutionName(int index) {
         return "#" + index;
+    }
+
+    public String constantName(Double x) {
+        return "0" + x.toString().replaceAll("-", "m").replaceAll("\\.", "d");
     }
 }
