@@ -7,10 +7,9 @@ import model.variables.TextVariable;
 import utils.Pair;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-import static java.lang.Math.*;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 public class Loader {
 
@@ -107,8 +106,8 @@ public class Loader {
                     System.out.println("Suspected constant:" + constant + ": " + i + " " + j);
                     try {
                         double x = Double.parseDouble(constant);
-                        if (!state.varBoxes.containsKey(state.constantName(x)))
-                            state.varBoxes.put(state.constantName(x), new NumericVariable(x));
+                        if (!state.results.containsKey(state.constantName(x)))
+                            state.results.put(state.constantName(x), new State.Result(Double.toString(x), new NumericVariable(x)));
                         builder.append(state.constantName(x));
                     } catch (Exception e) {
                         throw new ParsingException("could not process: " + constant + " as numeric constant\n");
@@ -138,12 +137,16 @@ public class Loader {
             //type casing
             if (b[1].charAt(0) == '\"') {//text
                 if (b[1].charAt(b[1].length() - 1) == '\"' && b[1].length() >= 2) {
-                    state.varBoxes.put(b[0], new TextVariable(b[1].substring(1, b[1].length() - 1)));
+                    state.results.put(b[0], new State.Result(
+                            b[0]
+                            , new TextVariable(b[1].substring(1, b[1].length() - 1))));
                 } else
                     throw new ParsingException("Text variable definition must be within '\"\"' quotation: " + a);
             } else if (b[1].charAt(0) == '(') {//function
                 if (b[1].charAt(b[1].length() - 1) == ')') {
-                    state.varBoxes.put(b[0], new FunctionVariable(b[1]));
+                    state.results.put(b[0], new State.Result(
+                            b[0]
+                            , new FunctionVariable(b[1])));
                 } else
                     throw new ParsingException("Function variable definition must be within () parenthesis: " + a);
             } else if (b[1].charAt(0) == '[') {//matrix
@@ -178,13 +181,17 @@ public class Loader {
                     for (int i = 0; i < matrix.size(); ++i)
                         for (int j = 0; j < rowSize; ++j)
                             dMatrix[i][j] = matrix.get(i).get(j);
-                    state.varBoxes.put(b[0], new MatrixVariable(dMatrix));
+                    state.results.put(b[0], new State.Result(
+                            b[0],
+                            new MatrixVariable(dMatrix)));
                 } else
                     throw new ParsingException("Matrix variable definition must be within [] parenthesis: " + a);
             } else {//numeric
                 try {
                     double x = Double.parseDouble(b[1]);
-                    state.varBoxes.put(b[0], new NumericVariable(x));
+                    state.results.put(b[0], new State.Result(
+                            b[0],
+                            new NumericVariable(x)));
                 } catch (NumberFormatException e) {
                     throw new ParsingException(b[1] + " from definition " + a + " does not represent valid number");
                 }
@@ -316,7 +323,7 @@ public class Loader {
             }
         }
         String varName = state.getSubstitutionName();
-        state.futureVariables.put(varName, resolved);
+        state.expressions.put(varName, new State.Expression(resolved.first, resolved.second));
         return varName;
     }
 }
