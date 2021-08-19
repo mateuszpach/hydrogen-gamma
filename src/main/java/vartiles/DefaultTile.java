@@ -5,11 +5,14 @@ public abstract class DefaultTile implements Tile {
 
     @Override
     public String getLabel() {
-        return '$' + label + '$';
+        return label;
     }
 
-    public DefaultTile setLabel(String label) {
+    public void setLabel(String label) {
         this.label = label;
-        return this;
+    }
+
+    public void addPrefixToLabel(String prefix) {
+        this.label = prefix + this.label;
     }
 }
