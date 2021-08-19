@@ -23,7 +23,7 @@ public class Computer {
                 if (state.varBoxes.containsKey(var)) {
                     components[j] = state.varBoxes.get(var);
                 } else {
-                    state.msg = "Could not find variable " + var + "when computing #" + i + "\n";
+                    state.msg = "Could not find variable " + var + " when computing " + varName + "\n";
                     return;
                 }
             }

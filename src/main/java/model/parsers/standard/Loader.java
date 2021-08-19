@@ -7,8 +7,10 @@ import model.variables.TextVariable;
 import utils.Pair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import static java.lang.Math.min;
+import static java.lang.Math.*;
 
 public class Loader {
 
@@ -22,17 +24,24 @@ public class Loader {
         State state = new State();
         //no # allowed, also remove whitespace
         varDefinition = varDefinition.replaceAll("\\s+", "").replaceAll("#", "");
-        operation = operation.replaceAll("\\s+", "").replaceAll("#", "") + ")";
+        operation = "(" + operation.replaceAll("\\s+", "").replaceAll("#", "") + ")";
         System.out.println("var:" + varDefinition + ": operation:" + operation + ":");
         try {
             this.parseVariables(varDefinition, state);
             operation = fixSigns(operation);
             operation = this.replaceConstants(operation, state);
             this.simplifyOperation(operation, state);
+            this.flattenTree(state);
         } catch (ParsingException e) {
             state.msg = e.msg;
         }
         return state;
+    }
+
+    private void flattenTree(State state) {
+        //  Map<String, Pair<String, ArrayList<String>>> flat = new HashMap<>();
+        //  int top=state.futureIndex-1;
+
     }
 
     private String fixSigns(String operation) {
@@ -83,16 +92,6 @@ public class Loader {
     private String replaceConstants(String operation, State state) {// seems like highly explosive one
         StringBuilder builder = new StringBuilder();
         char[] ins = operation.toCharArray();
-        for (int i = 0; i < ins.length; ++i) {//resolve double -
-            while (i < ins.length - 2 && ins[i] == '-' && ins[i + 1] == '-') {
-                i += 2;
-            }
-            builder.append(ins[i]);
-        }
-        operation = builder.toString();
-        System.out.println("after removing --: " + operation);
-        ins = operation.toCharArray();
-        builder = new StringBuilder();
         for (int i = 0; i < ins.length; ++i) {
             if ((ins[i] <= '9' && ins[i] >= '0') || ins[i] == '-') {
                 int j = i;
@@ -206,8 +205,7 @@ public class Loader {
                 String operation = query.substring(0, i);
                 ArrayList<String> myVars = new ArrayList<>();
                 query = simplify(query.substring(min(i + 1, query.length())), myVars, state);
-                String varName = state.getSubstitutionName();
-                state.futureVariables.put(varName, new Pair<>(operation, myVars));
+                String varName = resolveAndAddFuture(new Pair<>(operation, myVars), state);
                 list.add(varName);
                 return simplify(query, list, state);
             } else if (chars[i] == ')') {//go up, and substitute
@@ -235,22 +233,127 @@ public class Loader {
         }
         return "";
     }
+
+    private String resolveAndAddFuture(Pair<String, ArrayList<String>> definition, State state) {
+        //1. innards don't have parenthesis! just resolve bioperators
+        //new rule if some uses a*-b or a*-(...) it will explode, be nice and write a*(-b) or a*(-(...))
+        Pair<String, ArrayList<String>> resolved = new Pair<>("", new ArrayList<>());
+        for (String var : definition.second) {
+            System.out.print("delinquent to resolve: " + var + "    resolved to: ");
+            if (!var.matches("\\w*")) {//contains sign
+                //find *,/ and reorder a*b into *(a,b), don't look at anything else
+                //resolving from lower to higher order will push low order operations outward, so they will execute last
+                //+- then */ recursively
+                //what if +(a+b+c,d+e+f) resolved as a+b+n_var+e+f, n_var=c+d ? pointless complication, just don't
+                // a*b+c*d => +(a*b,c*d) => +(*(a,b),*(c,d))
+                // a+b*c+d => +(a,b*c+d) => +(a,+(b*c,d)) => +(a,+(*(b,c),d))
+                int pos;
+                if ((pos = max(var.indexOf('+'), var.indexOf('-'))) != -1) {
+                    Pair<String, ArrayList<String>> tmp = new Pair<>(Character.toString(var.charAt(pos)), new ArrayList<>());
+                    if (pos == 0) {
+                        tmp.second.add(var.substring(1));
+                        System.out.println(var.charAt(pos) + " ( " + var.substring(1) + " )");
+                        resolved.second.add(resolveAndAddFuture(tmp, state));
+                    } else {
+                        tmp.second.add(var.substring(0, pos));
+                        tmp.second.add(var.substring(pos + 1));
+                        System.out.println(var.charAt(pos) + " ( " + var.substring(0, pos) + " , " + var.substring(pos + 1) + " )");
+                        resolved.second.add(resolveAndAddFuture(tmp, state));
+                    }
+                } else if ((pos = max(var.indexOf('*'), var.indexOf('/'))) != -1) {
+                    Pair<String, ArrayList<String>> tmp = new Pair<>(Character.toString(var.charAt(pos)), new ArrayList<>());
+                    if (pos == 0) {
+                        tmp.second.add(var.substring(1));
+                        System.out.println(var.charAt(pos) + " ( " + var.substring(1) + " )");
+                        resolved.second.add(resolveAndAddFuture(tmp, state));
+                    } else {
+                        tmp.second.add(var.substring(0, pos));
+                        tmp.second.add(var.substring(pos + 1));
+                        System.out.println(var.charAt(pos) + " ( " + var.substring(0, pos) + " , " + var.substring(pos + 1) + " )");
+                        resolved.second.add(resolveAndAddFuture(tmp, state));
+                    }
+                }
+            } else {
+                System.out.println("just " + var);
+                resolved.second.add(var);
+            }
+        }
+        System.out.println("resolving operation name from: " + definition.first + "   to: ");
+        if (definition.first.matches("\\w*") || definition.first.matches("\\W$")) {// is simple definition of just mod name or just sign
+            System.out.println("case: simple");
+            resolved.first = definition.first;
+            System.out.println("just " + resolved.first);
+        } else {//has operation
+            if (definition.first.matches(".*\\W$")) {//ends with special sign
+                System.out.println("case: special");
+                // a+b*(c) => ret (a+b*new_var), new_var=(c)
+                // a*b+(c) => ret (a*b+new_var), new_var=(c)
+                resolved.first = "";
+                String new_var = resolveAndAddFuture(resolved, state);
+                resolved = new Pair<>("", new ArrayList<>());
+                resolved.first = "";
+                resolved.second.add(definition.first + new_var);
+                System.out.println("( " + definition.first + new_var + " ) where " + new_var + " = ( inside )");
+                return resolveAndAddFuture(resolved, state);
+
+            } else {// ends with modular operation
+                System.out.println("case: modular");
+                int i = 0;
+                while (i < definition.first.length() && definition.first.substring(definition.first.length() - 1 - i).matches("\\w*")) { // get the longest trailing valid word
+                    ++i;
+                    System.out.println("i: " + i + "   :   " + definition.first.substring(0, definition.first.length() - 1 - i) + " " + definition.first.substring(definition.first.length() - 1 - i));
+                }
+                --i;
+                // a+b*mod(c,d) => ret (a+b*new_var), new_var=mod(c,d)
+                // a*b+mod(c,d) => ret (a*b+new_var), new_var=mod(c,d)
+                resolved.first = definition.first.substring(definition.first.length() - 1 - i);
+                String new_var = resolveAndAddFuture(resolved, state);
+                resolved = new Pair<>("", new ArrayList<>());
+                resolved.first = "";
+                resolved.second.add(definition.first.substring(0, definition.first.length() - 1 - i) + new_var);
+                System.out.println("( " + definition.first.substring(0, definition.first.length() - 1 - i) + new_var + " ) where " + new_var + " = " + definition.first.substring(definition.first.length() - 1 - i) + "( inside )");
+                return resolveAndAddFuture(resolved, state);
+            }
+        }
+        String varName = state.getSubstitutionName();
+        state.futureVariables.put(varName, resolved);
+        return varName;
+    }
 }
 /*
 Solution:
-???
+resolve inner mess, then try resolving mess in function name
+any instance of something_alphabetic(...) treat as another module, meaning last variable name in operation key string is module name,
+unless last char is sign, than treat innards as variable from identity module
 Problem
 a=2
-+(a++-(a),a+a*a/(a+a)*a,+(a+a*-a,-a))
-var:a=2: operation:+(a++-(a),a+a*a/(a+a)*a,+(a+a*-a,-a))):
-pre fixing: +(a++-(a),a+a*a/(a+a)*a,+(a+a*-a,-a)))
-post fixing: +(a-(a),a+a*a/(a+a)*a,+(a+a*-a,-a)))
-after removing --: +(a-(a),a+a*a/(a+a)*a,+(a+a*-a,-a)))
-after replacing constants:+(a-(a),a+a*a/(a+a)*a,+(a+a*-a,-a))):
++(a++-(a),a+a*a/(a+a(a))*a,+(a+a*(-a+a),(-a),++-+-3.66))
+var:a=2: operation:+(a++-(a),a+a*a/(a+a(a))*a,+(a+a*(-a+a),(-a),++-+-3.66))):
+pre fixing: +(a++-(a),a+a*a/(a+a(a))*a,+(a+a*(-a+a),(-a),++-+-3.66)))
+post fixing: +(a-(a),a+a*a/(a+a(a))*a,+(a+a*(-a+a),(-a),+3.66)))
+after removing --: +(a-(a),a+a*a/(a+a(a))*a,+(a+a*(-a+a),(-a),+3.66)))
+Suspected constant:3.66: 44 48
+after replacing constants:+(a-(a),a+a*a/(a+a(a))*a,+(a+a*(-a+a),(-a),+03d66))):
+delinquent to resolve: a    resolved to: a
+delinquent to resolve: a    resolved to: a
+delinquent to resolve: 1var    resolved to: 1var
+delinquent to resolve: -a+a    resolved to: + ( -a , a )
+delinquent to resolve: -a    resolved to: - ( a )
+delinquent to resolve: 3var    resolved to: 3var
+delinquent to resolve: 4var    resolved to: 4var
+delinquent to resolve: +03d66    resolved to: + ( 03d66 )
+delinquent to resolve: 0var    resolved to: 0var
+delinquent to resolve: 2var    resolved to: 2var
+delinquent to resolve: *a    resolved to: * ( a )
+delinquent to resolve: 5var    resolved to: 5var
 variable:a 2.0
-future: #0 = a- ( a )                  : a+(-(a)) => +(a,-(a)) V=???
-future: #1 = a+a*a/ ( a+a )            : a+a*a*(/(1,a+a))  =>a+*(a,a)*(/(1,+(a,a)))
-(if there was (a+a,a) would yield  a+a*a*(/(1,a+a,a)) and rightfully explode)
-future: #2 = + ( a+a*-a -a )           :
-future: #3 = + ( #0 #1 *a #2           :
+variable:03d66 3.66
+future: 0var = a- ( a )
+future: 1var = a+a ( a )
+future: 2var = a+a*a/ ( 1var )
+future: 3var = a+a* ( -a+a )
+future: 4var =  ( -a )
+future: 5var = + ( 3var 4var +03d66 )
+future: 6var = + ( 0var 2var *a 5var )
+
  */

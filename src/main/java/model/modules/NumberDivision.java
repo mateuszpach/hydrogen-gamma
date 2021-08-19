@@ -19,7 +19,7 @@ public class NumberDivision implements Module<NumericVariable> {
     }
 
     @Override
-    public boolean verify(Variable<?>... args) {
+    public boolean verify(Variable<?>... args) {// should it not allow for 0 division or throw on zero division???
         if (args.length > 2 || args.length == 0)
             return false;
         NumericVariable a, b;
