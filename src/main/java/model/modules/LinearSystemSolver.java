@@ -7,7 +7,6 @@ import model.modules.utils.LinearAlgebra;
 import model.variables.MatrixVariable;
 import utils.Pair;
 import vartiles.MatrixTile;
-import vartiles.factories.MatrixTileFactory;
 
 public class LinearSystemSolver implements Module<MatrixVariable> {
 

@@ -7,7 +7,6 @@ import model.modules.utils.Functions;
 import model.modules.utils.ModuleException;
 import utils.Pair;
 import model.variables.FunctionVariable;
-import vartiles.factories.FunctionTileFactory;
 
 import java.util.ArrayList;
 import java.util.Stack;

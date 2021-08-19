@@ -7,7 +7,6 @@ import model.modules.utils.LinearAlgebra;
 import model.variables.MatrixVariable;
 import model.variables.NumericVariable;
 import utils.Pair;
-import vartiles.factories.NumericTileFactory;
 
 public class Determinant implements Module<NumericVariable> {
     @Override
