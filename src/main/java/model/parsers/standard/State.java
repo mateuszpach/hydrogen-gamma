@@ -29,7 +29,7 @@ public class State {
     }
 
     public String getSubstitutionName(int index) {
-        return "#" + index;
+        return index + "var";
     }
 
     public String constantName(Double x) {

@@ -10,10 +10,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
-// it can't be run in parallel. Should it though? Never have it been mentioned in this project, even once
-//
-//On the topic of more steps in interface, it makes parser depend on types returned by those steps and prevents from finding different ways of parsing
-//also there would be a lot thing to return/pass that's another reason to let parser use it's internal state in calculations
 public class StandardParser implements Parser {
 
     private final Loader loader;
@@ -43,19 +39,21 @@ public class StandardParser implements Parser {
             state.container.addTile(new InfoTile(state.varBoxes.get(key).getValue().toString(), key));
         }//after loading print variables
         state.msg = null;
-        try {
-            computer.compute(state);
-        } catch (ModuleException exception) {
-            state.container = new TilesContainerImpl();
-            state.container.addTile(new InfoTile(exception.toString(), "Module error"));
-        }
-        {
-            for (String key : state.futureVariables.keySet()) {
-                System.out.print("future: " + key + " = " + state.futureVariables.get(key).first + " ( ");
-                for (String name : state.futureVariables.get(key).second) {
-                    System.out.print(name + " ");
+        if (state.futureVariables.size() > 0) {
+            try {
+                computer.compute(state);
+            } catch (ModuleException exception) {
+                state.container = new TilesContainerImpl();
+                state.container.addTile(new InfoTile(exception.toString(), "Module error"));
+            }
+            {
+                for (String key : state.futureVariables.keySet()) {
+                    System.out.print("future: " + key + " = " + state.futureVariables.get(key).first + " ( ");
+                    for (String name : state.futureVariables.get(key).second) {
+                        System.out.print(name + " ");
+                    }
+                    System.out.println(")");
                 }
-                System.out.println(")");
             }
         }
         if (state.msg != null) {
