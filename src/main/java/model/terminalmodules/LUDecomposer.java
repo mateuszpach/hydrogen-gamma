@@ -18,6 +18,7 @@ public class LUDecomposer implements TerminalModule {
         tileL.setLabel("L");
         MatrixTile tileU = new MatrixTile(lu.second);
         tileU.setLabel("U");
+        // TODO tile LUKASZ
     }
 
     // given A finds matrices L and U such that LU = A, L is lower triangular and U is upper triangular

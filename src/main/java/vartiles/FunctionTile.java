@@ -12,6 +12,6 @@ public class FunctionTile extends DefaultTile {
 
     @Override
     public String getContent() {
-        return '$' + function.getValue() + '$'; // TODO: change to proper format
+        return '$' + function.getValue() + '$'; // TODO: use latex class LUKASZ
     }
 }

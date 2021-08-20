@@ -136,8 +136,7 @@ public class Differentiator implements Module<FunctionVariable> {
     public boolean verify(Variable<?>... args) {
         return args.length == 1 && args[0].getClass() == FunctionVariable.class;
     }
-
-    // TODO
+    
     private static String removeParentheses(String formula) {
         int n = formula.length();
         if (formula.length() < 2 || formula.charAt(0) != '(' || formula.charAt(n - 1) != ')')

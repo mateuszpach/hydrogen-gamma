@@ -13,11 +13,7 @@ import static java.lang.Math.min;
 
 public class Loader {
 
-    //TODO: divide into smaller classes/functions (load, compute -> "inner" class)
-    //TODO: terminal module, print stuff (identity function)
-    //: infix, don't start  variable with digit, parse numeric constants
-    //TODO: replace #n in label with nested formula
-    //TODO: try not to remove whitespace from within text variables (or don't 'cause controlling these is vital)
+    //TODO: try not to remove whitespace from within text variables (or don't 'cause controlling these is vital) MICHLE
 
     public State load(String varDefinition, String operation) {
         State state = new State();
@@ -123,6 +119,7 @@ public class Loader {
         return builder.toString();
     }
 
+    // TODO Extractors dla parsera zwracające odpowiednie typy varaible LUKASZ
     private void parseVariables(String varDefinition, State state) {
         if (varDefinition.length() == 0)
             return;
