@@ -32,8 +32,8 @@ public class StandardParser implements Parser {
             return state.container;
         }
 
-        state.results.forEach((id, result) -> {
-            if (id.charAt(0) != '0') {
+        state.results.forEach((id, result) -> {  // TODO powinno być w Computer MICHAL
+            if (id.charAt(0) != '0') { // TODO zrób czytelną funkcję na to MICHAL
                 Tile tile = new InfoTile(result.value.getValue().toString(), result.text);
                 state.container.addTile(tile);
 
@@ -41,16 +41,16 @@ public class StandardParser implements Parser {
             }
         });
 
-
+        // TODO zaszłość, rzuć exception MICHAL
         state.msg = null;
-        if (state.expressions.size() > 0) {
+        if (state.expressions.size() > 0) { // TODO usuń MICHAL
             try {
                 computer.compute(state);
             } catch (ModuleException exception) {
                 state.container = new TilesContainerImpl();
                 state.container.addTile(new InfoTile(exception.toString(), "Module error"));
             }
-            {
+            { // TODO wyodrębnij i loguj MATEUSZ
                 for (String key : state.expressions.keySet()) {
                     System.out.print("future: " + key + " = " + state.expressions.get(key).functionName + " ( ");
                     for (String name : state.expressions.get(key).subexpressionsIds) {
@@ -65,7 +65,8 @@ public class StandardParser implements Parser {
             state.container.addTile(new InfoTile(state.msg, "Computing error"));
             return state.container;
         }
-        return state.container;
+        return state.container;  // TODO wyodrębnij Container i nie modyfikuj state.container. MICHAL
 
+        //TODO jeden duży try catch, różne catche dla różnych exception MICHAL
     }
 }

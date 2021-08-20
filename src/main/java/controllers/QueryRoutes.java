@@ -35,7 +35,7 @@ public class QueryRoutes {
         String expression = ctx.req.getParameter("expr");
         System.out.println(parameters);
         System.out.println(expression);
-        String regex = "\\$"; // TODO: check if $ is only character/phrase that affects HTML and should be filtered out
+        String regex = "\\$"; // TODO: check if $ is only character/phrase that affects HTML and should be filtered out MATEUSZ
         if (parameters == null)// not taking care of your own nulls is kinda mean
             parameters = "";
         else
@@ -45,7 +45,7 @@ public class QueryRoutes {
         else
             expression = expression.replaceAll(regex, "");
 
-        Parser parser = ParserFactory.getParser(ParserFactory.ParserType.STANDARD);
+        Parser parser = ParserFactory.getParser();
         TilesContainer container = parser.parse(parameters, expression);
 
         ArrayList<Tile> tiles = new ArrayList<>();

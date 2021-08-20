@@ -1,7 +1,9 @@
 package model.variables;
 import model.Variable;
 
-public class MatrixVariable extends Variable<double[][]> {
+public class MatrixVariable implements Variable<double[][]> {
+
+    private final double[][] value;
 
     public MatrixVariable(double[][] value) throws IllegalArgumentException {
         if (value == null || value.length == 0 || value[0].length == 0)

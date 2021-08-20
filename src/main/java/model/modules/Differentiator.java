@@ -7,7 +7,6 @@ import model.modules.utils.Functions;
 import model.modules.utils.ModuleException;
 import utils.Pair;
 import model.variables.FunctionVariable;
-import vartiles.factories.FunctionTileFactory;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -17,7 +16,6 @@ public class Differentiator implements Module<FunctionVariable> {
     @Override
     public FunctionVariable execute(TilesContainer container, Variable<?>... args) {
         FunctionVariable function = (FunctionVariable) args[0];
-        container.addTile(new FunctionTileFactory().get(function, "derivative"));
         return symbolicDerivative(function);
     }
 
@@ -138,8 +136,7 @@ public class Differentiator implements Module<FunctionVariable> {
     public boolean verify(Variable<?>... args) {
         return args.length == 1 && args[0].getClass() == FunctionVariable.class;
     }
-
-    // TODO
+    
     private static String removeParentheses(String formula) {
         int n = formula.length();
         if (formula.length() < 2 || formula.charAt(0) != '(' || formula.charAt(n - 1) != ')')

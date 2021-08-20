@@ -7,15 +7,18 @@ import model.Variable;
 import model.modules.utils.LinearAlgebra;
 import model.variables.MatrixVariable;
 import utils.Pair;
-import vartiles.factories.MatrixTileFactory;
+import vartiles.MatrixTile;
 
 public class LUDecomposer implements TerminalModule {
 
     @Override
     public void execute(TilesContainer container, Variable<?>... args) {
         Pair<MatrixVariable, MatrixVariable> lu = decompositionLU((MatrixVariable) args[0]);
-        container.addTile(new MatrixTileFactory().get(lu.first, "L"));
-        container.addTile(new MatrixTileFactory().get(lu.second, "U"));
+        MatrixTile tileL = new MatrixTile(lu.first);
+        tileL.setLabel("L");
+        MatrixTile tileU = new MatrixTile(lu.second);
+        tileU.setLabel("U");
+        // TODO tile LUKASZ
     }
 
     // given A finds matrices L and U such that LU = A, L is lower triangular and U is upper triangular

@@ -1,21 +1,20 @@
 package utils;
 
-import model.modules.Differentiator;
 import model.modules.utils.Functions;
-import model.variables.FunctionVariable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-public abstract class FunctionLatex {
+public class FunctionLatex {
 
-    public static Set<String> knownFormulas = new TreeSet<String>();
+    public static Set<String> slashableFormulas = new TreeSet<String>();
 
     static {
-        knownFormulas.add("sin(x)");
-        knownFormulas.add("cos(x)");
+        slashableFormulas.add("sin(x)");
+        slashableFormulas.add("cos(x)");
+        slashableFormulas.add("ln(x)");
     }
 
     public static String latexForm(String formula) {
@@ -29,7 +28,7 @@ public abstract class FunctionLatex {
             if (formulas.second.isEmpty()) {
                 formulas = Functions.findSubcomponents(formula, "^");
                 if (formulas.second.isEmpty()) {
-                    return knownFormulas.contains(formula) ? "\\" + formula : formula;
+                    return slashableFormulas.contains(formula) ? "\\" + formula : formula;
                 }
             }
         }

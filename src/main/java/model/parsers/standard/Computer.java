@@ -10,12 +10,11 @@ import java.util.EnumSet;
 import java.util.Optional;
 
 public class Computer {
-    // TODO: split each matching to separate methods
     public void compute(State state) {
-        int lastVar = state.futureIndex;
+        int lastVar = state.futureIndex;  // TODO wielkość listy zamiast tego MICHAL
         state.futureIndex = 0;
         for (int i = 0; i < lastVar; ++i) {
-            String id = state.getSubstitutionName(i);
+            String id = state.getSubstitutionName(i);  // TODO rozważ usunięcie MICHAL/MATEUSZ
             State.Expression expression = state.expressions.get(id);
             String functionName = expression.functionName;
             ArrayList<String> subexpressionsIds = expression.subexpressionsIds;
@@ -25,7 +24,7 @@ public class Computer {
 
             for (int j = 0; j < subexpressionsIds.size(); ++j) {
                 String subId = subexpressionsIds.get(j);
-                if (state.results.containsKey(subId)) {
+                if (state.results.containsKey(subId)) {  // TODO zastąp wyjątkami MATEUSZ/MICHAL
                     components[j] = state.results.get(subId).value;
                     subexpressionsTexts.add(state.results.get(subId).text);
                 } else {
@@ -45,10 +44,11 @@ public class Computer {
                 Variable<?> value = matchedModule.get().module.execute(state.container, components);
 
                 state.results.put(id, new State.Result(expressionText, value));
-                state.container.addTile(new InfoTile(value.getValue().toString(), expressionText));
+                state.container.addTile(new InfoTile(value.getValue().toString(), expressionText)); // TODO moduły muszą same robić kafle LUKASZ
                 continue;
             }
 
+            // TODO void variable. Można robić kafle we wszystkich modułach a terminalne zwracać VoidVariable LUKASZ
             Optional<TerminalModules> matchedTerminalModule = EnumSet.allOf(TerminalModules.class)
                     .stream()
                     .filter(x -> x.name.equals(functionName))
@@ -59,7 +59,7 @@ public class Computer {
                 continue;
             }
 
-            state.msg = String.format("Couldn't find possible operation associated with %s to obtain %s \n",
+            state.msg = String.format("Couldn't find possible operation associated with %s to obtain %s \n", // TODO throw exceptino M&M'S
                     functionName,
                     id);
             return;
