@@ -12,14 +12,17 @@
                 <fieldset class="form-group">
                     <div class="form-group">
                         <label for="params">Parameters</label>
+                        <!--/*@thymesVar id="params" type="java.lang.String"*/-->
                         <textarea class="form-control" id="params" rows="3" name="params"
-                                  placeholder="x=1.0; y=[0,1/1,2]; z=&quot;lorem ipsum&quot;; f=(sin(x));"></textarea>
+                                  placeholder="x=1.0; y=2; A=[0,1/1,2]; txt=&quot;lorem ipsum&quot;; f=(sin(x));"
+                                  th:text="${params}"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="params">Expression</label>
+                        <!--/*@thymesVar id="expr" type="java.lang.String"*/-->
                         <textarea class="form-control" id="expr" rows="3" name="expr"
-                                  placeholder="f^2/2*derivative(f)"></textarea>
-                        <!-- yeah, sure. good luck with that. -->
+                                  placeholder="sin(x+cos(x))"
+                                  th:text="${expr}"></textarea>
                     </div>
                 </fieldset>
                 <div class="form-group d-flex justify-content-end">
@@ -29,8 +32,8 @@
         </div>
     </div>
 
-    <!--/*@thymesVar id="tiles" type="java.util.ArrayList<controllers.QueryRoutes.Tile>"*/-->
-    <!--/*@thymesVar id="tile" type="controllers.QueryRoutes.Tile"*/-->
+    <!--/*@thymesVar id="tiles" type="java.util.ArrayList<hydrogengamma.controllers.QueryRoutes.TileData>"*/-->
+    <!--/*@thymesVar id="tile" type="hydrogengamma.controllers.QueryRoutes.TileData"*/-->
     <div th:each="tile : ${tiles}" class="card border-success mt-1 mb-1">
         <div class="card-body">
             <!--/*@thymesVar id="label" type="java.lang.String"*/-->
