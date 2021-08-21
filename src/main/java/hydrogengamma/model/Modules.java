@@ -20,11 +20,13 @@ public enum Modules {
     TEXT_IDENTITY("", new TextIdentity()),
     FUNCTION_IDENTITY("", new FunctionIdentity());
     // TODO: add stuff here L&M&M
-    // so constant values in expression enforce some new rules about module calling names: 1. don't make "--", it will be resolved to ""; 2. don't use numeric values or I'll replace them
     public final String name;
     public final Module<?> module;
 
     Modules(String name, Module<?> module) {
+        if (!name.matches("^([a-zA-Z]*|[+-:/^!&*|])$")) {
+            throw new IllegalArgumentException("Module name must be either alphabetic or one of +-:/^!&*| or empty.");
+        }
         this.name = name;
         this.module = module;
     }
