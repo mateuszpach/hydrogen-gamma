@@ -3,23 +3,32 @@ package hydrogengamma.model;
 import hydrogengamma.model.modules.*;
 
 public enum Modules {
-    DETERMINANT("determinant", new Determinant()),
+    // Numeric
+    NUMBER_IDENTITY("", new NumericIdentity()),
     DERIVATIVE("derivative", new Differentiator()),
-    LEVENSHTEIN_DIST("levenshtein", new LevenshteinDistance()),
-    LINEAR_SYSTEM("solve", new LinearSystemSolver()),
-    MATRIX_ADD("+", new MatrixAddition()),
-    MATRIX_MUL("*", new MatrixMultiplication()),
-    MATRIX_SCALE("*", new MatrixScalar()),
     NUMBER_ADD("+", new NumberAddition()),
-    //NUMBER_ADD2("a", new NumberAddition()),
+    NUMBER_SUB("-", new NumberSubtraction()),
     NUMBER_MUL("*", new NumberMultiplication()),
     NUMBER_DIV("/", new NumberDivision()),
-    NUMBER_SUB("-", new NumberSubtraction()),
-    NUMBER_IDENTITY("", new NumericIdentity()),
+//    NUMBER_ADD2("a", new NumberAddition()),
+
+    // Matrix
     MATRIX_IDENTITY("", new MatrixIdentity()),
+    DETERMINANT("determinant", new Determinant()),
+    LINEAR_SYSTEM("solve", new LinearSystemSolver()),
+    MATRIX_ADD("+", new MatrixAddition()),
+    MATRIX_SUB("+", new MatrixSubtraction()),
+    MATRIX_MUL("*", new MatrixMultiplication()),
+    MATRIX_SCALE("*", new MatrixScalar()),
+
+    // Text
     TEXT_IDENTITY("", new TextIdentity()),
+    LEVENSHTEIN_DIST("levenshtein", new LevenshteinDistance()),
+
+    // Function
     FUNCTION_IDENTITY("", new FunctionIdentity());
-    // TODO: add stuff here L&M&M
+
+    // TODO: add stuff here L&M
     public final String name;
     public final Module<?> module;
 
