@@ -5,6 +5,7 @@ import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.model.variables.NumericVariable;
+import hydrogengamma.vartiles.MatrixTile;
 
 public class MatrixScalar implements Module<MatrixVariable> {
 
@@ -20,10 +21,15 @@ public class MatrixScalar implements Module<MatrixVariable> {
             b = (NumericVariable) args[0];
         }
         double[][] c = new double[a.rowsNum()][a.colsNum()];
-        for (int i = 0; i < a.rowsNum(); ++i)
-            for (int j = 0; j < a.colsNum(); ++j)
+        for (int i = 0; i < a.rowsNum(); ++i) {
+            for (int j = 0; j < a.colsNum(); ++j) {
                 c[i][j] = a.get(i, j) * b.getValue();
-        return new MatrixVariable(c);
+            }
+        }
+
+        MatrixVariable result = new MatrixVariable(c);
+        container.addTile(new MatrixTile(result));
+        return result;
     }
 
     @Override
