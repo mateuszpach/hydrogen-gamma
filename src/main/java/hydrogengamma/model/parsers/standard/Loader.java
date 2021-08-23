@@ -13,23 +13,17 @@ import static java.lang.Math.min;
 
 public class Loader {
 
-    //TODO: try not to remove whitespace from within text variables (or don't 'cause controlling these is vital) MICHLE
-
     public State load(String varDefinition, String operation) {
         State state = new State();
         //no # allowed, also remove whitespace
-        varDefinition = varDefinition.replaceAll("\\s+", "").replaceAll("#", "");
+        varDefinition = varDefinition.replaceAll("#", "");
         operation = "(" + operation.replaceAll("\\s+", "").replaceAll("#", "") + ")";
         System.out.println("var:" + varDefinition + ": operation:" + operation + ":");
-        try {
-            this.parseVariables(varDefinition, state);
-            operation = fixSigns(operation);
-            operation = this.replaceConstants(operation, state);
-            this.simplifyOperation(operation, state);
-            this.flattenTree(state);
-        } catch (ParsingException e) {
-            state.msg = e.msg;
-        }
+        this.parseVariables(varDefinition, state);
+        operation = fixSigns(operation);
+        operation = this.replaceConstants(operation, state);
+        this.simplifyOperation(operation, state);
+        this.flattenTree(state);
         return state;
     }
 
@@ -92,9 +86,12 @@ public class Loader {
                 int j = i;
                 boolean legit = false;
                 while (j < ins.length && operation.substring(i, j).matches("-?\\d*\\.?\\d*")) {
-                    if (ins[j] <= '9' && ins[j] >= '0') {
+                    if (ins[j] <= '9' && ins[j] >= '0') { // IGNORE THIS WARNING, IT'S FAKE!!!
                         legit = true;
-                        break;
+                        // don't break it, intellij is wrong here, I need 'j' to increment while it can without breaking it prematurely, 'legit' is a side check
+                        // break here would parse "500" into 3 variables 5,0,0, while 'legit' check makes sure stranded '-' isn't being attempted to be parsed as number
+
+                        // break; DON'T
                     }
                     ++j;
                 }
@@ -104,8 +101,8 @@ public class Loader {
                     System.out.println("Suspected constant:" + constant + ": " + i + " " + j);
                     try {
                         double x = Double.parseDouble(constant);
-                        if (!state.results.containsKey(state.constantName(x)))
-                            state.results.put(state.constantName(x), new State.Result(Double.toString(x), new NumericVariable(x)));
+                        if (!state.containsKey(state.constantName(x)))
+                            state.addExpression(state.constantName(x), new State.Expression(Double.toString(x), new NumericVariable(x)));
                         builder.append(state.constantName(x));
                     } catch (Exception e) {
                         throw new ParsingException("could not process: " + constant + " as numeric constant\n");
@@ -122,6 +119,7 @@ public class Loader {
     }
 
     // TODO Extractors dla parsera zwracające odpowiednie typy varaible LUKASZ
+    // note: varDefinition will contain whitespace, remove it from everywhere BUT textVariable content (don't leave it in variables names)
     private void parseVariables(String varDefinition, State state) {
         if (varDefinition.length() == 0)
             return;
@@ -130,70 +128,76 @@ public class Loader {
             String[] b = a.split("=");
             if (b.length != 2)
                 throw new ParsingException("variable definition must contain exactly one '=' character: " + a);
+            b[0] = b[0].replaceAll("\\s+", ""); // remove whitespace from name
+            b[1] = b[1].strip();// strip leading and trailing whitespace from definition
             if (!b[0].matches("[a-zA-Z][\\w]*")) {
                 throw new ParsingException("variable name must be alphanumeric not beginning with digit, but is:" + b[0]);
             }
             //type casing
             if (b[1].charAt(0) == '\"') {//text
                 if (b[1].charAt(b[1].length() - 1) == '\"' && b[1].length() >= 2) {
-                    state.results.put(b[0], new State.Result(
+                    state.addExpression(b[0], new State.Expression(
                             b[0]
                             , new TextVariable(b[1].substring(1, b[1].length() - 1))));
                 } else
                     throw new ParsingException("Text variable definition must be within '\"\"' quotation: " + a);
-            } else if (b[1].charAt(0) == '(') {//function
-                if (b[1].charAt(b[1].length() - 1) == ')') {
-                    state.results.put(b[0], new State.Result(
-                            b[0]
-                            , new FunctionVariable(b[1])));
-                } else
-                    throw new ParsingException("Function variable definition must be within () parenthesis: " + a);
-            } else if (b[1].charAt(0) == '[') {//matrix
-                if (b[1].charAt(b[1].length() - 1) == ']') {
-                    b[1] = b[1].replaceAll("/", " / ");// looks stupid but makes rows not glue together
-                    String[] rows = b[1].substring(1, b[1].length() - 1).split("/");
-                    ArrayList<ArrayList<Double>> matrix = new ArrayList<>();
-                    for (String row : rows) {
-                        ArrayList<Double> rowVal = new ArrayList<>();
-                        String[] val = row.split(",");
-                        for (String x : val) {
-                            x = x.replaceAll("[^\\d-.]", "");
-                            if (x.length() == 0)
-                                continue;
-                            try {
-                                Double y = Double.parseDouble(x);
-                                rowVal.add(y);
-                            } catch (NumberFormatException e) {
-                                throw new ParsingException(x + " from matrix definition " + a + " does not represent valid number");
+            } else {
+                b[1] = b[1].replaceAll("\\s+", "");// not a text so remove all whitespace left
+                if (b[1].charAt(0) == '(') {//function
+                    if (b[1].charAt(b[1].length() - 1) == ')') {
+                        state.addExpression(b[0], new State.Expression(
+                                b[0]
+                                , new FunctionVariable(b[1])));
+                    } else
+                        throw new ParsingException("Function variable definition must be within () parenthesis: " + a);
+                } else if (b[1].charAt(0) == '[') {//matrix
+                    if (b[1].charAt(b[1].length() - 1) == ']') {
+                        b[1] = b[1].replaceAll("/", " / ");// looks stupid but makes rows not glue together
+                        String[] rows = b[1].substring(1, b[1].length() - 1).split("/");
+                        ArrayList<ArrayList<Double>> matrix = new ArrayList<>();
+                        for (String row : rows) {
+                            ArrayList<Double> rowVal = new ArrayList<>();
+                            String[] val = row.split(",");
+                            for (String x : val) {
+                                x = x.replaceAll("[^\\d-.]", "");
+                                if (x.length() == 0)
+                                    continue;
+                                try {
+                                    Double y = Double.parseDouble(x);
+                                    rowVal.add(y);
+                                } catch (NumberFormatException e) {
+                                    throw new ParsingException(x + " from matrix definition " + a + " does not represent valid number");
+                                }
                             }
+                            if (rowVal.size() < 1)
+                                throw new ParsingException("A row from matrix definition " + a + " was found empty");
+                            matrix.add(rowVal);
                         }
-                        if (rowVal.size() < 1)
-                            throw new ParsingException("A row from matrix definition " + a + " was found empty");
-                        matrix.add(rowVal);
+                        int rowSize = matrix.get(0).size();
+                        for (ArrayList<Double> row : matrix) {
+                            if (row.size() != rowSize)
+                                throw new ParsingException("Rows in matrix definition " + a + "must be of equal length");
+                        }
+                        double[][] dMatrix = new double[matrix.size()][rowSize];
+                        for (int i = 0; i < matrix.size(); ++i)
+                            for (int j = 0; j < rowSize; ++j)
+                                dMatrix[i][j] = matrix.get(i).get(j);
+                        state.addExpression(b[0], new State.Expression(
+                                b[0],
+                                new MatrixVariable(dMatrix)));
+                    } else
+                        throw new ParsingException("Matrix variable definition must be within [] parenthesis: " + a);
+                } else {//numeric
+                    try {
+                        double x = Double.parseDouble(b[1]);
+                        state.addExpression(b[0], new State.Expression(
+                                b[0],
+                                new NumericVariable(x)));
+                    } catch (NumberFormatException e) {
+                        throw new ParsingException(b[1] + " from definition " + a + " does not represent valid number");
                     }
-                    int rowSize = matrix.get(0).size();
-                    for (ArrayList<Double> row : matrix) {
-                        if (row.size() != rowSize)
-                            throw new ParsingException("Rows in matrix definition " + a + "must be of equal length");
-                    }
-                    double[][] dMatrix = new double[matrix.size()][rowSize];
-                    for (int i = 0; i < matrix.size(); ++i)
-                        for (int j = 0; j < rowSize; ++j)
-                            dMatrix[i][j] = matrix.get(i).get(j);
-                    state.results.put(b[0], new State.Result(
-                            b[0],
-                            new MatrixVariable(dMatrix)));
-                } else
-                    throw new ParsingException("Matrix variable definition must be within [] parenthesis: " + a);
-            } else {//numeric
-                try {
-                    double x = Double.parseDouble(b[1]);
-                    state.results.put(b[0], new State.Result(
-                            b[0],
-                            new NumericVariable(x)));
-                } catch (NumberFormatException e) {
-                    throw new ParsingException(b[1] + " from definition " + a + " does not represent valid number");
                 }
+
             }
         }
     }
@@ -322,7 +326,7 @@ public class Loader {
             }
         }
         String varName = state.getSubstitutionName();
-        state.expressions.put(varName, new State.Expression(resolved.first, resolved.second));
+        state.addExpression(varName, new State.Expression(resolved.first, resolved.second));
         return varName;
     }
 }
