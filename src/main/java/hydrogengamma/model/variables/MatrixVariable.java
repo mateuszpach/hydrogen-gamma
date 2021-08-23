@@ -2,6 +2,8 @@ package hydrogengamma.model.variables;
 
 import hydrogengamma.model.Variable;
 
+import java.util.Arrays;
+
 public class MatrixVariable implements Variable<double[][]> {
 
     private final double[][] value;
@@ -59,5 +61,10 @@ public class MatrixVariable implements Variable<double[][]> {
             }
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(value);
     }
 }
