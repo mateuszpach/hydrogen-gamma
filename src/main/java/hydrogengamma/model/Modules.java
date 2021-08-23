@@ -20,6 +20,7 @@ public enum Modules {
     MATRIX_SUB("+", new MatrixSubtraction()),
     MATRIX_MUL("*", new MatrixMultiplication()),
     MATRIX_SCALE("*", new MatrixScalar()),
+    MATRIX_TRANS("transpose", new MatrixTranspose()),
 
     // Text
     TEXT_IDENTITY("", new TextIdentity()),

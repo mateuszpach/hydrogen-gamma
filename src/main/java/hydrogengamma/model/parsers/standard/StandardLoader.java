@@ -1,5 +1,6 @@
 package hydrogengamma.model.parsers.standard;
 
+import hydrogengamma.controllers.Loader;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.model.variables.NumericVariable;
@@ -7,11 +8,13 @@ import hydrogengamma.model.variables.TextVariable;
 import hydrogengamma.utils.Pair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-public class Loader {
+public class StandardLoader implements Loader {
 
     public State load(String varDefinition, String operation) {
         State state = new State();
@@ -23,14 +26,8 @@ public class Loader {
         operation = fixSigns(operation);
         operation = this.replaceConstants(operation, state);
         this.simplifyOperation(operation, state);
-        this.flattenTree(state);
+        // so tree flattening is dumb and would be easily resolved by making identity modules not print anything
         return state;
-    }
-
-    private void flattenTree(State state) {
-        //  Map<String, Pair<String, ArrayList<String>>> flat = new HashMap<>();
-        //  int top=state.futureIndex-1;
-
     }
 
     private String fixSigns(String operation) {
@@ -89,7 +86,7 @@ public class Loader {
                     if (ins[j] <= '9' && ins[j] >= '0') { // IGNORE THIS WARNING, IT'S FAKE!!!
                         legit = true;
                         // don't break it, intellij is wrong here, I need 'j' to increment while it can without breaking it prematurely, 'legit' is a side check
-                        // break here would parse "500" into 3 variables 5,0,0, while 'legit' check makes sure stranded '-' isn't being attempted to be parsed as number
+                        // break here would parse "500" into 3 variables 5,0,0, while 'legit' check just makes sure a stranded '-' won't be tried to be parsed as a number
 
                         // break; DON'T
                     }

@@ -1,4 +1,4 @@
-// TODO: update tests
+// TODO: update tests Mateusz
 
 //class TextAnalysisTest {
 //

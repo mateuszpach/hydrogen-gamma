@@ -1,5 +1,6 @@
 package hydrogengamma.model.parsers.standard;
 
+import hydrogengamma.controllers.Computer;
 import hydrogengamma.model.*;
 import hydrogengamma.vartiles.InfoTile;
 import hydrogengamma.vartiles.Tile;
@@ -9,9 +10,9 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Optional;
 
-public class Computer {
+public class StandardComputer implements Computer {
 
-    private static final Logger logger = Logger.getLogger(Computer.class);
+    private static final Logger logger = Logger.getLogger(StandardComputer.class);
 
     public TilesContainer compute(State state) {
         TilesContainer container = new TilesContainerImpl();

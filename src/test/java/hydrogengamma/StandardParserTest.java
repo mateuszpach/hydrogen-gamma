@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class StandardParserTest {
-    Loader loader = new Loader();
-    Computer computer = new Computer();
+    StandardLoader standardLoader = new StandardLoader();
+    StandardComputer standardComputer = new StandardComputer();
 
     @Test
     void removeWhitespaceAndHashtags() {
-        State state = loader.load("#a#a#=#1#;b    b   =   1   ;\nc\nc\n=\n1\n;\rd\r\rd\r=\r1\r; e e = 1 ", "");
+        State state = standardLoader.load("#a#a#=#1#;b    b   =   1   ;\nc\nc\n=\n1\n;\rd\r\rd\r=\r1\r; e e = 1 ", "");
         assertTrue(state.containsKey("aa"));
         assertTrue(state.containsKey("bb"));
         assertTrue(state.containsKey("cc"));
@@ -25,25 +25,25 @@ public class StandardParserTest {
     void parseVariableDefinitionStructure() {
         State state;
         //returns message on throw (to parser to print status for user)
-        assertThrows(ParsingException.class, () -> loader.load("a;1", ""));
-        assertThrows(ParsingException.class, () -> loader.load("0a=1", ""));
-        assertThrows(ParsingException.class, () -> loader.load("a=\"", ""));
-        assertThrows(ParsingException.class, () -> loader.load("a=(", ""));
-        assertThrows(ParsingException.class, () -> loader.load("a=[", ""));
-        assertThrows(ParsingException.class, () -> loader.load("a=aaa", ""));
-        assertThrows(ParsingException.class, () -> loader.load("a=1..1", ""));
-        assertThrows(ParsingException.class, () -> loader.load("a=--1.1", ""));
-        assertThrows(ParsingException.class, () -> loader.load("a=[1,1/1]", ""));
-        assertThrows(ParsingException.class, () -> loader.load("a=[1..1]", ""));
-        assertThrows(ParsingException.class, () -> loader.load("a=[--1.1]", ""));
-        assertThrows(ParsingException.class, () -> loader.load("a=[]", ""));
-        assertThrows(ParsingException.class, () -> loader.load("a=[/]", ""));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a;1", ""));
+        assertThrows(ParsingException.class, () -> standardLoader.load("0a=1", ""));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=\"", ""));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=(", ""));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=[", ""));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=aaa", ""));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=1..1", ""));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=--1.1", ""));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=[1,1/1]", ""));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=[1..1]", ""));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=[--1.1]", ""));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=[]", ""));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=[/]", ""));
     }
 
     @Test
     void correctVariablesPass() {
         final State[] state = new State[1];//cause lambda
-        assertDoesNotThrow(() -> state[0] = loader.load("a=1;b=-1;c=1.1;d=-1.1;e=\"\";f=\"\"\";g=(1);h=(1,-1,1.1,-1.1);i=[1];j=[1/-1/1.1/-1.1];k=[1,-1/1.1,-1.1];l=[1,-1,1.1,-1.1]", ""));
+        assertDoesNotThrow(() -> state[0] = standardLoader.load("a=1;b=-1;c=1.1;d=-1.1;e=\"\";f=\"\"\";g=(1);h=(1,-1,1.1,-1.1);i=[1];j=[1/-1/1.1/-1.1];k=[1,-1/1.1,-1.1];l=[1,-1,1.1,-1.1]", ""));
         assertEquals(state[0].expressions.size() - state[0].getComputationOrder().size(), 12);
         assertEquals(state[0].expressions.get("a").getVariable().getValue(), 1d);
         assertEquals(state[0].expressions.get("b").getVariable().getValue(), -1d);
@@ -62,13 +62,13 @@ public class StandardParserTest {
     @Test
     void replaceConstants() {
         final State[] state = new State[1];
-        assertDoesNotThrow(() -> state[0] = loader.load("", "(-1)+(-1.1)+1.1+-1+-1.1+--1+---1+--1.1+---1.1"));
+        assertDoesNotThrow(() -> state[0] = standardLoader.load("", "(-1)+(-1.1)+1.1+-1+-1.1+--1+---1+--1.1+---1.1"));
         assertEquals(state[0].expressions.size() - state[0].getComputationOrder().size(), 4);
         assertEquals(state[0].expressions.get("01d0").getVariable().getValue(), 1d);
         assertEquals(state[0].expressions.get("0m1d0").getVariable().getValue(), -1d);
         assertEquals(state[0].expressions.get("01d1").getVariable().getValue(), 1.1d);
         assertEquals(state[0].expressions.get("0m1d1").getVariable().getValue(), -1.1d);
-        assertDoesNotThrow(() -> state[0] = loader.load("", "-+--+---+-1.1"));
+        assertDoesNotThrow(() -> state[0] = standardLoader.load("", "-+--+---+-1.1"));
         assertEquals(state[0].expressions.size() - state[0].getComputationOrder().size(), 1);
         assertEquals(state[0].expressions.get("0m1d1").getVariable().getValue(), -1.1d);
     }

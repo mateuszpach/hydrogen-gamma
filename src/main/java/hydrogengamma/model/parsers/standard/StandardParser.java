@@ -5,19 +5,18 @@ import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.TilesContainerImpl;
 import hydrogengamma.model.modules.utils.ModuleException;
 import hydrogengamma.vartiles.InfoTile;
-import hydrogengamma.vartiles.Tile;
 import org.apache.log4j.Logger;
 
 public class StandardParser implements Parser {
 
     private static final Logger logger = Logger.getLogger(StandardParser.class);
 
-    private final Loader loader;
-    private final Computer computer;
+    private final StandardLoader standardLoader;
+    private final StandardComputer standardComputer;
 
-    public StandardParser(Loader loader, Computer computer) {
-        this.loader = loader;
-        this.computer = computer;
+    public StandardParser(StandardLoader standardLoader, StandardComputer standardComputer) {
+        this.standardLoader = standardLoader;
+        this.standardComputer = standardComputer;
     }
 
     @Override
@@ -30,7 +29,7 @@ public class StandardParser implements Parser {
 
         State state;
         try {
-            state = loader.load(variables, expression);
+            state = standardLoader.load(variables, expression);
         } catch (ParsingException e) {
             return new TilesContainerImpl(new InfoTile(e.msg, "Parsing error"));
         }
@@ -50,7 +49,7 @@ public class StandardParser implements Parser {
 
         TilesContainer container;
         try {
-            container = computer.compute(state);
+            container = standardComputer.compute(state);
         } catch (ParsingException e) {
             return new TilesContainerImpl(new InfoTile(e.msg, "Computing error"));
         } catch (ModuleException exception) {

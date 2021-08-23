@@ -1,9 +1,6 @@
 package hydrogengamma.model.parsers.standard;
 
-import hydrogengamma.model.TilesContainer;
-import hydrogengamma.model.TilesContainerImpl;
 import hydrogengamma.model.Variable;
-import hydrogengamma.utils.Pair;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -12,11 +9,11 @@ import java.util.TreeMap;
 public class State {
     //public TilesContainer container;
     public Map<String, Expression> expressions;// TODO: make it private, with some kind of lock that will prohibit modification once it leaves loader (some proxy) MICHAL
-    private int futureIndex;
+    private int nextIndex;
 
     public State() {
         this.expressions = new TreeMap<>();
-        this.futureIndex = 0;
+        this.nextIndex = 0;
     }
 
     public void addExpression(String name, Expression exp) {
@@ -31,9 +28,9 @@ public class State {
 
     public ArrayList<String> getComputationOrder() {
         ArrayList<String> order = new ArrayList<>();
-        if (futureIndex == 0)
+        if (nextIndex == 0)
             return order;
-        String top = getSubstitutionName(futureIndex - 1);
+        String top = getSubstitutionName(nextIndex - 1);
         traverse(top, order);
         System.out.println("Computation order: " + order);
         return order;
@@ -50,7 +47,7 @@ public class State {
     }
 
     public String getSubstitutionName() {
-        return getSubstitutionName(futureIndex++);
+        return getSubstitutionName(nextIndex++);
     }
 
     public String getSubstitutionName(int index) {
