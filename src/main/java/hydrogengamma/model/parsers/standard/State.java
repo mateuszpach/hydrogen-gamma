@@ -1,7 +1,5 @@
 package hydrogengamma.model.parsers.standard;
 
-import hydrogengamma.model.TilesContainer;
-import hydrogengamma.model.TilesContainerImpl;
 import hydrogengamma.model.Variable;
 
 import java.util.ArrayList;
@@ -9,22 +7,47 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class State {
-    public TilesContainer container;
-    public Map<String, Expression> expressions;
-    public Map<String, Result> results;
-    int futureIndex;
-    public String msg;
+    //public TilesContainer container;
+    public Map<String, Expression> expressions;// TODO: make it private, with some kind of lock that will prohibit modification once it leaves loader (some proxy) MICHAL
+    private int nextIndex;
 
     public State() {
         this.expressions = new TreeMap<>();
-        this.results = new TreeMap<>();
-        this.futureIndex = 0;
-        this.container = new TilesContainerImpl();
-        this.msg = null;
+        this.nextIndex = 0;
+    }
+
+    public void addExpression(String name, Expression exp) {
+        if (expressions.containsKey(name))
+            throw new ParsingException(String.format("attempted redefinition of variable %s\n", name));
+        expressions.put(name, exp);
+    }
+
+    public boolean containsKey(String x) {
+        return expressions.containsKey(x);
+    }
+
+    public ArrayList<String> getComputationOrder() {
+        ArrayList<String> order = new ArrayList<>();
+        if (nextIndex == 0)
+            return order;
+        String top = getSubstitutionName(nextIndex - 1);
+        traverse(top, order);
+        System.out.println("Computation order: " + order);
+        return order;
+    }
+
+    private void traverse(String node, ArrayList<String> order) {
+        if (expressions.get(node).ready) {
+            return;
+        }
+        for (String component : expressions.get(node).subexpressionsIds) {
+            traverse(component, order);
+        }
+        order.add(node);
     }
 
     public String getSubstitutionName() {
-        return getSubstitutionName(futureIndex++);
+        return getSubstitutionName(nextIndex++);
     }
 
     public String getSubstitutionName(int index) {
@@ -35,23 +58,50 @@ public class State {
         return "0" + x.toString().replaceAll("-", "m").replaceAll("\\.", "d");
     }
 
+    public boolean isUserMadeName(String x) {
+        return x.matches("[a-zA-Z]]+");
+    }
+
     public static class Expression {
         String functionName;
         ArrayList<String> subexpressionsIds;
+        String text;
+        boolean ready;
+        private Variable<?> value;
 
         public Expression(String functionName, ArrayList<String> subexpressionsIds) {
             this.functionName = functionName;
             this.subexpressionsIds = subexpressionsIds;
+            this.ready = false;
         }
-    }
 
-    public static class Result {
-        String text;
-        Variable<?> value;
-
-        public Result(String text, Variable<?> value) {
+        public Expression(String text, Variable<?> value) {
             this.text = text;
             this.value = value;
+            this.ready = true;
+        }
+
+        public void setVariable(String text, Variable<?> value) {
+            if (this.ready)
+                throw new ParsingException(String.format("An attempt to reassign value of %s,%s(%s) was made, was %s\n", this.text, this.functionName, this.subexpressionsIds, this.value));
+            this.text = text;
+            this.value = value;
+            this.ready = true;
+        }
+
+        public Variable<?> getVariable() {
+            if (!this.ready)
+                throw new ParsingException(String.format("An attempt to obtain value of %s(%s) was made before it was assigned\n", this.functionName, this.subexpressionsIds));
+            return this.value;
+        }
+
+        @Override
+        public String toString() {
+            if (this.ready)
+                return getVariable().getValue().toString();
+            else
+                return String.format("%s(%s)", functionName, String.join(", ", this.subexpressionsIds));
         }
     }
+
 }

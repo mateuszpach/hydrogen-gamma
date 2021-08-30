@@ -1,24 +1,31 @@
 package hydrogengamma.model.parsers.standard;
 
-import hydrogengamma.model.Modules;
-import hydrogengamma.model.TerminalModules;
-import hydrogengamma.model.Variable;
+import hydrogengamma.controllers.Computer;
+import hydrogengamma.model.*;
 import hydrogengamma.vartiles.InfoTile;
+import hydrogengamma.vartiles.Tile;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Optional;
 
-public class Computer {
+public class StandardComputer implements Computer {
 
-    private static final Logger logger = Logger.getLogger(Computer.class);
+    private static final Logger logger = Logger.getLogger(StandardComputer.class);
 
-    public void compute(State state) {
-        int lastVar = state.futureIndex;  // TODO wielkość listy zamiast tego MICHAL
-        state.futureIndex = 0;
-        for (int i = 0; i < lastVar; ++i) {
-            String id = state.getSubstitutionName(i);  // TODO rozważ usunięcie MICHAL/MATEUSZ
+    public TilesContainer compute(State state) {
+        TilesContainer container = new TilesContainerImpl();
+        state.expressions.forEach((id, result) -> {
+            if (state.isUserMadeName(id)) {
+                Tile tile = new InfoTile(result.getVariable().getValue().toString(), result.text);
+                container.addTile(tile);
+
+                System.out.println("variable:" + id + " " + result.getVariable().getValue());
+            }
+        });
+        for (String id : state.getComputationOrder()) {
+            System.out.println("Computing: " + id);
             State.Expression expression = state.expressions.get(id);
             String functionName = expression.functionName;
             ArrayList<String> subexpressionsIds = expression.subexpressionsIds;
@@ -28,12 +35,11 @@ public class Computer {
 
             for (int j = 0; j < subexpressionsIds.size(); ++j) {
                 String subId = subexpressionsIds.get(j);
-                if (state.results.containsKey(subId)) {  // TODO zastąp wyjątkami MATEUSZ/MICHAL
-                    components[j] = state.results.get(subId).value;
-                    subexpressionsTexts.add(state.results.get(subId).text);
+                if (state.containsKey(subId)) {
+                    components[j] = state.expressions.get(subId).getVariable();
+                    subexpressionsTexts.add(state.expressions.get(subId).text);
                 } else {
-                    state.msg = "Could not find variable " + subId + " when computing " + id + "\n";
-                    return;
+                    throw new ParsingException("Could not find variable " + subId + " when computing " + id + "\n");
                 }
             }
 
@@ -47,10 +53,10 @@ public class Computer {
             if (matchedModule.isPresent()) {
                 logger.debug("Matched module " + matchedModule.get().name());
 
-                Variable<?> value = matchedModule.get().module.execute(state.container, components);
+                Variable<?> value = matchedModule.get().module.execute(container, components);
 
-                state.results.put(id, new State.Result(expressionText, value));
-                state.container.addTile(new InfoTile(value.getValue().toString(), expressionText)); // TODO moduły muszą same robić kafle LUKASZ
+                state.expressions.get(id).setVariable(expressionText, value);
+                container.addTile(new InfoTile(value.getValue().toString(), expressionText)); // TODO moduły muszą same robić kafle LUKASZ
                 continue;
             }
 
@@ -61,15 +67,12 @@ public class Computer {
                     .filter(x -> x.module.verify(components))
                     .findFirst();
             if (matchedTerminalModule.isPresent()) {
-                matchedTerminalModule.get().module.execute(state.container, components);
+                matchedTerminalModule.get().module.execute(container, components);
                 continue;
             }
-
-            state.msg = String.format("Couldn't find possible operation associated with %s to obtain %s \n", // TODO throw exceptino M&M'S
-                    functionName,
-                    id);
-            return;
+            throw new ParsingException(String.format("Couldn't find possible operation associated with %s to obtain %s \n", functionName, id));
         }
+        return container;
     }
 
     private String getExpressionText(String functionName, ArrayList<String> subexpressionsTexts) {

@@ -5,56 +5,39 @@ import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.TilesContainerImpl;
 import hydrogengamma.model.modules.utils.ModuleException;
 import hydrogengamma.vartiles.InfoTile;
-import hydrogengamma.vartiles.Tile;
 import org.apache.log4j.Logger;
 
 public class StandardParser implements Parser {
 
     private static final Logger logger = Logger.getLogger(StandardParser.class);
 
-    private final Loader loader;
-    private final Computer computer;
+    private final StandardLoader standardLoader;
+    private final StandardComputer standardComputer;
 
-    public StandardParser(Loader loader, Computer computer) {
-        this.loader = loader;
-        this.computer = computer;
+    public StandardParser(StandardLoader standardLoader, StandardComputer standardComputer) {
+        this.standardLoader = standardLoader;
+        this.standardComputer = standardComputer;
     }
 
     @Override
     public TilesContainer parse(String variables, String expression) { // runs load and compute session with error handling and tile building
         if (variables.equals("") && expression.equals("")) {
             //just so it can return immediately on empty input
-            State state = new State();
-            return state.container;
+            return new TilesContainerImpl();
         }
 
-        State state = loader.load(variables, expression);
-        if (state.msg != null) {
-            state.container = new TilesContainerImpl();
-            state.container.addTile(new InfoTile(state.msg, "Parsing error"));
-            return state.container;
+
+        State state;
+        try {
+            state = standardLoader.load(variables, expression);
+        } catch (ParsingException e) {
+            return new TilesContainerImpl(new InfoTile(e.msg, "Parsing error"));
         }
-
-        state.results.forEach((id, result) -> {  // TODO powinno być w Computer MICHAL
-            if (id.charAt(0) != '0') { // TODO zrób czytelną funkcję na to MICHAL
-                Tile tile = new InfoTile(result.value.getValue().toString(), result.text);
-                state.container.addTile(tile);
-
-                System.out.println("variable:" + id + " " + result.value.getValue());
-            }
-        });
-
-        // TODO zaszłość, rzuć exception MICHAL
-        state.msg = null;
-        if (state.expressions.size() > 0) { // TODO usuń MICHAL
-            try {
-                computer.compute(state);
-            } catch (ModuleException exception) {
-                state.container = new TilesContainerImpl();
-                state.container.addTile(new InfoTile(exception.toString(), "Module error"));
-            }
-            { // TODO wyodrębnij i loguj MATEUSZ
-                for (String key : state.expressions.keySet()) {
+        { // TODO wyodrębnij i loguj MATEUSZ
+            for (String key : state.expressions.keySet()) {
+                if (state.expressions.get(key).ready) {
+                    System.out.println(key + " : " + state.expressions.get(key).text + " = " + state.expressions.get(key).getVariable().getValue().toString());
+                } else {
                     System.out.print("future: " + key + " = " + state.expressions.get(key).functionName + " ( ");
                     for (String name : state.expressions.get(key).subexpressionsIds) {
                         System.out.print(name + " ");
@@ -63,13 +46,16 @@ public class StandardParser implements Parser {
                 }
             }
         }
-        if (state.msg != null) {
-            state.container = new TilesContainerImpl();
-            state.container.addTile(new InfoTile(state.msg, "Computing error"));
-            return state.container;
-        }
-        return state.container;  // TODO wyodrębnij Container i nie modyfikuj state.container. MICHAL
 
-        //TODO jeden duży try catch, różne catche dla różnych exception MICHAL
+        TilesContainer container;
+        try {
+            container = standardComputer.compute(state);
+        } catch (ParsingException e) {
+            return new TilesContainerImpl(new InfoTile(e.msg, "Computing error"));
+        } catch (ModuleException exception) {
+            return new TilesContainerImpl(new InfoTile(exception.toString(), "Module error"));
+        }
+        return container;
+
     }
 }

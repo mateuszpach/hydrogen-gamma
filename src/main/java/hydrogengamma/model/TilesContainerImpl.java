@@ -8,6 +8,14 @@ public class TilesContainerImpl implements TilesContainer {
 
     private final ArrayList<Tile> tiles = new ArrayList<>();
 
+    public TilesContainerImpl() {
+    }
+
+    public TilesContainerImpl(Tile tile) {
+        this();
+        this.addTile(tile);
+    }
+
     @Override
     public void addTile(Tile tile) {
         tiles.add(tile);
