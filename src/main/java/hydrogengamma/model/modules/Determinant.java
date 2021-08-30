@@ -7,12 +7,14 @@ import hydrogengamma.model.modules.utils.LinearAlgebra;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.model.variables.NumericVariable;
 import hydrogengamma.utils.Pair;
+import hydrogengamma.vartiles.NumericTile;
 
 public class Determinant implements Module<NumericVariable> {
     @Override
     public NumericVariable execute(TilesContainer container, Variable<?>... args) {
         MatrixVariable matrix = (MatrixVariable) args[0];
         Double det = determinant(matrix);
+        container.addTile(new NumericTile(new NumericVariable(det), "Determinant"));
         return new NumericVariable(det);
     }
 

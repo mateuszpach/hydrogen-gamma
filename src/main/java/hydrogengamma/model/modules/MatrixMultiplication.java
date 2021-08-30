@@ -4,6 +4,7 @@ import hydrogengamma.model.Module;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.MatrixVariable;
+import hydrogengamma.vartiles.MatrixTile;
 
 public class MatrixMultiplication implements Module<MatrixVariable> {
 
@@ -16,6 +17,7 @@ public class MatrixMultiplication implements Module<MatrixVariable> {
             for (int j = 0; j < b.colsNum(); ++j)
                 for (int k = 0; k < a.colsNum(); ++k)
                     c[i][j] += a.get(i, k) * b.get(k, j);
+        container.addTile(new MatrixTile(new MatrixVariable(c), "Matrix product"));
         return new MatrixVariable(c);
     }
 

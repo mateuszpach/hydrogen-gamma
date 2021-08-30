@@ -4,6 +4,7 @@ import hydrogengamma.model.Module;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.NumericVariable;
+import hydrogengamma.vartiles.NumericTile;
 
 public class NumberAddition implements Module<NumericVariable> {
 
@@ -13,6 +14,7 @@ public class NumberAddition implements Module<NumericVariable> {
         for (Variable<?> arg : args) {
             sum += ((NumericVariable) arg).getValue();
         }
+        container.addTile(new NumericTile(new NumericVariable(sum), "Sum of numbers"));
         return new NumericVariable(sum);
     }
 

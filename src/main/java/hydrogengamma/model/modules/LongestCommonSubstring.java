@@ -1,17 +1,19 @@
-package hydrogengamma.model.terminalmodules;
+package hydrogengamma.model.modules;
 
+import hydrogengamma.model.Module;
 import hydrogengamma.model.TerminalModule;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.TextVariable;
+import hydrogengamma.model.variables.VoidVariable;
 import hydrogengamma.vartiles.TableTile;
 
 import java.util.ArrayList;
 
-public class LongestCommonSubstring implements TerminalModule {
+public class LongestCommonSubstring implements Module<VoidVariable> {
 
     @Override
-    public void execute(TilesContainer container, Variable<?>... args) {
+    public VoidVariable execute(TilesContainer container, Variable<?>... args) {
         String text1 = ((TextVariable) args[0]).getValue();
         String text2 = ((TextVariable) args[1]).getValue();
 
@@ -41,6 +43,7 @@ public class LongestCommonSubstring implements TerminalModule {
         }
 
         container.addTile(new TableTile(result, "LCS"));
+        return new VoidVariable();
     }
 
     @Override

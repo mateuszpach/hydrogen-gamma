@@ -7,6 +7,7 @@ import hydrogengamma.model.modules.utils.Functions;
 import hydrogengamma.model.modules.utils.ModuleException;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.utils.Pair;
+import hydrogengamma.vartiles.FunctionTile;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -16,7 +17,9 @@ public class Differentiator implements Module<FunctionVariable> {
     @Override
     public FunctionVariable execute(TilesContainer container, Variable<?>... args) {
         FunctionVariable function = (FunctionVariable) args[0];
-        return symbolicDerivative(function);
+        FunctionVariable derivative = symbolicDerivative(function);
+        container.addTile(new FunctionTile(derivative, "Derivative"));
+        return derivative;
     }
 
     private static FunctionVariable symbolicDerivative(FunctionVariable func) {

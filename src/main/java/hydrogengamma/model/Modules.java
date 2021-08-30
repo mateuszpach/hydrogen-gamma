@@ -1,11 +1,14 @@
 package hydrogengamma.model;
 
 import hydrogengamma.model.modules.*;
+import hydrogengamma.model.modules.CountLetters;
+import hydrogengamma.model.modules.CountWords;
+import hydrogengamma.model.modules.LUDecomposer;
+import hydrogengamma.model.modules.LongestCommonSubstring;
 
 public enum Modules {
     // Numeric
     NUMBER_IDENTITY("", new NumericIdentity()),
-    DERIVATIVE("derivative", new Differentiator()),
     NUMBER_ADD("+", new NumberAddition()),
     NUMBER_SUB("-", new NumberSubtraction()),
     NUMBER_MUL("*", new NumberMultiplication()),
@@ -27,7 +30,14 @@ public enum Modules {
     LEVENSHTEIN_DIST("levenshtein", new LevenshteinDistance()),
 
     // Function
-    FUNCTION_IDENTITY("", new FunctionIdentity());
+    FUNCTION_IDENTITY("", new FunctionIdentity()),
+    DERIVATIVE("derivative", new Differentiator()),
+
+    // Voids
+    COUNT_LETTERS("count_letters", new CountLetters()),
+    COUNT_WORDS("count_words", new CountWords()),
+    LU_DECOMPOSITION("lu", new LUDecomposer()),
+    LONGEST_COMMON_SUBSTRING("lcs", new LongestCommonSubstring());
 
     // TODO: add stuff here L&M
     public final String name;
