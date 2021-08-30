@@ -40,7 +40,7 @@ public class LongestCommonSubstring implements TerminalModule {
             }
         }
 
-        container.addTile(new TableTile(result));
+        container.addTile(new TableTile(result, "LCS"));
     }
 
     @Override

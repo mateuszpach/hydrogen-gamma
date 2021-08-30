@@ -28,7 +28,7 @@ public class MatrixScalar implements Module<MatrixVariable> {
         }
 
         MatrixVariable result = new MatrixVariable(c);
-        container.addTile(new MatrixTile(result));
+        container.addTile(new MatrixTile(result, "Matrix by scalar multiplication"));
         return result;
     }
 

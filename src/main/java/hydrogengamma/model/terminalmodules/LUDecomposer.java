@@ -13,10 +13,8 @@ public class LUDecomposer implements TerminalModule {
     @Override
     public void execute(TilesContainer container, Variable<?>... args) {
         Pair<MatrixVariable, MatrixVariable> lu = decompositionLU((MatrixVariable) args[0]);
-        MatrixTile tileL = new MatrixTile(lu.first);
-        tileL.setLabel("L");
-        MatrixTile tileU = new MatrixTile(lu.second);
-        tileU.setLabel("U");
+        MatrixTile tileL = new MatrixTile(lu.first, "L");
+        MatrixTile tileU = new MatrixTile(lu.second, "U");
         // TODO tile LUKASZ
     }
 

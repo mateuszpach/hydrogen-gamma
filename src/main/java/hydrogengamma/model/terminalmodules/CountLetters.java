@@ -22,7 +22,7 @@ public class CountLetters implements TerminalModule {
                 lettersFreq.put(letter, oldValue + 1);
             }
         }
-        container.addTile(new TableTile(lettersFreq));
+        container.addTile(new TableTile(lettersFreq, "Number of letters"));
     }
 
     @Override

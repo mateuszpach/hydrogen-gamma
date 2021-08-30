@@ -20,7 +20,7 @@ public class CountWords implements TerminalModule {
             Integer oldValue = wordsFreq.getOrDefault(word, 0);
             wordsFreq.put(word, oldValue + 1);
         }
-        container.addTile(new TableTile(wordsFreq));
+        container.addTile(new TableTile(wordsFreq, "Words frequencies"));
     }
 
     @Override

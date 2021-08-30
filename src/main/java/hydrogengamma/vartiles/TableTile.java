@@ -6,20 +6,21 @@ import java.util.Map;
 public class TableTile extends DefaultTile {
     private final String[][] table;
 
-    public TableTile(String[][] table) {
+    public TableTile(String[][] table, String label) {
+        super(label);
         this.table = table;
     }
 
-    public TableTile(Map<?, ?> map) {
+    public TableTile(Map<?, ?> map, String label) {
         this(map.entrySet().stream()
                 .map(e -> new String[]{e.getKey().toString(), e.getValue().toString()})
-                .toArray(String[][]::new));
+                .toArray(String[][]::new), label);
     }
 
-    public TableTile(ArrayList<?> list) {
+    public TableTile(ArrayList<?> list, String label) {
         this(list.stream()
                 .map(e -> new String[]{e.toString()})
-                .toArray(String[][]::new));
+                .toArray(String[][]::new), label);
     }
 
     @Override
