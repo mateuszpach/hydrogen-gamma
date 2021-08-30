@@ -4,9 +4,10 @@ import hydrogengamma.model.variables.FunctionVariable;
 
 public class FunctionTile extends DefaultTile {
 
-    private FunctionVariable function;
+    private final FunctionVariable function;
 
-    public FunctionTile(FunctionVariable func) {
+    public FunctionTile(FunctionVariable func, String label) {
+        super(label);
         function = func;
     }
 

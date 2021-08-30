@@ -3,7 +3,7 @@ package hydrogengamma;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.modules.utils.LinearAlgebra;
-import hydrogengamma.model.terminalmodules.LUDecomposer;
+import hydrogengamma.model.modules.LUDecomposer;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.vartiles.Tile;

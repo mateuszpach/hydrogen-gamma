@@ -6,7 +6,8 @@ public class MatrixTile extends DefaultTile {
 
     private final MatrixVariable matrix;
 
-    public MatrixTile(MatrixVariable mat) {
+    public MatrixTile(MatrixVariable mat, String label) {
+        super(label);
         matrix = mat;
     }
 

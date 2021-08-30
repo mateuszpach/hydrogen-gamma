@@ -1,18 +1,19 @@
-package hydrogengamma.model.terminalmodules;
+package hydrogengamma.model.modules;
 
-import hydrogengamma.model.TerminalModule;
+import hydrogengamma.model.Module;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.TextVariable;
+import hydrogengamma.model.variables.VoidVariable;
 import hydrogengamma.vartiles.TableTile;
 
 import java.util.Map;
 import java.util.TreeMap;
 
-public class CountLetters implements TerminalModule {
+public class CountLetters implements Module<VoidVariable> {
 
     @Override
-    public void execute(TilesContainer container, Variable<?>... args) {
+    public VoidVariable execute(TilesContainer container, Variable<?>... args) {
         String text = ((TextVariable) args[0]).getValue();
         text = text.replaceAll("[^a-zA-Z ]", "").toLowerCase();
         Map<Character, Integer> lettersFreq = new TreeMap<>();
@@ -22,7 +23,8 @@ public class CountLetters implements TerminalModule {
                 lettersFreq.put(letter, oldValue + 1);
             }
         }
-        container.addTile(new TableTile(lettersFreq));
+        container.addTile(new TableTile(lettersFreq, "Number of letters"));
+        return new VoidVariable();
     }
 
     @Override

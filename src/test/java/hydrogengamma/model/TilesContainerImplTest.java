@@ -16,9 +16,9 @@ class TilesContainerImplTest {
     @Test
     public void addTest() {
         MatrixVariable m = new MatrixVariable(new double[][] {{0, 1, 2},{3, 2, 4}});
-        Tile mTile = new MatrixTile(m);
+        Tile mTile = new MatrixTile(m, "");
         FunctionVariable f = new FunctionVariable("sin(x)");
-        Tile fTile = new FunctionTile(f);
+        Tile fTile = new FunctionTile(f, "");
         TilesContainer tilesContainer = new TilesContainerImpl();
 
         tilesContainer.addTile(mTile);

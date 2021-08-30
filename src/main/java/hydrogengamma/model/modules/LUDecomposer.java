@@ -1,23 +1,23 @@
-package hydrogengamma.model.terminalmodules;
+package hydrogengamma.model.modules;
 
+import hydrogengamma.model.Module;
 import hydrogengamma.model.TerminalModule;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.modules.utils.LinearAlgebra;
 import hydrogengamma.model.variables.MatrixVariable;
+import hydrogengamma.model.variables.VoidVariable;
 import hydrogengamma.utils.Pair;
 import hydrogengamma.vartiles.MatrixTile;
 
-public class LUDecomposer implements TerminalModule {
+public class LUDecomposer implements Module<VoidVariable> {
 
     @Override
-    public void execute(TilesContainer container, Variable<?>... args) {
+    public VoidVariable execute(TilesContainer container, Variable<?>... args) {
         Pair<MatrixVariable, MatrixVariable> lu = decompositionLU((MatrixVariable) args[0]);
-        MatrixTile tileL = new MatrixTile(lu.first);
-        tileL.setLabel("L");
-        MatrixTile tileU = new MatrixTile(lu.second);
-        tileU.setLabel("U");
-        // TODO tile LUKASZ
+        container.addTile(new MatrixTile(lu.first, "L"));
+        container.addTile(new MatrixTile(lu.second, "U"));
+        return new VoidVariable();
     }
 
     // given A finds matrices L and U such that LU = A, L is lower triangular and U is upper triangular

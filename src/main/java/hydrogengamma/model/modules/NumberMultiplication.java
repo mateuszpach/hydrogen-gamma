@@ -4,16 +4,18 @@ import hydrogengamma.model.Module;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.NumericVariable;
+import hydrogengamma.vartiles.NumericTile;
 
 public class NumberMultiplication implements Module<NumericVariable> {
 
     @Override
     public NumericVariable execute(TilesContainer container, Variable<?>... args) {
-        double sum = 1d;
+        double prod = 1d;
         for (Variable<?> arg : args) {
-            sum *= ((NumericVariable) arg).getValue();
+            prod *= ((NumericVariable) arg).getValue();
         }
-        return new NumericVariable(sum);
+        container.addTile(new NumericTile(new NumericVariable(prod), "Numbers product"));
+        return new NumericVariable(prod);
     }
 
     @Override

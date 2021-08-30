@@ -49,8 +49,8 @@ class MatrixScalarTest {
         MatrixVariable expectedResult = new MatrixVariable(new double[][]{{-1, 2, -3}, {4, -5, 6}});
 
         assertEquals(1, tiles.size());
-        assertEquals(new MatrixTile(expectedResult).getContent(), tiles.get(0).getContent());
-        assertEquals(new MatrixTile(expectedResult).getLabel(), tiles.get(0).getLabel());
+        assertEquals(new MatrixTile(expectedResult, "Matrix by scalar multiplication").getContent(), tiles.get(0).getContent());
+        assertEquals(new MatrixTile(expectedResult,"Matrix by scalar multiplication").getLabel(), tiles.get(0).getLabel());
     }
 
     @Test
@@ -87,8 +87,8 @@ class MatrixScalarTest {
         MatrixVariable expectedResult = new MatrixVariable(new double[][]{{-1, 2, -3}, {4, -5, 6}});
 
         assertEquals(1, tiles.size());
-        assertEquals(new MatrixTile(expectedResult).getContent(), tiles.get(0).getContent());
-        assertEquals(new MatrixTile(expectedResult).getLabel(), tiles.get(0).getLabel());
+        assertEquals(new MatrixTile(expectedResult, "Matrix by scalar multiplication").getContent(), tiles.get(0).getContent());
+        assertEquals(new MatrixTile(expectedResult, "Matrix by scalar multiplication").getLabel(), tiles.get(0).getLabel());
     }
 
     @Test

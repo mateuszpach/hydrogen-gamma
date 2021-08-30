@@ -12,8 +12,7 @@ public class TilesContainerImpl implements TilesContainer {
     }
 
     public TilesContainerImpl(Tile tile) {
-        this();
-        this.addTile(tile);
+        addTile(tile);
     }
 
     @Override

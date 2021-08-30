@@ -4,9 +4,10 @@ import hydrogengamma.model.variables.NumericVariable;
 
 public class NumericTile extends DefaultTile {
 
-    private NumericVariable number;
+    private final NumericVariable number;
 
-    public NumericTile(NumericVariable num) {
+    public NumericTile(NumericVariable num, String label) {
+        super(label);
         number = num;
     }
 

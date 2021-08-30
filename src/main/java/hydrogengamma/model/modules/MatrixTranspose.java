@@ -5,6 +5,7 @@ import hydrogengamma.model.Module;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.MatrixVariable;
+import hydrogengamma.vartiles.MatrixTile;
 
 public class MatrixTranspose implements Module<MatrixVariable> {
 
@@ -15,6 +16,7 @@ public class MatrixTranspose implements Module<MatrixVariable> {
         for (int i = 0; i < a.rowsNum(); ++i)
             for (int j = 0; j < a.colsNum(); ++j)
                 c[j][i] = a.get(i, j);
+        container.addTile(new MatrixTile(new MatrixVariable(c), "Matrix transpose"));
         return new MatrixVariable(c);
     }
 

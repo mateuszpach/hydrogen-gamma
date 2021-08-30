@@ -4,9 +4,10 @@ import hydrogengamma.model.variables.TextVariable;
 
 public class TextTile extends DefaultTile {
 
-    private TextVariable text;
+    private final TextVariable text;
 
-    public TextTile(TextVariable text) {
+    public TextTile(TextVariable text, String label) {
+        super(label);
         this.text = text;
     }
 
