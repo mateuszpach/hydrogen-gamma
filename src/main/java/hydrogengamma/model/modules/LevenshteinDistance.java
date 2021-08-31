@@ -43,7 +43,7 @@ public class LevenshteinDistance implements Module<NumericVariable> {
         }
 
         NumericVariable result = new NumericVariable(d[word1.length()][word2.length()]);
-        container.addTile(new NumericTile(result, "Levenshtein distance"));
+        container.addTile(new NumericTile(result, "Levenshtein distance of"));
         return result;
     }
 

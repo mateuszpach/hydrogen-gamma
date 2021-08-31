@@ -13,7 +13,7 @@ public class LinearSystemSolver implements Module<MatrixVariable> {
     @Override
     public MatrixVariable execute(TilesContainer container, Variable<?>... args) {
         MatrixVariable solution = solveLinearSystem((MatrixVariable)args[0], (MatrixVariable) args[1]);
-        container.addTile(new MatrixTile(solution, "Linear system solution"));
+        container.addTile(new MatrixTile(solution, "AX=B solution where A, B are"));
         return solution;
     }
 

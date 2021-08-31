@@ -16,7 +16,7 @@ public class MatrixTranspose implements Module<MatrixVariable> {
         for (int i = 0; i < a.rowsNum(); ++i)
             for (int j = 0; j < a.colsNum(); ++j)
                 c[j][i] = a.get(i, j);
-        container.addTile(new MatrixTile(new MatrixVariable(c), "Matrix transpose"));
+        container.addTile(new MatrixTile(new MatrixVariable(c), "Transpose of"));
         return new MatrixVariable(c);
     }
 

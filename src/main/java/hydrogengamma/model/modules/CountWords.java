@@ -21,7 +21,7 @@ public class CountWords implements Module<VoidVariable> {
             Integer oldValue = wordsFreq.getOrDefault(word, 0);
             wordsFreq.put(word, oldValue + 1);
         }
-        container.addTile(new TableTile(wordsFreq, "Words frequencies"));
+        container.addTile(new TableTile(wordsFreq, "Frequencies of words in"));
         return new VoidVariable();
     }
 

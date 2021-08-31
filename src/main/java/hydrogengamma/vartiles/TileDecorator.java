@@ -2,11 +2,11 @@ package hydrogengamma.vartiles;
 
 public class TileDecorator implements Tile {
 
-    private final String labelPrefix;
+    private final String labelSuffix;
     private final Tile tile; // decoratee
 
     public TileDecorator(Tile tile, String prefix) {
-        this.labelPrefix = prefix;
+        this.labelSuffix = prefix;
         this.tile = tile;
     }
 
@@ -17,6 +17,6 @@ public class TileDecorator implements Tile {
 
     @Override
     public String getLabel() {
-        return labelPrefix + " " + tile.getLabel();
+        return tile.getLabel() + labelSuffix;
     }
 }

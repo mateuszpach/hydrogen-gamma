@@ -14,7 +14,7 @@ public class Determinant implements Module<NumericVariable> {
     public NumericVariable execute(TilesContainer container, Variable<?>... args) {
         MatrixVariable matrix = (MatrixVariable) args[0];
         Double det = determinant(matrix);
-        container.addTile(new NumericTile(new NumericVariable(det), "Determinant"));
+        container.addTile(new NumericTile(new NumericVariable(det), "Determinant of"));
         return new NumericVariable(det);
     }
 

@@ -18,7 +18,7 @@ public class Differentiator implements Module<FunctionVariable> {
     public FunctionVariable execute(TilesContainer container, Variable<?>... args) {
         FunctionVariable function = (FunctionVariable) args[0];
         FunctionVariable derivative = symbolicDerivative(function);
-        container.addTile(new FunctionTile(derivative, "Derivative"));
+        container.addTile(new FunctionTile(derivative, "Derivative of"));
         return derivative;
     }
 

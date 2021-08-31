@@ -14,7 +14,7 @@ public class NumberAddition implements Module<NumericVariable> {
         for (Variable<?> arg : args) {
             sum += ((NumericVariable) arg).getValue();
         }
-        container.addTile(new NumericTile(new NumericVariable(sum), "Sum of numbers"));
+        container.addTile(new NumericTile(new NumericVariable(sum), "Sum of"));
         return new NumericVariable(sum);
     }
 

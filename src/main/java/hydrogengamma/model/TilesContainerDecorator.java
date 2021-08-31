@@ -8,11 +8,11 @@ import java.util.ArrayList;
 public class TilesContainerDecorator implements TilesContainer {
     //TODO: cool we got those, would you mind using them LUKASZ
     private final TilesContainer container; // decoratee
-    private final String labelPrefix;
+    private final String labelSuffix;
 
     public TilesContainerDecorator(TilesContainer container, String prefix) {
         this.container = container;
-        labelPrefix = prefix;
+        labelSuffix = prefix;
     }
 
     public TilesContainerDecorator(TilesContainer container, String prefix, Tile tile) {
@@ -22,7 +22,7 @@ public class TilesContainerDecorator implements TilesContainer {
 
     @Override
     public void addTile(Tile tile) {
-        container.addTile(new TileDecorator(tile, labelPrefix));
+        container.addTile(new TileDecorator(tile, labelSuffix));
     }
 
     @Override
@@ -30,13 +30,3 @@ public class TilesContainerDecorator implements TilesContainer {
         return container.getTiles();
     }
 }
-/*
-TItle1:     LU(A+B) : L=
-    content1: matrix1
-TItle2:     LU(A+B) : U=
-    content2:  matrix2
-
- Sum of numbers: a+b+c , d+e
-
- computer gives suffix for title aas list of arguments
- */

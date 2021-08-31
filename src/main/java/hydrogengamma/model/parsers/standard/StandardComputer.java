@@ -2,10 +2,7 @@ package hydrogengamma.model.parsers.standard;
 
 import hydrogengamma.controllers.Computer;
 import hydrogengamma.controllers.Expression;
-import hydrogengamma.model.Modules;
-import hydrogengamma.model.TilesContainer;
-import hydrogengamma.model.TilesContainerImpl;
-import hydrogengamma.model.Variable;
+import hydrogengamma.model.*;
 import hydrogengamma.utils.Pair;
 import hydrogengamma.vartiles.InfoTile;
 import hydrogengamma.vartiles.Tile;
@@ -26,9 +23,6 @@ public class StandardComputer implements Computer {
             System.out.print("received:" + expression);
         TilesContainer container = new TilesContainerImpl();
         myVariables.forEach((id, result) -> {
-            Tile tile = new InfoTile(result.second.getValue().toString(), id);
-            container.addTile(tile);
-
             System.out.println("variable:" + id + " as " + result.first + " : " + result.second.getValue());
         });
         for (Expression exp : expressions) {
@@ -36,12 +30,14 @@ public class StandardComputer implements Computer {
             String functionName = exp.operationName;
             List<String> subexpressionsIds = exp.subExpressions;
 
-            Variable<?>[] components = new Variable[subexpressionsIds.size()];
+            String[] subLabels = new String[subexpressionsIds.size()];
+            Variable<?>[] subComponents = new Variable[subexpressionsIds.size()];
 
             for (int j = 0; j < subexpressionsIds.size(); ++j) {
                 String subId = subexpressionsIds.get(j);
                 if (myVariables.containsKey(subId)) {
-                    components[j] = myVariables.get(subId).second;
+                    subLabels[j] = myVariables.get(subId).first;
+                    subComponents[j] = myVariables.get(subId).second;
                 } else {
                     throw new ParsingException("Could not find variable " + subId + " when computing " + exp.id + " as " + exp.label + "\n");
                 }
@@ -51,14 +47,19 @@ public class StandardComputer implements Computer {
             Optional<Modules> matchedModule = EnumSet.allOf(Modules.class)
                     .stream()
                     .filter(x -> x.name.equals(functionName))
-                    .filter(x -> x.module.verify(components))
+                    .filter(x -> x.module.verify(subComponents))
                     .findFirst();
             if (matchedModule.isPresent()) {
                 logger.debug("Matched module " + matchedModule.get().name());
 
-                Variable<?> value = matchedModule.get().module.execute(container, components);
+                String argsStr = String.join(", ", subLabels);
+                TilesContainerDecorator containerDecorator = new TilesContainerDecorator(new TilesContainerImpl(), ": " + argsStr);
+
+                Variable<?> value = matchedModule.get().module.execute(containerDecorator, subComponents);
+                for (Tile tile : containerDecorator.getTiles())
+                    container.addTile(tile);
+
                 myVariables.put(exp.id, new Pair<>(exp.label, value));
-                container.addTile(new InfoTile(value.getValue().toString(), exp.label)); // TODO moduły muszą same robić kafle LUKASZ
                 continue;
             }
 
