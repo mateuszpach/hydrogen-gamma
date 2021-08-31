@@ -9,7 +9,7 @@ import hydrogengamma.vartiles.TableTile;
 
 import java.util.ArrayList;
 
-public class LongestCommonSubstring implements Module<VoidVariable> {
+public class LongestCommonSubstrings implements Module<VoidVariable> {
 
     @Override
     public VoidVariable execute(TilesContainer container, Variable<?>... args) {
@@ -41,12 +41,12 @@ public class LongestCommonSubstring implements Module<VoidVariable> {
             }
         }
 
-        container.addTile(new TableTile(result, "LCS of"));
+        container.addTile(new TableTile(result, "Longest common substrings of"));
         return new VoidVariable();
     }
 
     @Override
     public boolean verify(Variable<?>... args) {
-        return false;
+        return args.length == 2 && args[0] instanceof TextVariable && args[1] instanceof TextVariable;
     }
 }

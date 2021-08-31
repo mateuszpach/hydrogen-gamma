@@ -34,7 +34,8 @@ public enum Modules {
     COUNT_LETTERS("countLetters", new CountLetters()),
     COUNT_WORDS("countWords", new CountWords()),
     LU_DECOMPOSITION("LU", new LUDecomposer()),
-    LONGEST_COMMON_SUBSTRING("LCS", new LongestCommonSubstring());
+    LONGEST_COMMON_SUBSTRING("LCS", new LongestCommonSubstrings()),
+    VOID_IDENTITY("", new VoidIdentity());
 
     // TODO: add stuff here L&M
     public final String name;
