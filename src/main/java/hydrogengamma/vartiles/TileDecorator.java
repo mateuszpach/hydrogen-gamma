@@ -17,6 +17,6 @@ public class TileDecorator implements Tile {
 
     @Override
     public String getLabel() {
-        return tile.getLabel() + " " + labelSuffix;
+        return tile.getLabel() + labelSuffix;
     }
 }

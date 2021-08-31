@@ -14,7 +14,7 @@ public class NumberMultiplication implements Module<NumericVariable> {
         for (Variable<?> arg : args) {
             prod *= ((NumericVariable) arg).getValue();
         }
-        container.addTile(new NumericTile(new NumericVariable(prod), "Numbers product"));
+        container.addTile(new NumericTile(new NumericVariable(prod), "Product of"));
         return new NumericVariable(prod);
     }
 

@@ -86,11 +86,16 @@ public class StandardLoader implements Loader {
             String varName = varNameAndDef[0];
             String varDef = varNameAndDef[1];
 
+            boolean found = false;
             for (Extractors extractorEnum : Extractors.values()) {
                 if (extractorEnum.extractor.verify(varDef)) {
                     variableMap.put(varName, extractorEnum.extractor.extract(varDef));
+                    found = true;
+                    break;
                 }
             }
+            if (!found)
+                throw new ParsingException("Can't parse provided definition: " + varDefinition + " to any variable type.");
         }
         return variableMap;
     }

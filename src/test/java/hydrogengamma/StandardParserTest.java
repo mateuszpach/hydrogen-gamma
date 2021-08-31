@@ -100,7 +100,7 @@ public class StandardParserTest {
         assertDoesNotThrow(() -> tilesContainer[0] = computer.compute(
                 loader.load("a=2"),
                 treeBuilder.build("+(+(+(a),a),a,+(a,+(a)))")));
-        assertEquals("$10.0$", tilesContainer[0].getTiles().get(9).getContent());
+        assertEquals("$10.0$", tilesContainer[0].getTiles().get(5).getContent());
 
         assertDoesNotThrow(() -> tilesContainer[0] = computer.compute(
                 loader.load("a=2"),
@@ -110,6 +110,6 @@ public class StandardParserTest {
         assertDoesNotThrow(() -> tilesContainer[0] = computer.compute(
                 loader.load("a=2"),
                 treeBuilder.build("a+a*(a+a*a)")));
-        assertEquals("$14.0$", tilesContainer[0].getTiles().get(8).getContent());
+        assertEquals("$14.0$", tilesContainer[0].getTiles().get(4).getContent());
     }
 }

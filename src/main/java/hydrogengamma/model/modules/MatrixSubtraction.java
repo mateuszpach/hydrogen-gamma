@@ -16,7 +16,7 @@ public class MatrixSubtraction implements Module<MatrixVariable> {
         for (int i = 0; i < a.rowsNum(); ++i)
             for (int j = 0; j < a.colsNum(); ++j)
                 c[i][j] = a.get(i, j) - b.get(i, j);
-        container.addTile(new MatrixTile(new MatrixVariable(c), "Matrices subtracted"));
+        container.addTile(new MatrixTile(new MatrixVariable(c), "Difference of"));
         return new MatrixVariable(c);
     }
 

@@ -14,8 +14,8 @@ public class LUDecomposer implements Module<VoidVariable> {
     @Override
     public VoidVariable execute(TilesContainer container, Variable<?>... args) {
         Pair<MatrixVariable, MatrixVariable> lu = decompositionLU((MatrixVariable) args[0]);
-        container.addTile(new MatrixTile(lu.first, "L"));
-        container.addTile(new MatrixTile(lu.second, "U"));
+        container.addTile(new MatrixTile(lu.first, "L from LU decomposition of"));
+        container.addTile(new MatrixTile(lu.second, "U from LU decomposition of"));
         return new VoidVariable();
     }
 

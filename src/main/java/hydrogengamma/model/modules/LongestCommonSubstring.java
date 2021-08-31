@@ -41,7 +41,7 @@ public class LongestCommonSubstring implements Module<VoidVariable> {
             }
         }
 
-        container.addTile(new TableTile(result, "LCS"));
+        container.addTile(new TableTile(result, "LCS of"));
         return new VoidVariable();
     }
 
