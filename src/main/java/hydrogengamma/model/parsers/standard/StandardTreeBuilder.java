@@ -129,7 +129,6 @@ public class StandardTreeBuilder implements TreeBuilder {
         }
         return pos;
     }
-
     private String resolveAndAddFuture(Pair<String, ArrayList<String>> definition, List<Expression> expressions, Map<String, String> variablesText, Integer[] nextIndex) {
         Pair<String, ArrayList<String>> resolved = new Pair<>("", new ArrayList<>());
         for (String var : definition.second) {
@@ -207,3 +206,8 @@ public class StandardTreeBuilder implements TreeBuilder {
     }
 
 }
+/*
+a+b+c+d+e
+a+b
+c+d+e
+ */

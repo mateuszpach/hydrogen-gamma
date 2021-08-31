@@ -17,6 +17,7 @@ public class StandardComputer implements Computer {
     private static final Logger logger = Logger.getLogger(StandardComputer.class);
 
     public TilesContainer compute(Map<String, Variable<?>> variables, List<Expression> expressions) {
+        //TODO: not my variable (rename) MICHAL
         Map<String, Pair<String, Variable<?>>> myVariables = new TreeMap<>();
         for (String key : variables.keySet()) {
             myVariables.put(key, new Pair<>(key, variables.get(key))); // local variables holding both value and label (variable name for "loaded" variables)

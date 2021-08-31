@@ -4,6 +4,7 @@ import java.util.List;
 
 public final class Expression {// final can't be extended
     // I'm not so sure about this class, but it's a final container (and otherwise there is problem defining what is returned by treeBuilder)
+    //todo: getters for strings MICHAL
     final public String id;
     final public String operationName;
     final public String label;
