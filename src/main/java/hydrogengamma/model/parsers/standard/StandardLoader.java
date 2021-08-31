@@ -1,6 +1,7 @@
 package hydrogengamma.model.parsers.standard;
 
 import hydrogengamma.controllers.Loader;
+import hydrogengamma.model.Extractors;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.model.variables.MatrixVariable;
@@ -14,16 +15,13 @@ import java.util.TreeMap;
 public class StandardLoader implements Loader {
 
     public Map<String, Variable<?>> load(String varDefinition) {
-        Map<String, Variable<?>> variables = new TreeMap<>();
         //no # allowed, also remove whitespace
         varDefinition = varDefinition.replaceAll("#", "");
         System.out.println("var:" + varDefinition + ":");
-        this.parseVariables(varDefinition, variables);
-        // so tree flattening is dumb and would be easily resolved by making identity modules not print anything
-        return variables;
+        return this.parseVariables(varDefinition);
     }
 
-    /* TODO:shall be removed
+    /* TODO:shall be removed (and some Michal's comment: so tree flattening is dumb and would be easily resolved by making identity modules not print anything)
 
     private String replaceConstants(String operation, State state) {// seems like highly explosive one
         StringBuilder builder = new StringBuilder();
@@ -66,82 +64,36 @@ public class StandardLoader implements Loader {
     }
     */
 
-    // TODO Extractors dla parsera zwracające odpowiednie typy varaible LUKASZ
     // note: varDefinition will contain whitespace, remove it from everywhere BUT textVariable content (don't leave it in variables names)
-    private void parseVariables(String varDefinition, Map<String, Variable<?>> state) {
+    private Map<String, Variable<?>> parseVariables(String varDefinition) {
+        Map<String, Variable<?>> variableMap = new TreeMap<>();
         if (varDefinition.length() == 0)
-            return;
-        String[] vars = varDefinition.split(";");
-        for (String a : vars) {
-            String[] b = a.split("=");
-            if (b.length != 2)
-                throw new ParsingException("variable definition must contain exactly one '=' character: " + a);
-            b[0] = b[0].replaceAll("\\s+", ""); // remove whitespace from name
-            b[1] = b[1].strip();// strip leading and trailing whitespace from definition
-            if (!b[0].matches("[a-zA-Z][\\w]*")) {
-                throw new ParsingException("variable name must be alphanumeric not beginning with digit, but is:" + b[0]);
-            }
-            //type casing
-            if (b[1].charAt(0) == '\"') {//text
-                if (b[1].charAt(b[1].length() - 1) == '\"' && b[1].length() >= 2) {
-                    state.put(b[0], new TextVariable(b[1].substring(1, b[1].length() - 1)));
-                } else
-                    throw new ParsingException("Text variable definition must be within '\"\"' quotation: " + a);
-            } else {
-                b[1] = b[1].replaceAll("\\s+", "");// not a text so remove all whitespace left
-                if (b[1].charAt(0) == '(') {//function
-                    if (b[1].charAt(b[1].length() - 1) == ')') {
-                        state.put(b[0], new FunctionVariable(b[1]));
-                    } else
-                        throw new ParsingException("Function variable definition must be within () parenthesis: " + a);
-                } else if (b[1].charAt(0) == '[') {//matrix
-                    if (b[1].charAt(b[1].length() - 1) == ']') {
-                        b[1] = b[1].replaceAll("/", " / ");// looks stupid but makes rows not glue together
-                        String[] rows = b[1].substring(1, b[1].length() - 1).split("/");
-                        ArrayList<ArrayList<Double>> matrix = new ArrayList<>();
-                        for (String row : rows) {
-                            ArrayList<Double> rowVal = new ArrayList<>();
-                            String[] val = row.split(",");
-                            for (String x : val) {
-                                x = x.replaceAll("[^\\d-.]", "");
-                                if (x.length() == 0)
-                                    continue;
-                                try {
-                                    Double y = Double.parseDouble(x);
-                                    rowVal.add(y);
-                                } catch (NumberFormatException e) {
-                                    throw new ParsingException(x + " from matrix definition " + a + " does not represent valid number");
-                                }
-                            }
-                            if (rowVal.size() < 1)
-                                throw new ParsingException("A row from matrix definition " + a + " was found empty");
-                            matrix.add(rowVal);
-                        }
-                        int rowSize = matrix.get(0).size();
-                        for (ArrayList<Double> row : matrix) {
-                            if (row.size() != rowSize)
-                                throw new ParsingException("Rows in matrix definition " + a + "must be of equal length");
-                        }
-                        double[][] dMatrix = new double[matrix.size()][rowSize];
-                        for (int i = 0; i < matrix.size(); ++i)
-                            for (int j = 0; j < rowSize; ++j)
-                                dMatrix[i][j] = matrix.get(i).get(j);
-                        state.put(b[0], new MatrixVariable(dMatrix));
-                    } else
-                        throw new ParsingException("Matrix variable definition must be within [] parenthesis: " + a);
-                } else {//numeric
-                    try {
-                        double x = Double.parseDouble(b[1]);
-                        state.put(b[0], new NumericVariable(x));
-                    } catch (NumberFormatException e) {
-                        throw new ParsingException(b[1] + " from definition " + a + " does not represent valid number");
-                    }
-                }
+            return variableMap;
 
+        String[] variables = varDefinition.split(";");
+        for (String var : variables) {
+            String[] varNameAndDef = var.split("=");
+
+            if (varNameAndDef.length != 2)
+                throw new ParsingException("variable definition must contain exactly one '=' character: " + var);
+            varNameAndDef[0] = varNameAndDef[0].replaceAll("\\s+", ""); // remove whitespace from name
+            varNameAndDef[1] = varNameAndDef[1].strip();// strip leading and trailing whitespace from definition
+
+            if (!varNameAndDef[0].matches("[a-zA-Z][\\w]*")) {
+                throw new ParsingException("variable name must be alphanumeric not beginning with digit, but is:" + varNameAndDef[0]);
+            }
+
+            String varName = varNameAndDef[0];
+            String varDef = varNameAndDef[1];
+
+            for (Extractors extractorEnum : Extractors.values()) {
+                if (extractorEnum.extractor.verify(varDef)) {
+                    variableMap.put(varName, extractorEnum.extractor.extract(varDef));
+                }
             }
         }
+        return variableMap;
     }
-
 }
 /*
 Solution:
