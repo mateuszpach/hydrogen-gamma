@@ -17,7 +17,7 @@ public class MatrixMultiplication implements Module<MatrixVariable> {
             for (int j = 0; j < b.colsNum(); ++j)
                 for (int k = 0; k < a.colsNum(); ++k)
                     c[i][j] += a.get(i, k) * b.get(k, j);
-        container.addTile(new MatrixTile(new MatrixVariable(c), "Matrix product"));
+        container.addTile(new MatrixTile(new MatrixVariable(c), "Product of"));
         return new MatrixVariable(c);
     }
 

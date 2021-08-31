@@ -18,7 +18,7 @@ public class NumberSubtraction implements Module<NumericVariable> {
             b = (NumericVariable) args[1];
             result = new NumericVariable(a.getValue() - b.getValue());
         }
-        container.addTile(new NumericTile(result, "Numbers divided"));
+        container.addTile(new NumericTile(result, "Difference of"));
         return result;
     }
 
