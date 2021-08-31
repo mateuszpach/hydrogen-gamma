@@ -3,6 +3,7 @@ package hydrogengamma.model;
 import hydrogengamma.model.modules.*;
 
 public enum Modules {
+    // TODO: loading test must be added, just seen all tests pass while constructor was throwing
     // Numeric
     NUMBER_IDENTITY("", new NumericIdentity()),
     NUMBER_ADD("+", new NumberAddition()),

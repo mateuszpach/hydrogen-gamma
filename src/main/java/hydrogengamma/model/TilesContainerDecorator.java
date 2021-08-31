@@ -6,7 +6,7 @@ import hydrogengamma.vartiles.TileDecorator;
 import java.util.ArrayList;
 
 public class TilesContainerDecorator implements TilesContainer {
-
+    //TODO: cool we got those, would you mind using them LUKASZ
     private final TilesContainer container; // decoratee
     private final String labelPrefix;
 

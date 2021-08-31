@@ -30,23 +30,7 @@ public class StandardParser implements Parser {
             //just so it can return immediately on empty input
             return new TilesContainerImpl();
         }
-
-        /* //TODO: redo or remove MICHAL
-        State state;
-        { // TODO wyodrębnij i loguj MATEUSZ
-            for (String key : state.expressions.keySet()) {
-                if (state.expressions.get(key).ready) {
-                    System.out.println(key + " : " + state.expressions.get(key).text + " = " + state.expressions.get(key).getVariable().getValue().toString());
-                } else {
-                    System.out.print("future: " + key + " = " + state.expressions.get(key).functionName + " ( ");
-                    for (String name : state.expressions.get(key).subexpressionsIds) {
-                        System.out.print(name + " ");
-                    }
-                    System.out.println(")");
-                }
-            }
-        }
-        */
+        // TODO any logs MATEUSZ
         TilesContainer container;
         try {
             container = computer.compute(loader.load(variables), treeBuilder.build(operation));
