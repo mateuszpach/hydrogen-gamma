@@ -1,7 +1,9 @@
 package hydrogengamma.controllers;
 
-import hydrogengamma.model.parsers.standard.State;
+import hydrogengamma.model.Variable;
+
+import java.util.Map;
 
 public interface Loader {
-    State load(String variables, String operation);
+    Map<String, Variable<?>> load(String variables);
 }

@@ -1,79 +1,29 @@
 package hydrogengamma.model.parsers.standard;
 
 import hydrogengamma.controllers.Loader;
+import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.model.variables.NumericVariable;
 import hydrogengamma.model.variables.TextVariable;
-import hydrogengamma.utils.Pair;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-
-import static java.lang.Math.max;
-import static java.lang.Math.min;
+import java.util.TreeMap;
 
 public class StandardLoader implements Loader {
 
-    public State load(String varDefinition, String operation) {
-        State state = new State();
+    public Map<String, Variable<?>> load(String varDefinition) {
+        Map<String, Variable<?>> variables = new TreeMap<>();
         //no # allowed, also remove whitespace
         varDefinition = varDefinition.replaceAll("#", "");
-        operation = "(" + operation.replaceAll("\\s+", "").replaceAll("#", "") + ")";
-        System.out.println("var:" + varDefinition + ": operation:" + operation + ":");
-        this.parseVariables(varDefinition, state);
-        operation = fixSigns(operation);
-        operation = this.replaceConstants(operation, state);
-        this.simplifyOperation(operation, state);
+        System.out.println("var:" + varDefinition + ":");
+        this.parseVariables(varDefinition, variables);
         // so tree flattening is dumb and would be easily resolved by making identity modules not print anything
-        return state;
+        return variables;
     }
 
-    private String fixSigns(String operation) {
-        StringBuilder out;
-        System.out.println("pre fixing: " + operation);
-        boolean changed = true;
-        while (changed) {//seems dumb, might be dumb, is ineffective, BUT simple and bulletproof, when user input WON'T be too long
-            changed = false;
-            out = new StringBuilder();
-            char[] chars = operation.toCharArray();
-            for (int i = 1; i < chars.length; ++i) {
-                if (chars[i - 1] == '+' && chars[i] == '+') {
-                    chars[i - 1] = ' ';
-                    chars[i] = '+';
-                    changed = true;
-                } else if (chars[i - 1] == '+' && chars[i] == '-') {
-                    chars[i - 1] = ' ';
-                    chars[i] = '-';
-                    changed = true;
-                } else if (chars[i - 1] == '-' && chars[i] == '+') {
-                    chars[i - 1] = ' ';
-                    chars[i] = '-';
-                    changed = true;
-                } else if (chars[i - 1] == '-' && chars[i] == '-') {
-                    chars[i - 1] = ' ';
-                    chars[i] = '+';
-                    changed = true;
-                } else if (chars[i - 1] == '*' && chars[i] == '+') {
-                    chars[i - 1] = ' ';
-                    chars[i] = '*';
-                    changed = true;
-                } else if (chars[i - 1] == '/' && chars[i] == '+') {
-                    chars[i - 1] = ' ';
-                    chars[i] = '/';
-                    changed = true;
-                }
-            }
-            for (char x : chars) {
-                if (x != ' ')
-                    out.append(x);
-            }
-            operation = out.toString();
-        }
-        System.out.println("post fixing: " + operation);
-        return operation;
-    }
+    /* TODO:shall be removed
 
     private String replaceConstants(String operation, State state) {// seems like highly explosive one
         StringBuilder builder = new StringBuilder();
@@ -114,10 +64,11 @@ public class StandardLoader implements Loader {
         System.out.println("after replacing constants:" + builder + ":");
         return builder.toString();
     }
+    */
 
     // TODO Extractors dla parsera zwracające odpowiednie typy varaible LUKASZ
     // note: varDefinition will contain whitespace, remove it from everywhere BUT textVariable content (don't leave it in variables names)
-    private void parseVariables(String varDefinition, State state) {
+    private void parseVariables(String varDefinition, Map<String, Variable<?>> state) {
         if (varDefinition.length() == 0)
             return;
         String[] vars = varDefinition.split(";");
@@ -133,18 +84,14 @@ public class StandardLoader implements Loader {
             //type casing
             if (b[1].charAt(0) == '\"') {//text
                 if (b[1].charAt(b[1].length() - 1) == '\"' && b[1].length() >= 2) {
-                    state.addExpression(b[0], new State.Expression(
-                            b[0]
-                            , new TextVariable(b[1].substring(1, b[1].length() - 1))));
+                    state.put(b[0], new TextVariable(b[1].substring(1, b[1].length() - 1)));
                 } else
                     throw new ParsingException("Text variable definition must be within '\"\"' quotation: " + a);
             } else {
                 b[1] = b[1].replaceAll("\\s+", "");// not a text so remove all whitespace left
                 if (b[1].charAt(0) == '(') {//function
                     if (b[1].charAt(b[1].length() - 1) == ')') {
-                        state.addExpression(b[0], new State.Expression(
-                                b[0]
-                                , new FunctionVariable(b[1])));
+                        state.put(b[0], new FunctionVariable(b[1]));
                     } else
                         throw new ParsingException("Function variable definition must be within () parenthesis: " + a);
                 } else if (b[1].charAt(0) == '[') {//matrix
@@ -179,17 +126,13 @@ public class StandardLoader implements Loader {
                         for (int i = 0; i < matrix.size(); ++i)
                             for (int j = 0; j < rowSize; ++j)
                                 dMatrix[i][j] = matrix.get(i).get(j);
-                        state.addExpression(b[0], new State.Expression(
-                                b[0],
-                                new MatrixVariable(dMatrix)));
+                        state.put(b[0], new MatrixVariable(dMatrix));
                     } else
                         throw new ParsingException("Matrix variable definition must be within [] parenthesis: " + a);
                 } else {//numeric
                     try {
                         double x = Double.parseDouble(b[1]);
-                        state.addExpression(b[0], new State.Expression(
-                                b[0],
-                                new NumericVariable(x)));
+                        state.put(b[0], new NumericVariable(x));
                     } catch (NumberFormatException e) {
                         throw new ParsingException(b[1] + " from definition " + a + " does not represent valid number");
                     }
@@ -199,133 +142,6 @@ public class StandardLoader implements Loader {
         }
     }
 
-    private void simplifyOperation(String operation, State state) {
-        ArrayList<String> list = new ArrayList<>();
-        simplify(operation, list, state);
-    }
-
-    private String simplify(String query, ArrayList<String> list, State state) {
-        char[] chars = query.toCharArray();
-        int i = 0;
-        while (i < query.length()) {
-            if (chars[i] == '(') {//a bit like ,
-                String operation = query.substring(0, i);
-                ArrayList<String> myVars = new ArrayList<>();
-                query = simplify(query.substring(min(i + 1, query.length())), myVars, state);
-                String varName = resolveAndAddFuture(new Pair<>(operation, myVars), state);
-                list.add(varName);
-                return simplify(query, list, state);
-            } else if (chars[i] == ')') {//go up, and substitute
-                String var = query.substring(0, i);
-                if (var.length() > 0)
-                    list.add(var);
-                if (i + 1 == query.length())
-                    query = "";
-                else {
-                    query = query.substring(i + 1);
-                }
-                return query;
-            } else if (chars[i] == ',' || i + 1 == chars.length) {//add and continue
-                String var = query.substring(0, i);
-                if (var.length() > 0)
-                    list.add(var);
-                if (i + 1 == query.length())
-                    query = "";
-                else {
-                    query = query.substring(i + 1);
-                }
-                return simplify(query, list, state);
-            }
-            ++i;
-        }
-        return "";
-    }
-
-    private String resolveAndAddFuture(Pair<String, ArrayList<String>> definition, State state) {
-        //1. innards don't have parenthesis! just resolve bioperators
-        //new rule if some uses a*-b or a*-(...) it will explode, be nice and write a*(-b) or a*(-(...))
-        Pair<String, ArrayList<String>> resolved = new Pair<>("", new ArrayList<>());
-        for (String var : definition.second) {
-            System.out.print("delinquent to resolve: " + var + "    resolved to: ");
-            if (!var.matches("\\w*")) {//contains sign
-                //find *,/ and reorder a*b into *(a,b), don't look at anything else
-                //resolving from lower to higher order will push low order operations outward, so they will execute last
-                //+- then */ recursively
-                //what if +(a+b+c,d+e+f) resolved as a+b+n_var+e+f, n_var=c+d ? pointless complication, just don't
-                // a*b+c*d => +(a*b,c*d) => +(*(a,b),*(c,d))
-                // a+b*c+d => +(a,b*c+d) => +(a,+(b*c,d)) => +(a,+(*(b,c),d))
-                int pos;
-                if ((pos = max(var.indexOf('+'), var.indexOf('-'))) != -1) {
-                    Pair<String, ArrayList<String>> tmp = new Pair<>(Character.toString(var.charAt(pos)), new ArrayList<>());
-                    if (pos == 0) {
-                        tmp.second.add(var.substring(1));
-                        System.out.println(var.charAt(pos) + " ( " + var.substring(1) + " )");
-                        resolved.second.add(resolveAndAddFuture(tmp, state));
-                    } else {
-                        tmp.second.add(var.substring(0, pos));
-                        tmp.second.add(var.substring(pos + 1));
-                        System.out.println(var.charAt(pos) + " ( " + var.substring(0, pos) + " , " + var.substring(pos + 1) + " )");
-                        resolved.second.add(resolveAndAddFuture(tmp, state));
-                    }
-                } else if ((pos = max(var.indexOf('*'), var.indexOf('/'))) != -1) {
-                    Pair<String, ArrayList<String>> tmp = new Pair<>(Character.toString(var.charAt(pos)), new ArrayList<>());
-                    if (pos == 0) {
-                        tmp.second.add(var.substring(1));
-                        System.out.println(var.charAt(pos) + " ( " + var.substring(1) + " )");
-                        resolved.second.add(resolveAndAddFuture(tmp, state));
-                    } else {
-                        tmp.second.add(var.substring(0, pos));
-                        tmp.second.add(var.substring(pos + 1));
-                        System.out.println(var.charAt(pos) + " ( " + var.substring(0, pos) + " , " + var.substring(pos + 1) + " )");
-                        resolved.second.add(resolveAndAddFuture(tmp, state));
-                    }
-                }
-            } else {
-                System.out.println("just " + var);
-                resolved.second.add(var);
-            }
-        }
-        System.out.println("resolving operation name from: " + definition.first + "   to: ");
-        if (definition.first.matches("\\w*") || definition.first.matches("\\W$")) {// is simple definition of just mod name or just sign
-            System.out.println("case: simple");
-            resolved.first = definition.first;
-            System.out.println("just " + resolved.first);
-        } else {//has operation
-            if (definition.first.matches(".*\\W$")) {//ends with special sign
-                System.out.println("case: special");
-                // a+b*(c) => ret (a+b*new_var), new_var=(c)
-                // a*b+(c) => ret (a*b+new_var), new_var=(c)
-                resolved.first = "";
-                String new_var = resolveAndAddFuture(resolved, state);
-                resolved = new Pair<>("", new ArrayList<>());
-                resolved.first = "";
-                resolved.second.add(definition.first + new_var);
-                System.out.println("( " + definition.first + new_var + " ) where " + new_var + " = ( inside )");
-                return resolveAndAddFuture(resolved, state);
-
-            } else {// ends with modular operation
-                System.out.println("case: modular");
-                int i = 0;
-                while (i < definition.first.length() && definition.first.substring(definition.first.length() - 1 - i).matches("\\w*")) { // get the longest trailing valid word
-                    ++i;
-                    System.out.println("i: " + i + "   :   " + definition.first.substring(0, definition.first.length() - 1 - i) + " " + definition.first.substring(definition.first.length() - 1 - i));
-                }
-                --i;
-                // a+b*mod(c,d) => ret (a+b*new_var), new_var=mod(c,d)
-                // a*b+mod(c,d) => ret (a*b+new_var), new_var=mod(c,d)
-                resolved.first = definition.first.substring(definition.first.length() - 1 - i);
-                String new_var = resolveAndAddFuture(resolved, state);
-                resolved = new Pair<>("", new ArrayList<>());
-                resolved.first = "";
-                resolved.second.add(definition.first.substring(0, definition.first.length() - 1 - i) + new_var);
-                System.out.println("( " + definition.first.substring(0, definition.first.length() - 1 - i) + new_var + " ) where " + new_var + " = " + definition.first.substring(definition.first.length() - 1 - i) + "( inside )");
-                return resolveAndAddFuture(resolved, state);
-            }
-        }
-        String varName = state.getSubstitutionName();
-        state.addExpression(varName, new State.Expression(resolved.first, resolved.second));
-        return varName;
-    }
 }
 /*
 Solution:

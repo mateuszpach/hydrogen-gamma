@@ -1,8 +1,14 @@
 package hydrogengamma;
 
-import hydrogengamma.model.parsers.standard.*;
+import hydrogengamma.model.Variable;
+import hydrogengamma.model.parsers.standard.ParsingException;
+import hydrogengamma.model.parsers.standard.StandardComputer;
+import hydrogengamma.model.parsers.standard.StandardLoader;
 import hydrogengamma.model.variables.MatrixVariable;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,67 +18,67 @@ public class StandardParserTest {
 
     @Test
     void removeWhitespaceAndHashtags() {
-        State state = standardLoader.load("#a#a#=#1#;b    b   =   1   ;\nc\nc\n=\n1\n;\rd\r\rd\r=\r1\r; e e = 1 ", "");
+        Map<String, Variable<?>> state = standardLoader.load("#a#a#=#1#;b    b   =   1   ;\nc\nc\n=\n1\n;\rd\r\rd\r=\r1\r; e e = 1 ");
         assertTrue(state.containsKey("aa"));
         assertTrue(state.containsKey("bb"));
         assertTrue(state.containsKey("cc"));
         assertTrue(state.containsKey("dd"));
         assertTrue(state.containsKey("ee"));
-        assertEquals(state.expressions.size() - state.getComputationOrder().size(), 5);
+        assertEquals(state.size(), 5);
     }
 
     @Test
     void parseVariableDefinitionStructure() {
-        State state;
         //returns message on throw (to parser to print status for user)
-        assertThrows(ParsingException.class, () -> standardLoader.load("a;1", ""));
-        assertThrows(ParsingException.class, () -> standardLoader.load("0a=1", ""));
-        assertThrows(ParsingException.class, () -> standardLoader.load("a=\"", ""));
-        assertThrows(ParsingException.class, () -> standardLoader.load("a=(", ""));
-        assertThrows(ParsingException.class, () -> standardLoader.load("a=[", ""));
-        assertThrows(ParsingException.class, () -> standardLoader.load("a=aaa", ""));
-        assertThrows(ParsingException.class, () -> standardLoader.load("a=1..1", ""));
-        assertThrows(ParsingException.class, () -> standardLoader.load("a=--1.1", ""));
-        assertThrows(ParsingException.class, () -> standardLoader.load("a=[1,1/1]", ""));
-        assertThrows(ParsingException.class, () -> standardLoader.load("a=[1..1]", ""));
-        assertThrows(ParsingException.class, () -> standardLoader.load("a=[--1.1]", ""));
-        assertThrows(ParsingException.class, () -> standardLoader.load("a=[]", ""));
-        assertThrows(ParsingException.class, () -> standardLoader.load("a=[/]", ""));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a;1"));
+        assertThrows(ParsingException.class, () -> standardLoader.load("0a=1"));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=\""));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=("));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=["));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=aaa"));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=1..1"));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=--1.1"));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=[1,1/1]"));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=[1..1]"));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=[--1.1]"));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=[]"));
+        assertThrows(ParsingException.class, () -> standardLoader.load("a=[/]"));
     }
 
     @Test
     void correctVariablesPass() {
-        final State[] state = new State[1];//cause lambda
-        assertDoesNotThrow(() -> state[0] = standardLoader.load("a=1;b=-1;c=1.1;d=-1.1;e=\"\";f=\"\"\";g=(1);h=(1,-1,1.1,-1.1);i=[1];j=[1/-1/1.1/-1.1];k=[1,-1/1.1,-1.1];l=[1,-1,1.1,-1.1]", ""));
-        assertEquals(state[0].expressions.size() - state[0].getComputationOrder().size(), 12);
-        assertEquals(state[0].expressions.get("a").getVariable().getValue(), 1d);
-        assertEquals(state[0].expressions.get("b").getVariable().getValue(), -1d);
-        assertEquals(state[0].expressions.get("c").getVariable().getValue(), 1.1d);
-        assertEquals(state[0].expressions.get("d").getVariable().getValue(), -1.1d);
-        assertEquals(state[0].expressions.get("e").getVariable().getValue(), (""));
-        assertEquals(state[0].expressions.get("f").getVariable().getValue(), ("\""));
-        assertEquals(state[0].expressions.get("g").getVariable().getValue(), ("(1)"));
-        assertEquals(state[0].expressions.get("h").getVariable().getValue(), ("(1,-1,1.1,-1.1)"));
-        assertEquals(state[0].expressions.get("i").getVariable(), new MatrixVariable(new double[][]{{1}}));
-        assertEquals(state[0].expressions.get("j").getVariable(), new MatrixVariable(new double[][]{{1}, {-1}, {1.1}, {-1.1}}));
-        assertEquals(state[0].expressions.get("k").getVariable(), new MatrixVariable(new double[][]{{1, -1}, {1.1, -1.1}}));
-        assertEquals(state[0].expressions.get("l").getVariable(), new MatrixVariable(new double[][]{{1, -1, 1.1, -1.1}}));
+        final Map<String, Variable<?>>[] state = new Map[]{new TreeMap<>()};//cause lambda
+        assertDoesNotThrow(() -> state[0] = standardLoader.load("a=1;b=-1;c=1.1;d=-1.1;e=\"\";f=\"\"\";g=(1);h=(1,-1,1.1,-1.1);i=[1];j=[1/-1/1.1/-1.1];k=[1,-1/1.1,-1.1];l=[1,-1,1.1,-1.1]"));
+        assertEquals(state[0].size(), 12);
+        assertEquals(state[0].get("a").getValue(), 1d);
+        assertEquals(state[0].get("b").getValue(), -1d);
+        assertEquals(state[0].get("c").getValue(), 1.1d);
+        assertEquals(state[0].get("d").getValue(), -1.1d);
+        assertEquals(state[0].get("e").getValue(), (""));
+        assertEquals(state[0].get("f").getValue(), ("\""));
+        assertEquals(state[0].get("g").getValue(), ("(1)"));
+        assertEquals(state[0].get("h").getValue(), ("(1,-1,1.1,-1.1)"));
+        assertEquals(state[0].get("i"), new MatrixVariable(new double[][]{{1}}));
+        assertEquals(state[0].get("j"), new MatrixVariable(new double[][]{{1}, {-1}, {1.1}, {-1.1}}));
+        assertEquals(state[0].get("k"), new MatrixVariable(new double[][]{{1, -1}, {1.1, -1.1}}));
+        assertEquals(state[0].get("l"), new MatrixVariable(new double[][]{{1, -1, 1.1, -1.1}}));
     }
 
-    @Test
-    void replaceConstants() {
-        final State[] state = new State[1];
-        assertDoesNotThrow(() -> state[0] = standardLoader.load("", "(-1)+(-1.1)+1.1+-1+-1.1+--1+---1+--1.1+---1.1"));
-        assertEquals(state[0].expressions.size() - state[0].getComputationOrder().size(), 4);
-        assertEquals(state[0].expressions.get("01d0").getVariable().getValue(), 1d);
-        assertEquals(state[0].expressions.get("0m1d0").getVariable().getValue(), -1d);
-        assertEquals(state[0].expressions.get("01d1").getVariable().getValue(), 1.1d);
-        assertEquals(state[0].expressions.get("0m1d1").getVariable().getValue(), -1.1d);
-        assertDoesNotThrow(() -> state[0] = standardLoader.load("", "-+--+---+-1.1"));
-        assertEquals(state[0].expressions.size() - state[0].getComputationOrder().size(), 1);
-        assertEquals(state[0].expressions.get("0m1d1").getVariable().getValue(), -1.1d);
-    }
-
+    /* farewell constants, I won't miss you
+        @Test
+        void replaceConstants() {
+            final State[] state = new State[1];
+            assertDoesNotThrow(() -> state[0] = standardLoader.load("", "(-1)+(-1.1)+1.1+-1+-1.1+--1+---1+--1.1+---1.1"));
+            assertEquals(state[0].expressions.size() - state[0].getComputationOrder().size(), 4);
+            assertEquals(state[0].expressions.get("01d0").getVariable().getValue(), 1d);
+            assertEquals(state[0].expressions.get("0m1d0").getVariable().getValue(), -1d);
+            assertEquals(state[0].expressions.get("01d1").getVariable().getValue(), 1.1d);
+            assertEquals(state[0].expressions.get("0m1d1").getVariable().getValue(), -1.1d);
+            assertDoesNotThrow(() -> state[0] = standardLoader.load("", "-+--+---+-1.1"));
+            assertEquals(state[0].expressions.size() - state[0].getComputationOrder().size(), 1);
+            assertEquals(state[0].expressions.get("0m1d1").getVariable().getValue(), -1.1d);
+        }
+    */
     @Test
     void operationsAreSimplifiedCorrectly() {//input is changed into list of hydrogengamma.model.variables in postorder with recipes
         //final State[] state = new State[1];
