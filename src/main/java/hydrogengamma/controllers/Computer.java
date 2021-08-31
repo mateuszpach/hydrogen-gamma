@@ -1,8 +1,11 @@
 package hydrogengamma.controllers;
 
 import hydrogengamma.model.TilesContainer;
-import hydrogengamma.model.parsers.standard.State;
+import hydrogengamma.model.Variable;
+
+import java.util.List;
+import java.util.Map;
 
 public interface Computer {
-    TilesContainer compute(State state);
+    TilesContainer compute(Map<String, Variable<?>> variables, List<Expression> expressions);
 }

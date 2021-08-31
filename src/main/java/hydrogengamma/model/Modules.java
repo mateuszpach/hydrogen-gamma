@@ -1,12 +1,9 @@
 package hydrogengamma.model;
 
 import hydrogengamma.model.modules.*;
-import hydrogengamma.model.modules.CountLetters;
-import hydrogengamma.model.modules.CountWords;
-import hydrogengamma.model.modules.LUDecomposer;
-import hydrogengamma.model.modules.LongestCommonSubstring;
 
 public enum Modules {
+    // TODO: loading test must be added, just seen all tests pass while constructor was throwing
     // Numeric
     NUMBER_IDENTITY("", new NumericIdentity()),
     NUMBER_ADD("+", new NumberAddition()),
@@ -34,10 +31,10 @@ public enum Modules {
     DERIVATIVE("derivative", new Differentiator()),
 
     // Voids
-    COUNT_LETTERS("count_letters", new CountLetters()),
-    COUNT_WORDS("count_words", new CountWords()),
-    LU_DECOMPOSITION("lu", new LUDecomposer()),
-    LONGEST_COMMON_SUBSTRING("lcs", new LongestCommonSubstring());
+    COUNT_LETTERS("countLetters", new CountLetters()),
+    COUNT_WORDS("countWords", new CountWords()),
+    LU_DECOMPOSITION("LU", new LUDecomposer()),
+    LONGEST_COMMON_SUBSTRING("LCS", new LongestCommonSubstring());
 
     // TODO: add stuff here L&M
     public final String name;

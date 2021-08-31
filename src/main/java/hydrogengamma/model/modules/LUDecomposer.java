@@ -1,7 +1,6 @@
 package hydrogengamma.model.modules;
 
 import hydrogengamma.model.Module;
-import hydrogengamma.model.TerminalModule;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.modules.utils.LinearAlgebra;

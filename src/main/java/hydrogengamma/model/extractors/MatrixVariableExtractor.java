@@ -64,7 +64,7 @@ public class MatrixVariableExtractor implements VariableExtractor<MatrixVariable
             ArrayList<String> rowVal = new ArrayList<>();
             String[] val = row.split(",");
             for (String x : val) {
-                x = x.replaceAll("[^\\d-.]", "");
+                x = x.replaceAll("\\s", "");//remove whitespace
                 if (x.length() == 0)
                     continue;
                 rowVal.add(x);

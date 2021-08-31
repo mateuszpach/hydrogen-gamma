@@ -1,6 +1,9 @@
 package hydrogengamma.model.parsers.standard;
 
+import hydrogengamma.controllers.Computer;
+import hydrogengamma.controllers.Loader;
 import hydrogengamma.controllers.Parser;
+import hydrogengamma.controllers.TreeBuilder;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.TilesContainerImpl;
 import hydrogengamma.model.modules.utils.ModuleException;
@@ -11,45 +14,26 @@ public class StandardParser implements Parser {
 
     private static final Logger logger = Logger.getLogger(StandardParser.class);
 
-    private final StandardLoader standardLoader;
-    private final StandardComputer standardComputer;
+    private final Loader loader;
+    private final Computer computer;
+    private final TreeBuilder treeBuilder;
 
-    public StandardParser(StandardLoader standardLoader, StandardComputer standardComputer) {
-        this.standardLoader = standardLoader;
-        this.standardComputer = standardComputer;
+    public StandardParser(Loader loader, TreeBuilder treeBuilder, Computer computer) {
+        this.loader = loader;
+        this.computer = computer;
+        this.treeBuilder = treeBuilder;
     }
 
     @Override
-    public TilesContainer parse(String variables, String expression) { // runs load and compute session with error handling and tile building
-        if (variables.equals("") && expression.equals("")) {
+    public TilesContainer parse(String variables, String operation) { // runs load and compute session with error handling and tile building
+        if (variables.equals("") && operation.equals("")) {
             //just so it can return immediately on empty input
             return new TilesContainerImpl();
         }
-
-
-        State state;
-        try {
-            state = standardLoader.load(variables, expression);
-        } catch (ParsingException e) {
-            return new TilesContainerImpl(new InfoTile(e.msg, "Parsing error"));
-        }
-        { // TODO wyodrębnij i loguj MATEUSZ
-            for (String key : state.expressions.keySet()) {
-                if (state.expressions.get(key).ready) {
-                    System.out.println(key + " : " + state.expressions.get(key).text + " = " + state.expressions.get(key).getVariable().getValue().toString());
-                } else {
-                    System.out.print("future: " + key + " = " + state.expressions.get(key).functionName + " ( ");
-                    for (String name : state.expressions.get(key).subexpressionsIds) {
-                        System.out.print(name + " ");
-                    }
-                    System.out.println(")");
-                }
-            }
-        }
-
+        // TODO any logs MATEUSZ
         TilesContainer container;
         try {
-            container = standardComputer.compute(state);
+            container = computer.compute(loader.load(variables), treeBuilder.build(operation));
         } catch (ParsingException e) {
             return new TilesContainerImpl(new InfoTile(e.msg, "Computing error"));
         } catch (ModuleException exception) {

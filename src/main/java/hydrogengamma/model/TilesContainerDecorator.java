@@ -6,7 +6,7 @@ import hydrogengamma.vartiles.TileDecorator;
 import java.util.ArrayList;
 
 public class TilesContainerDecorator implements TilesContainer {
-
+    //TODO: cool we got those, would you mind using them LUKASZ
     private final TilesContainer container; // decoratee
     private final String labelPrefix;
 
@@ -30,3 +30,13 @@ public class TilesContainerDecorator implements TilesContainer {
         return container.getTiles();
     }
 }
+/*
+TItle1:     LU(A+B) : L=
+    content1: matrix1
+TItle2:     LU(A+B) : U=
+    content2:  matrix2
+
+ Sum of numbers: a+b+c , d+e
+
+ computer gives suffix for title aas list of arguments
+ */
