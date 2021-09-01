@@ -23,7 +23,7 @@ public class CountLetters implements Module<VoidVariable> {
                 lettersFreq.put(letter, oldValue + 1);
             }
         }
-        container.addTile(new TableTile(lettersFreq, "Frequencies of letters in"));
+        container.addTile(new TableTile(lettersFreq, "Number of letters"));
         return new VoidVariable();
     }
 

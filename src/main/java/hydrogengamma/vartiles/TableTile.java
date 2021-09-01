@@ -1,6 +1,7 @@
 package hydrogengamma.vartiles;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Map;
 
 public class TableTile extends DefaultTile {
@@ -14,12 +15,19 @@ public class TableTile extends DefaultTile {
     public TableTile(Map<?, ?> map, String label) {
         this(map.entrySet().stream()
                 .map(e -> new String[]{e.getKey().toString(), e.getValue().toString()})
+                .sorted((l, r) -> {
+                    if (l[0].equals(r[0])) {
+                        return l[1].compareTo(r[1]);
+                    }
+                    return l[0].compareTo(r[0]);
+                })
                 .toArray(String[][]::new), label);
     }
 
     public TableTile(ArrayList<?> list, String label) {
         this(list.stream()
                 .map(e -> new String[]{e.toString()})
+                .sorted(Comparator.comparing(l -> l[0]))
                 .toArray(String[][]::new), label);
     }
 
