@@ -5,11 +5,12 @@ import hydrogengamma.model.modules.*;
 public enum Modules {
     // TODO: loading test must be added, just seen all tests pass while constructor was throwing
     // Numeric
-    NUMBER_IDENTITY("", new NumericIdentity()),
+    NUMBER_IDENTITY("", new NumberIdentity()),
     NUMBER_ADD("+", new NumberAddition()),
     NUMBER_SUB("-", new NumberSubtraction()),
     NUMBER_MUL("*", new NumberMultiplication()),
     NUMBER_DIV("/", new NumberDivision()),
+    NUMBER_SQRT("sqrt", new NumberSquareRoot()),
 //    NUMBER_ADD2("a", new NumberAddition()),
 
     // Matrix
