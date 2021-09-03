@@ -1,6 +1,7 @@
 package hydrogengamma;
 
 import hydrogengamma.model.TilesContainer;
+import hydrogengamma.model.TilesContainerImpl;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.modules.Differentiator;
 import hydrogengamma.model.variables.FunctionVariable;
@@ -217,12 +218,35 @@ public class DifferentiatorTest {
     @Test
     public void verifyTest() {
         FunctionVariable f = new FunctionVariable("cos(x)");
-        Variable<String>[] arr1 = new Variable[]{f};
-        Variable<String>[] arr2 = new Variable[]{f, f};
-        Variable<double[][]>[] arr3 = new Variable[]{new MatrixVariable(new double[][]{{0}})};
+        Variable<?>[] arr1 = new Variable[]{f};
+        Variable<?>[] arr2 = new Variable[]{f, f};
+        Variable<?>[] arr3 = new Variable[]{new MatrixVariable(new double[][]{{0}})};
 
         assertTrue(new Differentiator().verify(arr1));
         assertFalse(new Differentiator().verify(arr2));
         assertFalse(new Differentiator().verify(arr3));
+    }
+
+    @Test
+    public void exceptionMessageTest() {
+        Differentiator diff = new Differentiator();
+        try {
+            diff.execute(new TilesContainerImpl(), new FunctionVariable("(ax)"));
+        }
+        catch (Differentiator.DerivativeNotKnownException e) {
+            assertEquals("Couldn't find a derivative for function: ax", e.toString());
+        }
+        try {
+            diff.execute(new TilesContainerImpl(), new FunctionVariable("(sin(x))**(cos(x))"));
+        }
+        catch (Differentiator.InvalidFormulaException e) {
+            assertEquals("Function formula is invalid: (sin(x))**(cos(x))", e.toString());
+        }
+        try {
+            diff.execute(new TilesContainerImpl(), new FunctionVariable("*(sin(x))*(cos(x))"));
+        }
+        catch (Differentiator.InvalidFormulaException e) {
+            assertEquals("Function formula is invalid: *(sin(x))*(cos(x))", e.toString());
+        }
     }
 }
