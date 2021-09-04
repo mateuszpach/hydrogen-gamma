@@ -48,6 +48,8 @@ public class StandardTreeBuilder implements TreeBuilder {
     @Override
     public List<Expression> build(String operation) {
         List<Expression> expressions = new ArrayList<>();
+        if (operation.equals(""))
+            return expressions;
         operation = "(" + operation.replaceAll("\\s+", "").replaceAll("#", "") + ")";
         System.out.println("operation:" + operation + ":");
         operation = fixSigns(operation);
@@ -97,7 +99,7 @@ public class StandardTreeBuilder implements TreeBuilder {
                 String operation = query.substring(0, i);
                 ArrayList<String> myVars = new ArrayList<>();
                 query = simplify(query.substring(min(i + 1, query.length())), myVars, expressions, variablesText, nextIndex);
-                String varName = resolveAndAddFuture(new Pair<>(operation, myVars), expressions, variablesText, nextIndex);
+                String varName = resolveSignsAndCreateExpression(new Pair<>(operation, myVars), expressions, variablesText, nextIndex);
                 list.add(varName);
                 return simplify(query, list, expressions, variablesText, nextIndex);
             } else if (chars[i] == ')' || chars[i] == ',' || i + 1 == chars.length) {//go up, and substitute or add and continue
@@ -129,62 +131,70 @@ public class StandardTreeBuilder implements TreeBuilder {
         }
         return pos;
     }
-    private String resolveAndAddFuture(Pair<String, ArrayList<String>> definition, List<Expression> expressions, Map<String, String> variablesText, Integer[] nextIndex) {
+
+    private String resolveSignsAndCreateExpression(Pair<String, ArrayList<String>> definition, List<Expression> expressions, Map<String, String> variablesText, Integer[] nextIndex) {
         Pair<String, ArrayList<String>> resolved = new Pair<>("", new ArrayList<>());
         for (String var : definition.second) {
-            System.out.print("delinquent to resolve: " + var + "    resolved to: ");
-            if (!var.matches("\\w*")) {//contains sign
-                int pos;
-                if ((pos = getSignIndex(var)) != -1) {
-                    Pair<String, ArrayList<String>> tmp = new Pair<>(Character.toString(var.charAt(pos)), new ArrayList<>());
-                    if (pos == 0) {
-                        tmp.second.add(var.substring(1));
-                        System.out.println(var.charAt(pos) + " ( " + var.substring(1) + " )");
-                    } else {
-                        tmp.second.add(var.substring(0, pos));
-                        tmp.second.add(var.substring(pos + 1));
-                        System.out.println(var.charAt(pos) + " ( " + var.substring(0, pos) + " , " + var.substring(pos + 1) + " )");
-                    }
-                    resolved.second.add(resolveAndAddFuture(tmp, expressions, variablesText, nextIndex));
-                }
-            } else {
-                System.out.println("just " + var);
-                resolved.second.add(var);
-            }
+            //System.out.print("delinquent to resolve: " + var + "    resolved to: ");
+            resolveSignsInModuleArgument(expressions, variablesText, nextIndex, resolved, var);
         }
-        System.out.println("resolving operation name from: " + definition.first + "   to: ");
+        //System.out.println("resolving operation name from: " + definition.first + "   to: ");
         if (definition.first.matches("\\w*") || definition.first.matches("\\W$")) {// is simple definition of just mod name or just sign
             resolved.first = definition.first;
         } else {//has operation
-            if (definition.first.matches(".*\\W$")) {//ends with special sign
-                resolved.first = "";
-                String new_var = resolveAndAddFuture(resolved, expressions, variablesText, nextIndex);
-                resolved = new Pair<>("", new ArrayList<>());
-                resolved.first = "";
-                resolved.second.add(definition.first + new_var);
-                return resolveAndAddFuture(resolved, expressions, variablesText, nextIndex);
-            } else {// ends with modular operation
-                System.out.println("case: modular");
-                int i = 0;
-                while (i < definition.first.length() && definition.first.substring(definition.first.length() - 1 - i).matches("\\w*")) { // get the longest trailing valid word
-                    ++i;
-                }
-                --i;
-                resolved.first = definition.first.substring(definition.first.length() - 1 - i);
-                String new_var = resolveAndAddFuture(resolved, expressions, variablesText, nextIndex);
-                resolved = new Pair<>("", new ArrayList<>());
-                resolved.first = "";
-                resolved.second.add(definition.first.substring(0, definition.first.length() - 1 - i) + new_var);
-                System.out.println("( " + definition.first.substring(0, definition.first.length() - 1 - i) + new_var + " ) where " + new_var + " = " + definition.first.substring(definition.first.length() - 1 - i) + "( inside )");
-                return resolveAndAddFuture(resolved, expressions, variablesText, nextIndex);
-            }
+            return resolveSignsInModuleName(definition, expressions, variablesText, nextIndex, resolved);
         }
         String varName = this.getSubstitutionName(nextIndex[0]++);
         String expressionText = getExpressionText(resolved.first, resolved.second, variablesText);
         variablesText.put(varName, expressionText);
         expressions.add(new Expression(varName, expressionText, resolved.first, resolved.second));
-        System.out.println("resolver created: " + expressions.get(expressions.size() - 1));
+        //System.out.println("resolver created: " + expressions.get(expressions.size() - 1));
         return varName;
+    }
+
+    private String resolveSignsInModuleName(Pair<String, ArrayList<String>> definition, List<Expression> expressions, Map<String, String> variablesText, Integer[] nextIndex, Pair<String, ArrayList<String>> resolved) {
+        if (definition.first.matches(".*\\W$")) {//ends with special sign
+            resolved.first = "";
+            String new_var = resolveSignsAndCreateExpression(resolved, expressions, variablesText, nextIndex);
+            resolved = new Pair<>("", new ArrayList<>());
+            resolved.first = "";
+            resolved.second.add(definition.first + new_var);
+        } else {// ends with modular operation
+            System.out.println("case: modular");
+            int i = 0;
+            while (i < definition.first.length() && definition.first.substring(definition.first.length() - 1 - i).matches("\\w*")) { // get the longest trailing valid word
+                ++i;
+            }
+            --i;
+            resolved.first = definition.first.substring(definition.first.length() - 1 - i);
+            String new_var = resolveSignsAndCreateExpression(resolved, expressions, variablesText, nextIndex);
+            resolved = new Pair<>("", new ArrayList<>());
+            resolved.first = "";
+            resolved.second.add(definition.first.substring(0, definition.first.length() - 1 - i) + new_var);
+            System.out.println("( " + definition.first.substring(0, definition.first.length() - 1 - i) + new_var + " ) where " + new_var + " = " + definition.first.substring(definition.first.length() - 1 - i) + "( inside )");
+        }
+        return resolveSignsAndCreateExpression(resolved, expressions, variablesText, nextIndex);
+    }
+
+    private void resolveSignsInModuleArgument(List<Expression> expressions, Map<String, String> variablesText, Integer[] nextIndex, Pair<String, ArrayList<String>> resolved, String var) {
+        if (!var.matches("\\w*")) {//contains sign
+            int pos;
+            if ((pos = getSignIndex(var)) != -1) {
+                Pair<String, ArrayList<String>> tmp = new Pair<>(Character.toString(var.charAt(pos)), new ArrayList<>());
+                if (pos == 0) {
+                    tmp.second.add(var.substring(1));
+                    System.out.println(var.charAt(pos) + " ( " + var.substring(1) + " )");
+                } else {
+                    tmp.second.add(var.substring(0, pos));
+                    tmp.second.add(var.substring(pos + 1));
+                    System.out.println(var.charAt(pos) + " ( " + var.substring(0, pos) + " , " + var.substring(pos + 1) + " )");
+                }
+                resolved.second.add(resolveSignsAndCreateExpression(tmp, expressions, variablesText, nextIndex));
+            }
+        } else {
+            System.out.println("just " + var);
+            resolved.second.add(var);
+        }
     }
 
     public String getSubstitutionName(Integer index) {
@@ -206,8 +216,3 @@ public class StandardTreeBuilder implements TreeBuilder {
     }
 
 }
-/*
-a+b+c+d+e
-a+b
-c+d+e
- */

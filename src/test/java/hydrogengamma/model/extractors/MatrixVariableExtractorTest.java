@@ -4,9 +4,19 @@ import hydrogengamma.model.variables.MatrixVariable;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MatrixVariableExtractorTest {
+    @Test
+    public void doesNotModifyArguments() {
+        final String e1 = "[1 /2 /3 ]";
+        final String e2 = "[1 /2 /3 ]";
+        FunctionVariableExtractor t = new FunctionVariableExtractor();
+        assertDoesNotThrow(() -> t.verify(e1));
+        assertEquals(e2, e1);
+        assertDoesNotThrow(() -> t.extract(e1));
+        assertEquals(e2, e1);
+    }
+
     @Test
     public void verifyTest() {
         String e1 = "[1/2/3]";
