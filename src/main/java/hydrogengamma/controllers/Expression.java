@@ -2,13 +2,11 @@ package hydrogengamma.controllers;
 
 import java.util.List;
 
-public final class Expression {// final can't be extended
-    // I'm not so sure about this class, but it's a final container (and otherwise there is problem defining what is returned by treeBuilder)
-    //todo: getters for strings MICHAL
-    final public String id;
-    final public String operationName;
-    final public String label;
-    final public List<String> subExpressions;
+public final class Expression {// final class can't be extended
+    private final String id;
+    private final String operationName;
+    private final String label;
+    private final List<String> subExpressions;
 
     public Expression(String id, String label, String operationName, List<String> subExpressions) {
         this.id = id;
@@ -19,6 +17,22 @@ public final class Expression {// final can't be extended
 
     @Override
     public String toString() {
-        return this.label + " as : " + this.id + " = " + this.operationName + "(" + String.join(", ", subExpressions) + ")\n";
+        return this.getLabel() + " as : " + this.getId() + " = " + this.getOperationName() + "(" + String.join(", ", getSubExpressions()) + ")\n";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getOperationName() {
+        return operationName;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public List<String> getSubExpressions() {
+        return subExpressions;
     }
 }

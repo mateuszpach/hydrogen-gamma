@@ -5,7 +5,7 @@ import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.NumericVariable;
 
-public class NumericIdentity implements Module<NumericVariable> {
+public class NumberIdentity implements Module<NumericVariable> {
     @Override
     public NumericVariable execute(TilesContainer container, Variable<?>... args) {
         return (NumericVariable) args[0];

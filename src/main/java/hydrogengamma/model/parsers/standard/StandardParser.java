@@ -26,16 +26,11 @@ public class StandardParser implements Parser {
 
     @Override
     public TilesContainer parse(String variables, String operation) { // runs load and compute session with error handling and tile building
-        if (variables.equals("") && operation.equals("")) {
-            //just so it can return immediately on empty input
-            return new TilesContainerImpl();
-        }
-        // TODO any logs MATEUSZ
         TilesContainer container;
         try {
             container = computer.compute(loader.load(variables), treeBuilder.build(operation));
-        } catch (ParsingException e) {
-            return new TilesContainerImpl(new InfoTile(e.msg, "Computing error"));
+        } catch (ParsingException exception) {
+            return new TilesContainerImpl(new InfoTile(exception.toString(), "Resolving error"));
         } catch (ModuleException exception) {
             return new TilesContainerImpl(new InfoTile(exception.toString(), "Module error"));
         }

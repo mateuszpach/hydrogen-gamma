@@ -10,7 +10,7 @@ public class FunctionVariableExtractor implements VariableExtractor<FunctionVari
 
     @Override
     public boolean verify(String formula) {
-        formula = formula.replaceAll("\\s+", "");// not a text so remove all whitespace left
+        formula = formula.replaceAll("\\s", "");// not a text so remove all whitespace left
         return formula.length() >= 2 && formula.charAt(0) == '(' && formula.charAt(formula.length() - 1) == ')';
     }
 }

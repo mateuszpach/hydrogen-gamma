@@ -1,9 +1,20 @@
 package hydrogengamma.model.extractors;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TextVariableExtractorTest {
+    @Test
+    public void doesNotModifyArguments() {
+        final String e1 = "\"     \"";
+        final String e2 = "\"     \"";
+        FunctionVariableExtractor t = new FunctionVariableExtractor();
+        assertDoesNotThrow(() -> t.verify(e1));
+        assertEquals(e2, e1);
+        assertDoesNotThrow(() -> t.extract(e1));
+        assertEquals(e2, e1);
+    }
 
     @Test
     public void verifyTest() {
