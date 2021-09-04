@@ -3,25 +3,31 @@ package hydrogengamma.model.modules;
 import hydrogengamma.model.Module;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
+import hydrogengamma.model.modules.tilefactories.GeneralTilesFactory;
+import hydrogengamma.model.modules.tilefactories.MatrixAndTextTileFactory;
 import hydrogengamma.model.modules.utils.LinearAlgebra;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.model.variables.TextVariable;
 import hydrogengamma.model.variables.VoidVariable;
 import hydrogengamma.utils.Pair;
-import hydrogengamma.vartiles.MatrixTile;
-import hydrogengamma.vartiles.TextTile;
 
 public class LUDecomposer implements Module<VoidVariable> {
+
+    private final MatrixAndTextTileFactory factory;
+
+    public LUDecomposer(MatrixAndTextTileFactory factory) {
+        this.factory = factory;
+    }
 
     @Override
     public VoidVariable execute(TilesContainer container, Variable<?>... args) {
         Pair<MatrixVariable, MatrixVariable> lu = decompositionLU((MatrixVariable) args[0]);
         if (containsNaNOrInf(lu.first.getValue()) || containsNaNOrInf(lu.second.getValue())) {
-            container.addTile(new TextTile(new TextVariable("LU decomposition could not be found"), "LU not found"));
+            container.addTile(factory.getTextTile(new TextVariable("LU decomposition could not be found"), "LU not found"));
             return new VoidVariable();
         }
-        container.addTile(new MatrixTile(lu.first, "L from LU decomposition of"));
-        container.addTile(new MatrixTile(lu.second, "U from LU decomposition of"));
+        container.addTile(factory.getMatrixTile(lu.first, "L from LU decomposition of"));
+        container.addTile(factory.getMatrixTile(lu.second, "U from LU decomposition of"));
         return new VoidVariable();
     }
 

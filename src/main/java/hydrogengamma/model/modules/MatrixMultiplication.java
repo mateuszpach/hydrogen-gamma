@@ -4,9 +4,15 @@ import hydrogengamma.model.Module;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.MatrixVariable;
-import hydrogengamma.vartiles.MatrixTile;
+import hydrogengamma.model.modules.tilefactories.MatrixTileFactory;
 
 public class MatrixMultiplication implements Module<MatrixVariable> {
+
+    private final MatrixTileFactory factory;
+
+    public MatrixMultiplication(MatrixTileFactory factory) {
+        this.factory = factory;
+    }
 
     @Override
     public MatrixVariable execute(TilesContainer container, Variable<?>... args) {
@@ -17,7 +23,7 @@ public class MatrixMultiplication implements Module<MatrixVariable> {
             for (int j = 0; j < b.colsNum(); ++j)
                 for (int k = 0; k < a.colsNum(); ++k)
                     c[i][j] += a.get(i, k) * b.get(k, j);
-        container.addTile(new MatrixTile(new MatrixVariable(c), "Product of"));
+        container.addTile(factory.getMatrixTile(new MatrixVariable(c), "Product of"));
         return new MatrixVariable(c);
     }
 

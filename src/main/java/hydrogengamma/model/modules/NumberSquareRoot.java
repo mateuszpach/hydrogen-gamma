@@ -4,14 +4,22 @@ import hydrogengamma.model.Module;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.NumericVariable;
+import hydrogengamma.model.modules.tilefactories.NumericTileFactory;
 
 import static java.lang.Math.sqrt;
 
 public class NumberSquareRoot implements Module<NumericVariable> {
 
+    private final NumericTileFactory factory;
+
+    public NumberSquareRoot(NumericTileFactory factory) {
+        this.factory = factory;
+    }
+
     @Override
     public NumericVariable execute(TilesContainer container, Variable<?>... args) {
         double prod = ((NumericVariable) args[0]).getValue();
+        container.addTile(factory.getNumericTile(new NumericVariable(sqrt(prod)), "Square root of"));
         return new NumericVariable(sqrt(prod));
     }
 

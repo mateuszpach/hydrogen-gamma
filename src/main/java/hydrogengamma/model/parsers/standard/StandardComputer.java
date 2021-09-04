@@ -16,6 +16,7 @@ public class StandardComputer implements Computer {
     public TilesContainer compute(Map<String, Variable<?>> loaderVariables, List<Expression> expressions) {
         TilesContainer container = new TilesContainerImpl();
         Map<String, Pair<String, Variable<?>>> variables = getVariables(loaderVariables);
+
         for (Expression exp : expressions) {
             String functionName = exp.getOperationName();
             List<String> subexpressionsIds = exp.getSubExpressions();

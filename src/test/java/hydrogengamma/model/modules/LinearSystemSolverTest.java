@@ -1,13 +1,15 @@
-package hydrogengamma;
+package hydrogengamma.model.modules;
 
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.modules.LinearSystemSolver;
+import hydrogengamma.model.modules.tilefactories.MatrixTileFactory;
 import hydrogengamma.model.modules.utils.LinearAlgebra;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.vartiles.Tile;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 
@@ -15,6 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class LinearSystemSolverTest {
+
+    TilesContainer container =  Mockito.mock(TilesContainer.class);
+    MatrixTileFactory factory = Mockito.mock(MatrixTileFactory.class);
 
     @Test
     void throwingMatrixNotSquare() {
@@ -34,7 +39,7 @@ public class LinearSystemSolverTest {
             }
         };
 
-        LinearSystemSolver solver = new LinearSystemSolver();
+        LinearSystemSolver solver = new LinearSystemSolver(factory);
 
         assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> solver.execute(container, new MatrixVariable(a), null));
         assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> solver.execute(container, new MatrixVariable(b), null));
@@ -62,7 +67,7 @@ public class LinearSystemSolverTest {
             }
         };
 
-        LinearSystemSolver solver = new LinearSystemSolver();
+        LinearSystemSolver solver = new LinearSystemSolver(factory);
 
         MatrixVariable x = solver.execute(container, C, D);
         assertEquals(sol1, solver.execute(container, A, B));
@@ -75,12 +80,12 @@ public class LinearSystemSolverTest {
     @Test
     public void verifyTest() {
         MatrixVariable m = new MatrixVariable(new double[][]{{0, 1}, {1, 0}});
-        Variable<double[][]>[] arr1 = new Variable[]{m};
-        Variable<double[][]>[] arr2 = new Variable[]{m, m};
-        Variable<String>[] arr3 = new Variable[]{new FunctionVariable("sin(x)")};
+        Variable<?>[] arr1 = new Variable[]{m};
+        Variable<?>[] arr2 = new Variable[]{m, m};
+        Variable<?>[] arr3 = new Variable[]{new FunctionVariable("sin(x)")};
 
-        assertFalse(new LinearSystemSolver().verify(arr1));
-        assertTrue(new LinearSystemSolver().verify(arr2));
-        assertFalse(new LinearSystemSolver().verify(arr3));
+        assertFalse(new LinearSystemSolver(factory).verify(arr1));
+        assertTrue(new LinearSystemSolver(factory).verify(arr2));
+        assertFalse(new LinearSystemSolver(factory).verify(arr3));
     }
 }
