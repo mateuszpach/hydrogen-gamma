@@ -4,6 +4,7 @@ import hydrogengamma.model.Module;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.FunctionVariable;
+import hydrogengamma.model.modules.tilefactories.TileFactory;
 
 public class FunctionIdentity implements Module<FunctionVariable> {
     @Override

@@ -5,9 +5,15 @@ import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.NumericVariable;
 import hydrogengamma.model.variables.TextVariable;
-import hydrogengamma.vartiles.NumericTile;
+import hydrogengamma.model.modules.tilefactories.NumericTileFactory;
 
 public class LevenshteinDistance implements Module<NumericVariable> {
+    private final NumericTileFactory factory;
+
+    public LevenshteinDistance(NumericTileFactory factory) {
+        this.factory = factory;
+    }
+
     @Override
     public NumericVariable execute(TilesContainer container, Variable<?>... args) {
         String word1 = ((TextVariable) args[0]).getValue();
@@ -43,7 +49,7 @@ public class LevenshteinDistance implements Module<NumericVariable> {
         }
 
         NumericVariable result = new NumericVariable(d[word1.length()][word2.length()]);
-        container.addTile(new NumericTile(result, "Levenshtein distance of"));
+        container.addTile(factory.getNumericTile(result, "Levenshtein distance of"));
         return result;
     }
 

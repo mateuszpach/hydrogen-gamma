@@ -5,9 +5,15 @@ import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.model.variables.NumericVariable;
-import hydrogengamma.vartiles.MatrixTile;
+import hydrogengamma.model.modules.tilefactories.MatrixTileFactory;
 
 public class MatrixScalar implements Module<MatrixVariable> {
+
+    private final MatrixTileFactory factory;
+
+    public MatrixScalar(MatrixTileFactory factory) {
+        this.factory = factory;
+    }
 
     @Override
     public MatrixVariable execute(TilesContainer container, Variable<?>... args) {
@@ -28,7 +34,7 @@ public class MatrixScalar implements Module<MatrixVariable> {
         }
 
         MatrixVariable result = new MatrixVariable(c);
-        container.addTile(new MatrixTile(result, "Matrix-scalar product of"));
+        container.addTile(factory.getMatrixTile(result, "Matrix-scalar product of"));
         return result;
     }
 

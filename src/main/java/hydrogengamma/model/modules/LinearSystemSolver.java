@@ -6,14 +6,20 @@ import hydrogengamma.model.Variable;
 import hydrogengamma.model.modules.utils.LinearAlgebra;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.utils.Pair;
-import hydrogengamma.vartiles.MatrixTile;
+import hydrogengamma.model.modules.tilefactories.MatrixTileFactory;
 
 public class LinearSystemSolver implements Module<MatrixVariable> {
+
+    private final MatrixTileFactory factory;
+
+    public LinearSystemSolver(MatrixTileFactory factory) {
+        this.factory = factory;
+    }
 
     @Override
     public MatrixVariable execute(TilesContainer container, Variable<?>... args) {
         MatrixVariable solution = solveLinearSystem((MatrixVariable)args[0], (MatrixVariable) args[1]);
-        container.addTile(new MatrixTile(solution, "AX=B solution where A, B are"));
+        container.addTile(factory.getMatrixTile(solution, "AX=B solution where A, B are"));
         return solution;
     }
 

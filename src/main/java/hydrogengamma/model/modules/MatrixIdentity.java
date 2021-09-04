@@ -4,6 +4,7 @@ import hydrogengamma.model.Module;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.MatrixVariable;
+import hydrogengamma.model.modules.tilefactories.TileFactory;
 
 public class MatrixIdentity implements Module<MatrixVariable> {
     @Override

@@ -3,14 +3,21 @@ package hydrogengamma.model.modules;
 import hydrogengamma.model.Module;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
+import hydrogengamma.model.modules.utils.Texts;
 import hydrogengamma.model.variables.TextVariable;
 import hydrogengamma.model.variables.VoidVariable;
-import hydrogengamma.vartiles.TableTile;
+import hydrogengamma.model.modules.tilefactories.TableTileFactory;
 
 import java.util.Map;
 import java.util.TreeMap;
 
 public class CountWords implements Module<VoidVariable> {
+
+    private final TableTileFactory factory;
+
+    public CountWords(TableTileFactory factory) {
+        this.factory = factory;
+    }
 
     @Override
     public VoidVariable execute(TilesContainer container, Variable<?>... args) {
@@ -21,7 +28,7 @@ public class CountWords implements Module<VoidVariable> {
             Integer oldValue = wordsFreq.getOrDefault(word, 0);
             wordsFreq.put(word, oldValue + 1);
         }
-        container.addTile(new TableTile(wordsFreq, "Frequencies of words in"));
+        container.addTile(factory.getTableTile(Texts.convertMapTo2dArray(wordsFreq), "Frequencies of words in"));
         return new VoidVariable();
     }
 

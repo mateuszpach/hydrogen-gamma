@@ -4,9 +4,15 @@ import hydrogengamma.model.Module;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.variables.NumericVariable;
-import hydrogengamma.vartiles.NumericTile;
+import hydrogengamma.model.modules.tilefactories.NumericTileFactory;
 
 public class NumberDivision implements Module<NumericVariable> {
+    private final NumericTileFactory factory;
+
+    public NumberDivision(NumericTileFactory factory) {
+        this.factory = factory;
+    }
+
     @Override
     public NumericVariable execute(TilesContainer container, Variable<?>... args) {
         NumericVariable a, b;
@@ -18,7 +24,7 @@ public class NumberDivision implements Module<NumericVariable> {
             b = (NumericVariable) args[1];
             result = new NumericVariable(a.getValue() / b.getValue());
         }
-        container.addTile(new NumericTile(result, "Division of"));
+        container.addTile(factory.getNumericTile(result, "Division of"));
         return result;
     }
 
