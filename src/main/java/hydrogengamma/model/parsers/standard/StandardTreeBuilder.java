@@ -3,6 +3,7 @@ package hydrogengamma.model.parsers.standard;
 import hydrogengamma.controllers.Expression;
 import hydrogengamma.controllers.TreeBuilder;
 import hydrogengamma.utils.Pair;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,8 @@ import static java.lang.Math.min;
 public class StandardTreeBuilder implements TreeBuilder {
     private final Map<String, Character> signFixes;
     private final ArrayList<ArrayList<Character>> signHierarchy;
+
+    private static final Logger logger = Logger.getLogger(StandardTreeBuilder.class);
 
     public StandardTreeBuilder() {
         this.signFixes = new TreeMap<>();
@@ -135,10 +138,10 @@ public class StandardTreeBuilder implements TreeBuilder {
     private String resolveSignsAndCreateExpression(Pair<String, ArrayList<String>> definition, List<Expression> expressions, Map<String, String> variablesText, Integer[] nextIndex) {
         Pair<String, ArrayList<String>> resolved = new Pair<>("", new ArrayList<>());
         for (String var : definition.second) {
-            //System.out.print("delinquent to resolve: " + var + "    resolved to: ");
+            logger.debug("Expression to resolve: " + var + "    resolved to: ");
             resolveSignsInModuleArgument(expressions, variablesText, nextIndex, resolved, var);
         }
-        //System.out.println("resolving operation name from: " + definition.first + "   to: ");
+        logger.debug("Resolving operation name from: " + definition.first + "   to: ");
         if (definition.first.matches("\\w*") || definition.first.matches("\\W$")) {// is simple definition of just mod name or just sign
             resolved.first = definition.first;
         } else {//has operation
@@ -148,7 +151,7 @@ public class StandardTreeBuilder implements TreeBuilder {
         String expressionText = getExpressionText(resolved.first, resolved.second, variablesText);
         variablesText.put(varName, expressionText);
         expressions.add(new Expression(varName, expressionText, resolved.first, resolved.second));
-        //System.out.println("resolver created: " + expressions.get(expressions.size() - 1));
+        logger.debug("Resolver created: " + expressions.get(expressions.size() - 1));
         return varName;
     }
 

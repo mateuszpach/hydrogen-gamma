@@ -17,7 +17,7 @@ public class DoubleColumnTableTile extends DefaultTile {
         StringBuilder content = new StringBuilder();
         content.append("<table class=\"table table-bordered w-auto table-non-fluid\"><tbody>");
         for (Pair<String, String> row : table) {
-            content.append(String.format("<tr><td>%s</td><td>%s</td></tr>", row.first, row.second));
+            content.append(String.format("<tr><td class=\"table-success\">%s</td><td>%s</td></tr>", row.first, row.second));
         }
         content.append("</tbody></table>");
         return content.toString();
