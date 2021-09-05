@@ -1,7 +1,8 @@
-package hydrogengamma;
+package hydrogengamma.model.variables;
 
-import hydrogengamma.model.variables.MatrixVariable;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,7 +61,7 @@ public class MatrixVariableTest {
     }
 
     @Test
-    void sameMatricesEqual() {
+    void sameEqual() {
         MatrixVariable A = new MatrixVariable(new double[][] {{1.0, -2.0}, {1e100, -3e100}});
         MatrixVariable B = new MatrixVariable(new double[][] {{1.0, -2.0}, {1e100, -3e100}});
 
@@ -69,7 +70,7 @@ public class MatrixVariableTest {
     }
 
     @Test
-    void differentMatricesNotEqual() {
+    void differentNotEqual() {
         MatrixVariable A = new MatrixVariable(new double[][]{{1e-20, -2.0}, {1e100, -3e100}});
         MatrixVariable B = new MatrixVariable(new double[][]{{-1e-20, -2.0}, {1e100, -3e100}});
 
@@ -77,6 +78,22 @@ public class MatrixVariableTest {
         assertNotEquals(B, A);
         assertNotEquals(new MatrixVariable(new double[][]{{1.0, 1.0}}), new MatrixVariable(new double[][]{{1.0}}));
         assertNotEquals(new MatrixVariable(new double[][]{{1.0, 1.0}}), new MatrixVariable(new double[][]{{1.0, 1.0}, {1.0, 1.0}}));
+        assertNotEquals(A, new FunctionVariable(""));
+    }
+
+    @Test
+    void testToString() {
+        MatrixVariable a = new MatrixVariable(new double[][]{{1.0, 2.0}, {3.0, 4.0}});
+
+        assertEquals("1.0 2.0 \n3.0 4.0 \n", a.toString());
+    }
+
+    @Test
+    void testHashCode() {
+        double[][] a = {{1.0, 2.0, 3.0}};
+        MatrixVariable A = new MatrixVariable(a);
+
+        assertEquals(Arrays.deepHashCode(a), A.hashCode());
     }
 
     @Test
