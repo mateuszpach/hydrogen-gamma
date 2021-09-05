@@ -3,18 +3,17 @@ package hydrogengamma.model.modules;
 import hydrogengamma.model.Module;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
-import hydrogengamma.model.modules.utils.Texts;
+import hydrogengamma.model.modules.tilefactories.SingleColumnTableTileFactory;
 import hydrogengamma.model.variables.TextVariable;
 import hydrogengamma.model.variables.VoidVariable;
-import hydrogengamma.model.modules.tilefactories.TableTileFactory;
 
 import java.util.ArrayList;
 
 public class LongestCommonSubstrings implements Module<VoidVariable> {
 
-    private final TableTileFactory factory;
+    private final SingleColumnTableTileFactory factory;
 
-    public LongestCommonSubstrings(TableTileFactory factory) {
+    public LongestCommonSubstrings(SingleColumnTableTileFactory factory) {
         this.factory = factory;
     }
 
@@ -48,7 +47,7 @@ public class LongestCommonSubstrings implements Module<VoidVariable> {
             }
         }
 
-        container.addTile(factory.getTableTile(Texts.convertArrayListTo2dArray(result), "Longest common substrings of"));
+        container.addTile(factory.getSingleColumnTableTile(result, "Longest common substrings of"));
         return new VoidVariable();
     }
 

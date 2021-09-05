@@ -35,7 +35,7 @@ public class DeterminantTest {
     }
 
     @Test
-    void properDeterminant() {
+    void correctResult() {
         MatrixVariable A = new MatrixVariable(new double[][]{{3.0, 4.0}, {-1.0, 30.0}});
         MatrixVariable B = new MatrixVariable(new double[][]{{1.0}});
         MatrixVariable C = new MatrixVariable(new double[][]{{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}, {7.0, 8.0, 9.0}});
