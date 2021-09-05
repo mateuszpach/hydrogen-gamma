@@ -1,10 +1,9 @@
 package hydrogengamma.model.modules;
 
 import hydrogengamma.model.TilesContainer;
-import hydrogengamma.model.modules.tilefactories.TableTileFactory;
+import hydrogengamma.model.modules.tilefactories.SingleColumnTableTileFactory;
 import hydrogengamma.model.variables.NumericVariable;
 import hydrogengamma.model.variables.TextVariable;
-import hydrogengamma.vartiles.TableTile;
 import hydrogengamma.vartiles.Tile;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -18,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LongestCommonSubstringsTest {
 
-    private TableTileFactory factory = Mockito.mock(TableTileFactory.class);
+    private SingleColumnTableTileFactory factory = Mockito.mock(SingleColumnTableTileFactory.class);
 
     @Test
     void executeTiles() {
