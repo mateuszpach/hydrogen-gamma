@@ -3,7 +3,6 @@ package hydrogengamma.model.modules;
 import hydrogengamma.model.Module;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
-import hydrogengamma.model.modules.tilefactories.GeneralTilesFactory;
 import hydrogengamma.model.modules.tilefactories.MatrixAndTextTileFactory;
 import hydrogengamma.model.modules.utils.LinearAlgebra;
 import hydrogengamma.model.variables.MatrixVariable;
