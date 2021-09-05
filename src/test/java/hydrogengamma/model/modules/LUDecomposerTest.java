@@ -3,7 +3,7 @@ package hydrogengamma.model.modules;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.modules.tilefactories.MatrixAndTextTileFactory;
-import hydrogengamma.model.modules.utils.LinearAlgebra;
+import hydrogengamma.model.modules.utils.ModuleException;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.model.variables.TextVariable;
@@ -24,19 +24,17 @@ public class LUDecomposerTest {
     Tile luNotFoundTile = Mockito.mock(Tile.class);
 
     @Test
-    void throwingMatrixNotSquare() {
+    void throwingWhenMatrixNotSquare() {
         MatrixVariable a = new MatrixVariable(new double[][]{{1.0, 1.0}, {2.0, 2.0}, {3.0, 3.0}});
         MatrixVariable b = new MatrixVariable(new double[][]{{1.0, 1.0}});
         MatrixVariable c = new MatrixVariable(new double[][]{{1.0}, {1.0}});
 
         LUDecomposer lu = new LUDecomposer(factory);
 
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> lu.execute(container, a));
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> lu.execute(container, b));
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> lu.execute(container, c));
+        assertThrows(ModuleException.class, () -> lu.execute(container, a));
+        assertThrows(ModuleException.class, () -> lu.execute(container, b));
+        assertThrows(ModuleException.class, () -> lu.execute(container, c));
     }
-
-    // TODO test L and U stored in kafelki. Commented out are old tests from static LinearAlgebra module.
 
     @Test
     void decompositionLUHardMatrices() {
