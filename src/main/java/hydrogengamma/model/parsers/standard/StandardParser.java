@@ -29,10 +29,10 @@ public class StandardParser implements Parser {
         TilesContainer container;
         try {
             container = computer.compute(loader.load(variables), treeBuilder.build(operation));
-        } catch (ParsingException exception) {
-            return new TilesContainerImpl(new InfoTile(exception.toString(), "Resolving error"));
         } catch (ModuleException exception) {
             return new TilesContainerImpl(new InfoTile(exception.toString(), "Module error"));
+        } catch (ParsingException exception) {
+            return new TilesContainerImpl(new InfoTile(exception.toString(), "Resolving error"));
         }
         return container;
 

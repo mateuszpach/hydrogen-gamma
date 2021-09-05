@@ -3,7 +3,7 @@ package hydrogengamma.model.modules;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.modules.tilefactories.MatrixTileFactory;
-import hydrogengamma.model.modules.utils.LinearAlgebra;
+import hydrogengamma.model.modules.utils.ModuleException;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.vartiles.Tile;
@@ -27,9 +27,9 @@ public class LinearSystemSolverTest {
 
         LinearSystemSolver solver = new LinearSystemSolver(factory);
 
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> solver.execute(container, new MatrixVariable(a), null));
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> solver.execute(container, new MatrixVariable(b), null));
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> solver.execute(container, new MatrixVariable(c), null));
+        assertThrows(ModuleException.class, () -> solver.execute(container, new MatrixVariable(a), null));
+        assertThrows(ModuleException.class, () -> solver.execute(container, new MatrixVariable(b), null));
+        assertThrows(ModuleException.class, () -> solver.execute(container, new MatrixVariable(c), null));
         Mockito.verifyNoInteractions(factory, container);
     }
 

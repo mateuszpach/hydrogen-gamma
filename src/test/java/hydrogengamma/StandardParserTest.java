@@ -32,12 +32,7 @@ public class StandardParserTest {
         TreeBuilder treeBuilder = Mockito.mock(TreeBuilder.class);
         final TilesContainer[] container = new TilesContainer[1];
         Computer computer = (variables, expressions) -> {
-            throw new ModuleException() {
-                @Override
-                public String toString() {
-                    return "error";
-                }
-            };
+            throw new ModuleException("error");
         };
         Parser parser = new StandardParser(loader, treeBuilder, computer);
         final String variables = "a=1";

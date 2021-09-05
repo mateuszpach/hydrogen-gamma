@@ -10,7 +10,7 @@ public interface LinearAlgebra {
     static Pair<Pair<MatrixVariable, MatrixVariable>, Integer[]> decompositionLUPivoted(MatrixVariable matrix) {
         int n = matrix.rowsNum();
         int m = matrix.colsNum();
-        if (n != m) throw new MatrixNotSquareException();
+        if (n != m) throw new ModuleException("Matrix is not square, but an operation requires it to be so");
 
         Integer[] permutation = identityPermutation(n);
 
@@ -129,12 +129,5 @@ public interface LinearAlgebra {
         int temp = A[i];
         A[i] = A[j];
         A[j] = temp;
-    }
-
-    class MatrixNotSquareException extends ModuleException {
-        @Override
-        public String toString() {
-            return "Matrix is not square but an operation requires it to be so.";
-        }
     }
 }
