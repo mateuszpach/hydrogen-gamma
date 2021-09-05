@@ -1,121 +1,75 @@
-/*
 package hydrogengamma.model.modules;
 
 import hydrogengamma.model.TilesContainer;
-import hydrogengamma.model.modules.tilefactories.TableTileFactory;
+import hydrogengamma.model.modules.tilefactories.DoubleColumnTableTileFactory;
 import hydrogengamma.model.variables.NumericVariable;
 import hydrogengamma.model.variables.TextVariable;
-import hydrogengamma.vartiles.TableTile;
+import hydrogengamma.utils.Pair;
 import hydrogengamma.vartiles.Tile;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import java.util.List;
-import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CountWordsTest {
 
-    private TableTileFactory factory;
+    TilesContainer container = Mockito.mock(TilesContainer.class);
+    DoubleColumnTableTileFactory factory = Mockito.mock(DoubleColumnTableTileFactory.class);
+    Tile createdTile = Mockito.mock(Tile.class);
 
     @Test
-    void executeRegularTiles() {
-        // Given
-        TextVariable t = new TextVariable("Lorem ipsum lorem ipsum dolor sit amet amet amet");
-
-        ArgumentCaptor<Tile> captor = ArgumentCaptor.forClass(Tile.class);
-        TilesContainer container = Mockito.mock(TilesContainer.class);
-
-        // When
-        new CountWords(factory).execute(container);
-        Mockito.verify(container).addTile(captor.capture());
-        List<Tile> tiles = captor.getAllValues();
-
-        // Then
-        assertEquals(1, tiles.size());
-
-        Map<String, Integer> expectedLettersFreq = Map.of(
-                "Lorem", 1,
-                "ipsum", 2,
-                "lorem", 1,
-                "dolor", 1,
-                "sit", 1,
-                "amet", 3
+    void factoryCommunication() {
+        TextVariable t1 = new TextVariable(" Lorem    lorem dolor sit        ");
+        TextVariable t2 = new TextVariable("Lorem $ ip?sum dolor sit \n amet,  ,, amet!");
+        CountWords module = new CountWords(factory);
+        List<Pair<String, String>> e1 = List.of(
+                new Pair<>("Lorem", "1"),
+                new Pair<>("dolor", "1"),
+                new Pair<>("lorem", "1"),
+                new Pair<>("sit", "1")
         );
-       */
-/* Tile expectedTile = new TableTile(expectedLettersFreq, "Frequencies of words in");
-        assertEquals(expectedTile.getContent(), tiles.get(0).getContent());
-        TODO Mateusz
-        assertEquals(expectedTile.getLabel(), tiles.get(0).getLabel());*//*
+        List<Pair<String, String>> e2 = List.of(
+                new Pair<>("Lorem", "1"),
+                new Pair<>("amet", "2"),
+                new Pair<>("dolor", "1"),
+                new Pair<>("ip", "1"),
+                new Pair<>("sit", "1"),
+                new Pair<>("sum", "1")
+        );
 
+        module.execute(container, t1);
+        module.execute(container, t2);
+
+        InOrder factOrd = Mockito.inOrder(factory);
+        factOrd.verify(factory).getDoubleColumnTableTile(e1, "Frequencies of words in");
+        factOrd.verify(factory).getDoubleColumnTableTile(e2, "Frequencies of words in");
+        Mockito.verifyNoMoreInteractions(factory);
     }
 
     @Test
-    void executeSpacesTiles() {
-        // Given
+    void containerCommunication() {
         TextVariable t = new TextVariable(" Lorem    lorem dolor sit        ");
-
-        ArgumentCaptor<Tile> captor = ArgumentCaptor.forClass(Tile.class);
-        TilesContainer container = Mockito.mock(TilesContainer.class);
-
-        // When
-        new CountWords(factory).execute(container, t);
-        Mockito.verify(container).addTile(captor.capture());
-        List<Tile> tiles = captor.getAllValues();
-
-        // Then
-        assertEquals(1, tiles.size());
-
-        Map<String, Integer> expectedLettersFreq = Map.of(
-                "Lorem", 1,
-                "lorem", 1,
-                "dolor", 1,
-                "sit", 1
+        CountWords module = new CountWords(factory);
+        List<Pair<String, String>> e = List.of(
+                new Pair<>("Lorem", "1"),
+                new Pair<>("dolor", "1"),
+                new Pair<>("lorem", "1"),
+                new Pair<>("sit", "1")
         );
-        */
-/*Tile expectedTile = new TableTile(expectedLettersFreq, "Frequencies of words in");
-        assertEquals(expectedTile.getContent(), tiles.get(0).getContent());
-        TODO Mateusz
-        assertEquals(expectedTile.getLabel(), tiles.get(0).getLabel());*//*
+        Mockito.when(factory.getDoubleColumnTableTile(e, "Frequencies of words in")).then((x) -> createdTile);
 
+        module.execute(container, t);
+
+        Mockito.verify(container).addTile(createdTile);
+        Mockito.verifyNoMoreInteractions(container);
     }
 
     @Test
-    void executeSpecialCharsTiles() {
-        // Given
-        TextVariable t = new TextVariable("Lorem $ ip?sum dolor sit \n amet,  ,, amet!");
-
-        ArgumentCaptor<Tile> captor = ArgumentCaptor.forClass(Tile.class);
-        TilesContainer container = Mockito.mock(TilesContainer.class);
-
-        // When
-        new CountWords(factory).execute(container);
-        Mockito.verify(container).addTile(captor.capture());
-        List<Tile> tiles = captor.getAllValues();
-
-        // Then
-        assertEquals(1, tiles.size());
-
-        Map<String, Integer> expectedLettersFreq = Map.of(
-                "Lorem", 1,
-                "ip", 1,
-                "sum", 1,
-                "dolor", 1,
-                "sit", 1,
-                "amet", 2
-        );
-        */
-/*Tile expectedTile = new TableTile(expectedLettersFreq, "Frequencies of words in");
-        assertEquals(expectedTile.getContent(), tiles.get(0).getContent());
-        TODO Mateusz
-        assertEquals(expectedTile.getLabel(), tiles.get(0).getLabel());*//*
-
-    }
-
-    @Test
-    void verify() {
+    void verifyTest() {
         TextVariable t = Mockito.mock(TextVariable.class);
         NumericVariable x = Mockito.mock(NumericVariable.class);
 
@@ -124,4 +78,4 @@ class CountWordsTest {
         assertFalse(new CountWords(factory).verify(t, t));
         assertFalse(new CountWords(factory).verify(x));
     }
-}*/
+}

@@ -1,66 +1,60 @@
-/*
 package hydrogengamma.model.modules;
 
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.modules.tilefactories.NumericTileFactory;
 import hydrogengamma.model.variables.NumericVariable;
 import hydrogengamma.model.variables.TextVariable;
-import hydrogengamma.vartiles.NumericTile;
 import hydrogengamma.vartiles.Tile;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class LevenshteinDistanceTest {
 
-    private NumericTileFactory factory;
+    TilesContainer container = Mockito.mock(TilesContainer.class);
+    NumericTileFactory factory = Mockito.mock(NumericTileFactory.class);
+    Tile createdTile = Mockito.mock(Tile.class);
 
     @Test
-    void executeResult() {
-        // Given
+    void correctResult() {
         TextVariable word1 = new TextVariable("Sunday");
         TextVariable word2 = new TextVariable("Saturday");
+        LevenshteinDistance module = new LevenshteinDistance(factory);
+        NumericVariable e = new NumericVariable(3);
 
-        TilesContainer container = Mockito.mock(TilesContainer.class);
+        NumericVariable result = module.execute(container, word1, word2);
 
-        // When
-        NumericVariable result = new LevenshteinDistance(factory).execute(container, word1, word2);
-
-        // Then
-        NumericVariable expectedResult = new NumericVariable(3);
-        assertEquals(expectedResult, result);
+        assertEquals(e, result);
     }
 
     @Test
-    void executeTiles() {
-        // Given
+    void factoryCommunication() {
         TextVariable word1 = new TextVariable("Sunday");
         TextVariable word2 = new TextVariable("Saturday");
+        LevenshteinDistance module = new LevenshteinDistance(factory);
 
-        ArgumentCaptor<Tile> captor = ArgumentCaptor.forClass(Tile.class);
-        TilesContainer container = Mockito.mock(TilesContainer.class);
+        NumericVariable result = module.execute(container, word1, word2);
 
-        // When
-        new LevenshteinDistance(factory).execute(container, word1, word2);
-        Mockito.verify(container).addTile(captor.capture());
-        List<Tile> tiles = captor.getAllValues();
-
-        // Then
-        assertEquals(1, tiles.size());
-
-        NumericVariable expectedResult = new NumericVariable(3);
-        Tile expectedTile = new NumericTile(expectedResult, "Levenshtein distance of");
-        assertEquals(expectedTile.getContent(), tiles.get(0).getContent());
-
-        assertEquals(expectedTile.getLabel(), tiles.get(0).getLabel());
+        Mockito.verify(factory).getNumericTile(result, "Levenshtein distance of");
+        Mockito.verifyNoMoreInteractions(factory);
     }
 
     @Test
-    void verify() {
+    void containerCommunication() {
+        TextVariable word1 = new TextVariable("Sunday");
+        TextVariable word2 = new TextVariable("Saturday");
+        LevenshteinDistance module = new LevenshteinDistance(factory);
+        Mockito.when(factory.getNumericTile(new NumericVariable(3), "Levenshtein distance of")).then((x) -> createdTile);
+
+        module.execute(container, word1, word2);
+
+        Mockito.verify(container).addTile(createdTile);
+        Mockito.verifyNoMoreInteractions(container);
+    }
+
+    @Test
+    public void verifyTest() {
         TextVariable t = Mockito.mock(TextVariable.class);
         NumericVariable x = Mockito.mock(NumericVariable.class);
 
@@ -69,4 +63,4 @@ class LevenshteinDistanceTest {
         assertFalse(new LevenshteinDistance(factory).verify(t));
         assertFalse(new LevenshteinDistance(factory).verify(x, t));
     }
-}*/
+}
