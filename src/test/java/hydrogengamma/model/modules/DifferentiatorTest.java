@@ -3,15 +3,13 @@ package hydrogengamma.model.modules;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.TilesContainerImpl;
 import hydrogengamma.model.Variable;
-import hydrogengamma.model.modules.Differentiator;
 import hydrogengamma.model.modules.tilefactories.FunctionTileFactory;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.vartiles.Tile;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
-
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,6 +18,7 @@ public class DifferentiatorTest {
 
     TilesContainer container =  Mockito.mock(TilesContainer.class);
     FunctionTileFactory factory = Mockito.mock(FunctionTileFactory.class);
+    Tile createdTile = null;
 
     @Test
     public void trivialDerivatives() {
@@ -28,17 +27,6 @@ public class DifferentiatorTest {
         FunctionVariable f3 = new FunctionVariable("e^(x)");
         FunctionVariable f4 = new FunctionVariable("ln(x)");
         FunctionVariable f5 = new FunctionVariable("x");
-        TilesContainer container = new TilesContainer() {
-            @Override
-            public void addTile(Tile tile) {
-
-            }
-
-            @Override
-            public ArrayList<Tile> getTiles() {
-                return null;
-            }
-        };
 
         Differentiator diff = new Differentiator(factory);
 
@@ -56,17 +44,6 @@ public class DifferentiatorTest {
         FunctionVariable f3 = new FunctionVariable("e^(x");
         FunctionVariable f4 = new FunctionVariable("sin+cox(x)");
         FunctionVariable f5 = new FunctionVariable("--x");
-        TilesContainer container = new TilesContainer() {
-            @Override
-            public void addTile(Tile tile) {
-
-            }
-
-            @Override
-            public ArrayList<Tile> getTiles() {
-                return null;
-            }
-        };
 
         Differentiator diff = new Differentiator(factory);
 
@@ -84,17 +61,6 @@ public class DifferentiatorTest {
         FunctionVariable f3 = new FunctionVariable("e^(x)-sin(x)-x+ln(x)");
         FunctionVariable f4 = new FunctionVariable("ln(x)+sin(x)");
         FunctionVariable f5 = new FunctionVariable("x+x");
-        TilesContainer container = new TilesContainer() {
-            @Override
-            public void addTile(Tile tile) {
-
-            }
-
-            @Override
-            public ArrayList<Tile> getTiles() {
-                return null;
-            }
-        };
 
         Differentiator diff = new Differentiator(factory);
 
@@ -112,17 +78,6 @@ public class DifferentiatorTest {
         FunctionVariable f3 = new FunctionVariable("sin(x)/cos(x)");
         FunctionVariable f4 = new FunctionVariable("sin(x)*x*cos(x)");
         FunctionVariable f5 = new FunctionVariable("e^(x)/sin(x)");
-        TilesContainer container = new TilesContainer() {
-            @Override
-            public void addTile(Tile tile) {
-
-            }
-
-            @Override
-            public ArrayList<Tile> getTiles() {
-                return null;
-            }
-        };
 
         Differentiator diff = new Differentiator(factory);
 
@@ -140,18 +95,6 @@ public class DifferentiatorTest {
         FunctionVariable f3 = new FunctionVariable("((sin(x)))/((cos(x)))");
         FunctionVariable f4 = new FunctionVariable("(((sin(x)))/((cos(x)))+(x))");
         FunctionVariable f5 = new FunctionVariable("((((((e^(x))))+(x))))");
-        TilesContainer container = new TilesContainer() {
-
-            @Override
-            public void addTile(Tile tile) {
-
-            }
-
-            @Override
-            public ArrayList<Tile> getTiles() {
-                return null;
-            }
-        };
 
         Differentiator diff = new Differentiator(factory);
 
@@ -169,18 +112,6 @@ public class DifferentiatorTest {
         FunctionVariable f3 = new FunctionVariable("-x^(-10)");
         FunctionVariable f4 = new FunctionVariable("x^(0)");
         FunctionVariable f5 = new FunctionVariable("sin(x)*(-5*x^(2))");
-        TilesContainer container = new TilesContainer() {
-
-            @Override
-            public void addTile(Tile tile) {
-
-            }
-
-            @Override
-            public ArrayList<Tile> getTiles() {
-                return null;
-            }
-        };
 
         Differentiator diff = new Differentiator(factory);
 
@@ -198,18 +129,6 @@ public class DifferentiatorTest {
         FunctionVariable f3 = new FunctionVariable("3*sin(x)");
         FunctionVariable f4 = new FunctionVariable("-4*cos(x)");
         FunctionVariable f5 = new FunctionVariable("x/10");
-        TilesContainer container = new TilesContainer() {
-
-            @Override
-            public void addTile(Tile tile) {
-
-            }
-
-            @Override
-            public ArrayList<Tile> getTiles() {
-                return null;
-            }
-        };
 
         Differentiator diff = new Differentiator(factory);
 
@@ -230,6 +149,39 @@ public class DifferentiatorTest {
         assertTrue(new Differentiator(factory).verify(arr1));
         assertFalse(new Differentiator(factory).verify(arr2));
         assertFalse(new Differentiator(factory).verify(arr3));
+    }
+
+    @Test
+    void factoryCommunication() {
+        FunctionVariable f1 = new FunctionVariable("sin(x)");
+        FunctionVariable f2 = new FunctionVariable("cos(x)");
+        FunctionVariable e1 = new FunctionVariable("cos(x)");
+        FunctionVariable e2 = new FunctionVariable("(-sin(x))");
+        Differentiator diff = new Differentiator(factory);
+
+        diff.execute(container, f1);
+        diff.execute(container, f2);
+
+        InOrder factOrd = Mockito.inOrder(factory);
+        factOrd.verify(factory).getFunctionTile(e1, "Derivative of");
+        factOrd.verify(factory).getFunctionTile(e2, "Derivative of");
+        Mockito.verifyNoMoreInteractions(factory);
+    }
+
+    @Test
+    void containerCommunication() {
+        FunctionVariable f1 = new FunctionVariable("sin(x)");
+        FunctionVariable e1 = new FunctionVariable("cos(x)");
+        Differentiator diff = new Differentiator(factory);
+        Mockito.when(factory.getFunctionTile(e1, "Derivative of")).then((x) -> {
+            createdTile = Mockito.mock(Tile.class);
+            return createdTile;
+        });
+
+        diff.execute(container, f1);
+
+        Mockito.verify(container).addTile(createdTile);
+        Mockito.verifyNoMoreInteractions(container);
     }
 
     @Test
