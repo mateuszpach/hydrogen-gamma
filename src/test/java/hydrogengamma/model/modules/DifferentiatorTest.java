@@ -19,7 +19,7 @@ public class DifferentiatorTest {
 
     TilesContainer container =  Mockito.mock(TilesContainer.class);
     FunctionTileFactory factory = Mockito.mock(FunctionTileFactory.class);
-    Tile createdTile = null;
+    Tile createdTile = Mockito.mock(Tile.class);
 
     @Test
     public void trivialDerivatives() {
@@ -174,10 +174,7 @@ public class DifferentiatorTest {
         FunctionVariable f1 = new FunctionVariable("sin(x)");
         FunctionVariable e1 = new FunctionVariable("cos(x)");
         Differentiator diff = new Differentiator(factory);
-        Mockito.when(factory.getFunctionTile(e1, "Derivative of")).then((x) -> {
-            createdTile = Mockito.mock(Tile.class);
-            return createdTile;
-        });
+        Mockito.when(factory.getFunctionTile(e1, "Derivative of")).then((x) -> createdTile);
 
         diff.execute(container, f1);
 

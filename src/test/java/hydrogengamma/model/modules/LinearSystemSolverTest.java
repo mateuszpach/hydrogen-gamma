@@ -17,7 +17,7 @@ public class LinearSystemSolverTest {
 
     TilesContainer container =  Mockito.mock(TilesContainer.class);
     MatrixTileFactory factory = Mockito.mock(MatrixTileFactory.class);
-    Tile createdTile = null;
+    Tile createdTile = Mockito.mock(Tile.class);
 
     @Test
     void throwingMatrixNotSquare() {
@@ -71,10 +71,7 @@ public class LinearSystemSolverTest {
         MatrixVariable B = new MatrixVariable(new double[][] {{3.0}, {9.0}});
         MatrixVariable sol1 = new MatrixVariable(new double[][] {{4.0}, {1.0}});
         LinearSystemSolver lin = new LinearSystemSolver(factory);
-        Mockito.when(factory.getMatrixTile(sol1, "AX=B solution where A, B are")).then((x) -> {
-            createdTile = Mockito.mock(Tile.class);
-            return createdTile;
-        });
+        Mockito.when(factory.getMatrixTile(sol1, "AX=B solution where A, B are")).then((x) -> createdTile);
 
         lin.execute(container, A, B);
 

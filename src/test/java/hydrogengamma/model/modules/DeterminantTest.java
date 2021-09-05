@@ -19,7 +19,7 @@ public class DeterminantTest {
 
     TilesContainer container =  Mockito.mock(TilesContainer.class);
     NumericTileFactory factory = Mockito.mock(NumericTileFactory.class);
-    Tile createdTile = null;
+    Tile createdTile = Mockito.mock(Tile.class);
 
     @Test
     void throwingMatrixNotSquare() {
@@ -69,10 +69,7 @@ public class DeterminantTest {
     void containerCommunication() {
         MatrixVariable A = new MatrixVariable(new double[][]{{3.0, 4.0}, {-1.0, 30.0}});
         Determinant det = new Determinant(factory);
-        Mockito.when(factory.getNumericTile(new NumericVariable(94.0), "Determinant of")).then((x) -> {
-            createdTile = Mockito.mock(Tile.class);
-            return createdTile;
-        });
+        Mockito.when(factory.getNumericTile(new NumericVariable(94.0), "Determinant of")).then((x) -> createdTile);
 
         det.execute(container, A);
 
