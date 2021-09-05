@@ -17,6 +17,7 @@ public class TileDecorator implements Tile {
 
     @Override
     public String getLabel() {
-        return tile.getLabel() + labelSuffix;
+//        return String.format("$\\text{%s: } %s$", tile.getLabel(), labelSuffix);
+        return String.format("%s: $\\mathit{%s}$", tile.getLabel(), labelSuffix);
     }
 }

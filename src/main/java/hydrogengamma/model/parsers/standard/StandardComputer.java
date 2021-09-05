@@ -23,6 +23,7 @@ public class StandardComputer implements Computer {
 
             String[] subLabels = new String[subexpressionsIds.size()];
             Variable<?>[] subComponents = getSubComponents(variables, exp, subexpressionsIds, subLabels);
+//            Arrays.stream(subComponents).forEach(logger::debug);
 
             Optional<Modules> matchedModule = getMatchedModule(functionName, subComponents);
             if (matchedModule.isEmpty())
@@ -30,7 +31,7 @@ public class StandardComputer implements Computer {
             logger.debug("Matched module " + matchedModule.get().name());
 
             String argsStr = String.join(", ", subLabels);
-            TilesContainerDecorator containerDecorator = new TilesContainerDecorator(new TilesContainerImpl(), ": " + argsStr);
+            TilesContainerDecorator containerDecorator = new TilesContainerDecorator(new TilesContainerImpl(), argsStr);
 
             Variable<?> value = matchedModule.get().module.execute(containerDecorator, subComponents);
             for (Tile tile : containerDecorator.getTiles())
