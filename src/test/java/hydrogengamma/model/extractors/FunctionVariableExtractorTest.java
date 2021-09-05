@@ -10,6 +10,7 @@ public class FunctionVariableExtractorTest {
         final String e1 = "(    )";
         final String e2 = "(    )";
         FunctionVariableExtractor t = new FunctionVariableExtractor();
+
         assertDoesNotThrow(() -> t.verify(e1));
         assertEquals(e2, e1);
         assertDoesNotThrow(() -> t.extract(e1));
@@ -17,22 +18,30 @@ public class FunctionVariableExtractorTest {
     }
 
     @Test
-    public void verifyTest() {
+    public void verifyGood() {
         String e1 = "()";
         String e2 = "(ubv9ben4 das)"; // pointless formulas are acceptable. It's the Module who throws.
         String e3 = "(siybc48e)u ((i)";
-        String e4 = "(aihf98";
-        String e5 = "a09h  2)";
-        String e6 = "a09h  2";
 
         FunctionVariableExtractor t = new FunctionVariableExtractor();
 
         assertTrue(t.verify(e1));
         assertTrue(t.verify(e2));
         assertTrue(t.verify(e3));
-        assertFalse(t.verify(e4));
-        assertFalse(t.verify(e5));
-        assertFalse(t.verify(e6));
+    }
+
+    @Test
+    public void verifyBad() {
+        // Missing parentheses
+        String e1 = "(aihf98";
+        String e2 = "a09h  2)";
+        String e3 = "a09h  2";
+
+        FunctionVariableExtractor t = new FunctionVariableExtractor();
+
+        assertFalse(t.verify(e1));
+        assertFalse(t.verify(e2));
+        assertFalse(t.verify(e3));
     }
 
     @Test
