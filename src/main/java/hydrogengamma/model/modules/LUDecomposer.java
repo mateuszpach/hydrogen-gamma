@@ -5,6 +5,7 @@ import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.modules.tilefactories.MatrixAndTextTileFactory;
 import hydrogengamma.model.modules.utils.LinearAlgebra;
+import hydrogengamma.model.modules.utils.ModuleException;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.model.variables.TextVariable;
 import hydrogengamma.model.variables.VoidVariable;
@@ -34,7 +35,7 @@ public class LUDecomposer implements Module<VoidVariable> {
     private static Pair<MatrixVariable, MatrixVariable> decompositionLU(MatrixVariable matrix) {
         int n = matrix.rowsNum();
         int m = matrix.colsNum();
-        if (n != m) throw new LinearAlgebra.MatrixNotSquareException();
+        if (n != m) throw new ModuleException("Matrix is not square, but an operation requires it to be so");
 
         Pair<MatrixVariable, MatrixVariable> initialLU = LinearAlgebra.prepareLU(matrix);
         double[][] L = initialLU.first.getValue();

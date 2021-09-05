@@ -4,6 +4,7 @@ import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.TilesContainerImpl;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.modules.tilefactories.FunctionTileFactory;
+import hydrogengamma.model.modules.utils.ModuleException;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.vartiles.Tile;
@@ -47,11 +48,11 @@ public class DifferentiatorTest {
 
         Differentiator diff = new Differentiator(factory);
 
-        assertThrows(Differentiator.InvalidFormulaException.class, () -> diff.execute(container, f1));
-        assertThrows(Differentiator.InvalidFormulaException.class, () -> diff.execute(container, f2));
-        assertThrows(Differentiator.DerivativeNotKnownException.class, () -> diff.execute(container, f3));
-        assertThrows(Differentiator.DerivativeNotKnownException.class, () -> diff.execute(container, f4));
-        assertThrows(Differentiator.DerivativeNotKnownException.class, () -> diff.execute(container, f5));
+        assertThrows(ModuleException.class, () -> diff.execute(container, f1));
+        assertThrows(ModuleException.class, () -> diff.execute(container, f2));
+        assertThrows(ModuleException.class, () -> diff.execute(container, f3));
+        assertThrows(ModuleException.class, () -> diff.execute(container, f4));
+        assertThrows(ModuleException.class, () -> diff.execute(container, f5));
     }
 
     @Test
@@ -189,20 +190,17 @@ public class DifferentiatorTest {
         Differentiator diff = new Differentiator(factory);
         try {
             diff.execute(new TilesContainerImpl(), new FunctionVariable("ax"));
-        }
-        catch (Differentiator.DerivativeNotKnownException e) {
+        } catch (ModuleException e) {
             assertEquals("Couldn't find a derivative for function: ax", e.toString());
         }
         try {
             diff.execute(new TilesContainerImpl(), new FunctionVariable("(sin(x))**(cos(x))"));
-        }
-        catch (Differentiator.InvalidFormulaException e) {
+        } catch (ModuleException e) {
             assertEquals("Function formula is invalid: (sin(x))**(cos(x))", e.toString());
         }
         try {
             diff.execute(new TilesContainerImpl(), new FunctionVariable("*(sin(x))*(cos(x))"));
-        }
-        catch (Differentiator.InvalidFormulaException e) {
+        } catch (ModuleException e) {
             assertEquals("Function formula is invalid: *(sin(x))*(cos(x))", e.toString());
         }
     }

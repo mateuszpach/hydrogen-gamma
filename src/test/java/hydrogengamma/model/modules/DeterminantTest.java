@@ -3,7 +3,7 @@ package hydrogengamma.model.modules;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.modules.tilefactories.NumericTileFactory;
-import hydrogengamma.model.modules.utils.LinearAlgebra;
+import hydrogengamma.model.modules.utils.ModuleException;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.model.variables.NumericVariable;
@@ -28,9 +28,9 @@ public class DeterminantTest {
         double[][] c = {{1.0}, {1.0}};
         Determinant det = new Determinant(factory);
 
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> det.execute(container, new MatrixVariable(a)));
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> det.execute(container, new MatrixVariable(b)));
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> det.execute(container, new MatrixVariable(c)));
+        assertThrows(ModuleException.class, () -> det.execute(container, new MatrixVariable(a)));
+        assertThrows(ModuleException.class, () -> det.execute(container, new MatrixVariable(b)));
+        assertThrows(ModuleException.class, () -> det.execute(container, new MatrixVariable(c)));
         Mockito.verifyNoInteractions(container, factory);
     }
 

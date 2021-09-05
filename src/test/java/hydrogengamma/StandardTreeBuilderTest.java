@@ -58,10 +58,10 @@ public class StandardTreeBuilderTest {
     @Test
     void signsWithModulesAreSimplifiedCorrectly() {
         TreeBuilder treeBuilder = new StandardTreeBuilder();
-        final String operation = "-sqrt(a)";
+        final String operation = "-add(a)";
         final List<Expression>[] state = new ArrayList[]{new ArrayList<>()};
         assertDoesNotThrow(() -> state[0] = treeBuilder.build(operation));
         assertEquals(4, state[0].size());
-        assertEquals("sqrt", state[0].get(0).getOperationName());
+        assertEquals("add", state[0].get(0).getOperationName());
     }
 }

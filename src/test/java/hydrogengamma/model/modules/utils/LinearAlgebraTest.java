@@ -1,6 +1,5 @@
 package hydrogengamma.model.modules.utils;
 
-import hydrogengamma.model.modules.utils.LinearAlgebra;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.utils.Pair;
 import org.junit.jupiter.api.Test;
@@ -16,14 +15,13 @@ public class LinearAlgebraTest {
         double[][] b = {{1.0, 1.0}};
         double[][] c = {{1.0}, {1.0}};
 
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.decompositionLUPivoted(new MatrixVariable(a)));
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.decompositionLUPivoted(new MatrixVariable(b)));
-        assertThrows(LinearAlgebra.MatrixNotSquareException.class, () -> LinearAlgebra.decompositionLUPivoted(new MatrixVariable(c)));
+        assertThrows(ModuleException.class, () -> LinearAlgebra.decompositionLUPivoted(new MatrixVariable(a)));
+        assertThrows(ModuleException.class, () -> LinearAlgebra.decompositionLUPivoted(new MatrixVariable(b)));
+        assertThrows(ModuleException.class, () -> LinearAlgebra.decompositionLUPivoted(new MatrixVariable(c)));
         try {
             LinearAlgebra.decompositionLUPivoted(new MatrixVariable(a));
-        }
-        catch (LinearAlgebra.MatrixNotSquareException e) {
-            assertEquals("Matrix is not square but an operation requires it to be so.", e.toString());
+        } catch (ModuleException e) {
+            assertEquals("Matrix is not square, but an operation requires it to be so", e.toString());
         }
     }
 
