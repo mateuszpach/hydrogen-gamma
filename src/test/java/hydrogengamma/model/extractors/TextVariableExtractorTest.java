@@ -17,6 +17,33 @@ public class TextVariableExtractorTest {
     }
 
     @Test
+    public void verifyGood() {
+        String e1 = "\"\"";
+        String e2 = "\"siybc48eu  bi\"";
+        String e3 = "\"siybc48e\"u  bi\"";
+
+        TextVariableExtractor t = new TextVariableExtractor();
+
+        assertTrue(t.verify(e1));
+        assertTrue(t.verify(e2));
+        assertTrue(t.verify(e3));
+    }
+
+    @Test
+    public void verifyBad() {
+        // Missing quote
+        String e1 = "\"aihf98";
+        String e2 = "a09h  2\"";
+        String e3 = "a09h  2";
+
+        TextVariableExtractor t = new TextVariableExtractor();
+
+        assertFalse(t.verify(e1));
+        assertFalse(t.verify(e2));
+        assertFalse(t.verify(e3));
+    }
+
+    @Test
     public void verifyTest() {
         String e1 = "\"\"";
         String e2 = "\"siybc48eu  bi\"";

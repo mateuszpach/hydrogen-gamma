@@ -24,10 +24,6 @@ public class MatrixVariableExtractor implements VariableExtractor<MatrixVariable
             return false;
         ArrayList<ArrayList<String>> rows = getRows(formula);
 
-        // non-empty check (our assumption)
-        if (rows.isEmpty())
-            return false;
-
         // non-empty rows check
         for (ArrayList<String> row : rows) {
             if (row.isEmpty())

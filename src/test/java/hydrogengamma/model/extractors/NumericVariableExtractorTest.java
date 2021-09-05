@@ -10,6 +10,7 @@ public class NumericVariableExtractorTest {
         final String e1 = "2 9 3 8 4 0";
         final String e2 = "2 9 3 8 4 0";
         FunctionVariableExtractor t = new FunctionVariableExtractor();
+
         assertDoesNotThrow(() -> t.verify(e1));
         assertEquals(e2, e1);
         assertDoesNotThrow(() -> t.extract(e1));
@@ -17,14 +18,11 @@ public class NumericVariableExtractorTest {
     }
 
     @Test
-    public void verifyTest() {
+    public void verifyGood() {
         String e1 = "293840";
         String e2 = "90314.0193";
         String e3 = "000000000000.00";
         String e4 = "-293840";
-        String e5 = "1d13";
-        String e6 = "hello";
-        String e7 = "09  2";
 
         NumericVariableExtractor t = new NumericVariableExtractor();
 
@@ -32,9 +30,20 @@ public class NumericVariableExtractorTest {
         assertTrue(t.verify(e2));
         assertTrue(t.verify(e3));
         assertTrue(t.verify(e4));
-        assertFalse(t.verify(e5));
-        assertFalse(t.verify(e6));
-        assertFalse(t.verify(e7));
+    }
+
+    @Test
+    public void verifyBad() {
+        // Can't parse a number
+        String e1 = "1d13";
+        String e2 = "hello";
+        String e3 = "09  2";
+
+        NumericVariableExtractor t = new NumericVariableExtractor();
+
+        assertFalse(t.verify(e1));
+        assertFalse(t.verify(e2));
+        assertFalse(t.verify(e3));
     }
 
     @Test
