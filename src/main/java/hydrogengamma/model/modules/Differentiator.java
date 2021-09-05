@@ -3,11 +3,11 @@ package hydrogengamma.model.modules;
 import hydrogengamma.model.Module;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
+import hydrogengamma.model.modules.tilefactories.FunctionTileFactory;
 import hydrogengamma.model.modules.utils.Functions;
 import hydrogengamma.model.modules.utils.ModuleException;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.utils.Pair;
-import hydrogengamma.model.modules.tilefactories.FunctionTileFactory;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -32,7 +32,7 @@ public class Differentiator implements Module<FunctionVariable> {
         String formula = removeParentheses(func.getValue());
 
         if (formula.isEmpty())
-            throw new InvalidFormulaException(formula);
+            throw new ModuleException("Function formula is invalid: " + formula);
 
         formula = removeParentheses(formula);
         if (isConstant(formula))
@@ -69,16 +69,16 @@ public class Differentiator implements Module<FunctionVariable> {
         ArrayList<Integer> operPos = operatorsPositions(formula);
 
         if (operPos.isEmpty())
-            throw new DerivativeNotKnownException(formula);
+            throw new ModuleException("Couldn't find a derivative for function: " + formula);
         if (!correctOperators(formula))
-            throw new InvalidFormulaException(formula);
+            throw new ModuleException("Function formula is invalid: " + formula);
 
         Pair<ArrayList<String>, ArrayList<Character>> additive = Functions.findSubcomponents(formula, "+-");
 
         if (additive.second.isEmpty()) {    // multiplicative
             Pair<ArrayList<String>, ArrayList<Character>> multiplicative = Functions.findSubcomponents(formula, "*/");
             if (multiplicative.second.isEmpty())
-                throw new DerivativeNotKnownException(formula);
+                throw new ModuleException("Couldn't find a derivative for function: " + formula);
             ArrayList<String> components = multiplicative.first;
             ArrayList<Character> operators = multiplicative.second;
 
@@ -235,26 +235,5 @@ public class Differentiator implements Module<FunctionVariable> {
             if (Functions.knownOperators.contains(formula.charAt(i)) && Functions.knownOperators.contains(formula.charAt(i + 1)))
                 return false;
         return true;
-    }
-
-    public static class DerivativeNotKnownException extends ModuleException {
-        private final String formula;
-        DerivativeNotKnownException(String form) {
-            formula = form;
-        }
-        @Override
-        public String toString() {
-            return "Couldn't find a derivative for function: " + formula;
-        }
-    }
-    public static class InvalidFormulaException extends ModuleException {
-        private final String formula;
-        InvalidFormulaException(String form) {
-            formula = form;
-        }
-        @Override
-        public String toString() {
-            return "Function formula is invalid: " + formula;
-        }
     }
 }

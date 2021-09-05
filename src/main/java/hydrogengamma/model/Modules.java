@@ -2,17 +2,22 @@ package hydrogengamma.model;
 
 import hydrogengamma.model.modules.*;
 import hydrogengamma.model.modules.tilefactories.AllTilesFactory;
+import hydrogengamma.model.modules.utils.ModuleException;
+import hydrogengamma.model.variables.NumericVariable;
 
 public enum Modules {
     // TODO: loading test must be added, just seen all tests pass while constructor was throwing
     // Numeric
     NUMBER_IDENTITY("", new NumberIdentity()),
-    NUMBER_ADD("+", new NumberAddition(new AllTilesFactory())),
-    NUMBER_SUB("-", new NumberSubtraction(new AllTilesFactory())),
-    NUMBER_MUL("*", new NumberMultiplication(new AllTilesFactory())),
-    NUMBER_DIV("/", new NumberDivision(new AllTilesFactory())),
-    NUMBER_SQRT("sqrt", new NumberSquareRoot(new AllTilesFactory())),
-//    NUMBER_ADD2("a", new NumberAddition()),
+    NUMBER_ADD("+", new NumberBiOperator(new AllTilesFactory(), "Sum of", (a, b) -> new NumericVariable(a.getValue() + b.getValue()))),
+    NUMBER_SUB("-", new NumberBiOperator(new AllTilesFactory(), "Difference of", (a, b) -> new NumericVariable(a.getValue() - b.getValue()))),
+    NUMBER_MUL("*", new NumberBiOperator(new AllTilesFactory(), "Product of", (a, b) -> new NumericVariable(a.getValue() * b.getValue()))),
+    NUMBER_DIV("/", new NumberBiOperator(new AllTilesFactory(), "Division of", (a, b) -> {
+        if (b.getValue() == 0d)
+            throw new ModuleException("Division by zero: " + a + " / " + b);
+        return new NumericVariable(a.getValue() / b.getValue());
+    })),
+    NUMBER_ADD2("add", new NumberBiOperator(new AllTilesFactory(), "Sum of", (a, b) -> new NumericVariable(a.getValue() + b.getValue()))),
 
     // Matrix
     MATRIX_IDENTITY("", new MatrixIdentity()),

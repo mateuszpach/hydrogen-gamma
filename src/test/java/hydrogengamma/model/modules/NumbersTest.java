@@ -1,25 +1,8 @@
 package hydrogengamma.model.modules;
 
-import hydrogengamma.model.TilesContainer;
-import hydrogengamma.model.modules.NumberAddition;
-import hydrogengamma.model.modules.NumberMultiplication;
-import hydrogengamma.model.variables.FunctionVariable;
-import hydrogengamma.model.variables.MatrixVariable;
-import hydrogengamma.model.variables.NumericVariable;
-import hydrogengamma.model.variables.TextVariable;
-import hydrogengamma.vartiles.Tile;
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Random;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 public class NumbersTest {
     /*
     Random rand = new Random();
-    NumberAddition add = new NumberAddition(factory);
-    NumberMultiplication mul = new NumberMultiplication(factory);
     TilesContainer container = new TilesContainer() {
 
         @Override
