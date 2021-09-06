@@ -3,8 +3,9 @@ package hydrogengamma.model.modules;
 import hydrogengamma.model.Module;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
-import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.model.modules.tilefactories.MatrixTileFactory;
+import hydrogengamma.model.modules.utils.ModuleException;
+import hydrogengamma.model.variables.MatrixVariable;
 
 public class MatrixMultiplication implements Module<MatrixVariable> {
 
@@ -18,6 +19,8 @@ public class MatrixMultiplication implements Module<MatrixVariable> {
     public MatrixVariable execute(TilesContainer container, Variable<?>... args) {
         MatrixVariable a = (MatrixVariable) args[0];
         MatrixVariable b = (MatrixVariable) args[1];
+        if (a.colsNum() != b.rowsNum() || a.rowsNum() != b.colsNum())
+            throw new ModuleException("Mismatched dimensions of matrices for product of " + a + " and " + b);
         double[][] c = new double[a.rowsNum()][b.colsNum()];
         for (int i = 0; i < a.rowsNum(); ++i)
             for (int j = 0; j < b.colsNum(); ++j)
@@ -29,11 +32,6 @@ public class MatrixMultiplication implements Module<MatrixVariable> {
 
     @Override
     public boolean verify(Variable<?>... args) {
-        if (args.length == 2 && args[0] instanceof MatrixVariable && args[1] instanceof MatrixVariable) {
-            MatrixVariable a = (MatrixVariable) args[0];
-            MatrixVariable b = (MatrixVariable) args[1];
-            return a.colsNum() == b.rowsNum();
-        }
-        return false;
+        return (args.length == 2 && args[0] instanceof MatrixVariable && args[1] instanceof MatrixVariable);
     }
 }
