@@ -70,4 +70,5 @@ public class StandardComputerTest {
 //        assertEquals("$10.0$", tilesContainer[0].getTiles().get(2).getContent());
 //        assertEquals("Sum of: a+a, a+(a+a)", tilesContainer[0].getTiles().get(2).getLabel()); TODO
     }
+
 }
