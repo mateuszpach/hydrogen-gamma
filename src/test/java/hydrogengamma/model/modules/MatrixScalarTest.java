@@ -1,102 +1,64 @@
-/*
 package hydrogengamma.model.modules;
 
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.modules.tilefactories.MatrixTileFactory;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.model.variables.NumericVariable;
-import hydrogengamma.vartiles.MatrixTile;
 import hydrogengamma.vartiles.Tile;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class MatrixScalarTest {
 
-    private MatrixTileFactory factory;
+    TilesContainer container = Mockito.mock(TilesContainer.class);
+    MatrixTileFactory factory = Mockito.mock(MatrixTileFactory.class);
+    Tile createdTile = Mockito.mock(Tile.class);
 
     @Test
-    void executeMatrixByScalarResult() {
-        // Given
+    void correctResult() {
         MatrixVariable A = new MatrixVariable(new double[][]{{1, -2, 3}, {-4, 5, -6}});
         NumericVariable s = new NumericVariable(-1);
+        MatrixScalar module = new MatrixScalar(factory);
+        MatrixVariable e = new MatrixVariable(new double[][]{{-1, 2, -3}, {4, -5, 6}});
 
-        TilesContainer container = Mockito.mock(TilesContainer.class);
+        MatrixVariable r1 = module.execute(container, A, s);
+        MatrixVariable r2 = module.execute(container, s, A);
 
-        // When
-        MatrixVariable result = new MatrixScalar(factory).execute(container, A, s);
-
-        // Then
-        MatrixVariable expectedResult = new MatrixVariable(new double[][]{{-1, 2, -3}, {4, -5, 6}});
-        assertEquals(expectedResult, result);
+        assertEquals(r1, e);
+        assertEquals(r2, e);
     }
 
     @Test
-    void executeMatrixByScalarTiles() {
-        // Given
+    void factoryCommunication() {
         MatrixVariable A = new MatrixVariable(new double[][]{{1, -2, 3}, {-4, 5, -6}});
         NumericVariable s = new NumericVariable(-1);
+        MatrixScalar module = new MatrixScalar(factory);
 
-        ArgumentCaptor<Tile> captor = ArgumentCaptor.forClass(Tile.class);
-        TilesContainer container = Mockito.mock(TilesContainer.class);
+        MatrixVariable r1 = module.execute(container, A, s);
+        MatrixVariable r2 = module.execute(container, s, A);
 
-        // When
-        new MatrixScalar(factory).execute(container, A, s);
-        Mockito.verify(container).addTile(captor.capture());
-        List<Tile> tiles = captor.getAllValues();
-
-        // Then
-        MatrixVariable expectedResult = new MatrixVariable(new double[][]{{-1, 2, -3}, {4, -5, 6}});
-
-        assertEquals(1, tiles.size());
-        assertEquals(new MatrixTile(expectedResult, "Matrix-scalar product of").getContent(), tiles.get(0).getContent());
-        assertEquals(new MatrixTile(expectedResult,"Matrix-scalar product of").getLabel(), tiles.get(0).getLabel());
+        Mockito.verify(factory, Mockito.times(2)).getMatrixTile(r1, "Matrix-scalar product of");
+        Mockito.verifyNoMoreInteractions(factory);
     }
 
     @Test
-    void executeScalarByMatrixResult() {
-        // Given
+    void containerCommunication() {
         MatrixVariable A = new MatrixVariable(new double[][]{{1, -2, 3}, {-4, 5, -6}});
         NumericVariable s = new NumericVariable(-1);
+        MatrixScalar module = new MatrixScalar(factory);
+        Mockito.when(factory.getMatrixTile(new MatrixVariable(new double[][]{{-1, 2, -3}, {4, -5, 6}}),
+                "Matrix-scalar product of")).then((x) -> createdTile);
 
-        TilesContainer container = Mockito.mock(TilesContainer.class);
+        module.execute(container, A, s);
 
-        // When
-        MatrixVariable result = new MatrixScalar(factory).execute(container, s, A);
-
-        // Then
-        MatrixVariable expectedResult = new MatrixVariable(new double[][]{{-1, 2, -3}, {4, -5, 6}});
-        assertEquals(expectedResult, result);
+        Mockito.verify(container).addTile(createdTile);
+        Mockito.verifyNoMoreInteractions(container);
     }
 
     @Test
-    void executeScalarByMatrixTiles() {
-        // Given
-        MatrixVariable A = new MatrixVariable(new double[][]{{1, -2, 3}, {-4, 5, -6}});
-        NumericVariable s = new NumericVariable(-1);
-
-        ArgumentCaptor<Tile> captor = ArgumentCaptor.forClass(Tile.class);
-        TilesContainer container = Mockito.mock(TilesContainer.class);
-
-        // When
-        new MatrixScalar(factory).execute(container, s, A);
-        Mockito.verify(container).addTile(captor.capture());
-        List<Tile> tiles = captor.getAllValues();
-
-        // Then
-        MatrixVariable expectedResult = new MatrixVariable(new double[][]{{-1, 2, -3}, {4, -5, 6}});
-
-        assertEquals(1, tiles.size());
-        assertEquals(new MatrixTile(expectedResult, "Matrix-scalar product of").getContent(), tiles.get(0).getContent());
-        assertEquals(new MatrixTile(expectedResult, "Matrix-scalar product of").getLabel(), tiles.get(0).getLabel());
-    }
-
-    @Test
-    void verify() {
+    void verifyTest() {
         MatrixVariable A = Mockito.mock(MatrixVariable.class);
         NumericVariable s = Mockito.mock(NumericVariable.class);
 
@@ -108,4 +70,4 @@ class MatrixScalarTest {
         assertFalse(new MatrixScalar(factory).verify(A, A));
         assertFalse(new MatrixScalar(factory).verify(s, s));
     }
-}*/
+}

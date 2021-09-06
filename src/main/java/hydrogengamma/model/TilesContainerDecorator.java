@@ -14,11 +14,6 @@ public class TilesContainerDecorator implements TilesContainer {
         labelSuffix = prefix;
     }
 
-    public TilesContainerDecorator(TilesContainer container, String prefix, Tile tile) {
-        this(container, prefix);
-        addTile(tile);
-    }
-
     @Override
     public void addTile(Tile tile) {
         container.addTile(new TileDecorator(tile, labelSuffix));
