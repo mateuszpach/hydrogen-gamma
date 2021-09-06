@@ -3,6 +3,7 @@ package hydrogengamma.model;
 import hydrogengamma.model.modules.*;
 import hydrogengamma.model.modules.tilefactories.AllTilesFactory;
 import hydrogengamma.model.modules.utils.ModuleException;
+import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.model.variables.NumericVariable;
 
 import static java.lang.Math.sin;
@@ -44,8 +45,16 @@ public enum Modules {
     LEVENSHTEIN_DIST("levenshtein", new LevenshteinDistance(new AllTilesFactory())),
 
     // Function
-    FUNCTION_IDENTITY("", new FunctionIdentity()),
     DERIVATIVE("derivative", new Differentiator(new AllTilesFactory())),
+    FUNCTION_ADD_BINARY("+", new FunctionBiOperator(new AllTilesFactory(), "Sum of",
+            (f, g) -> new FunctionVariable("(" + f.getValue() + "+" + g.getValue() + ")"))),
+    FUNCTION_SUB_BINARY("-", new FunctionBiOperator(new AllTilesFactory(), "Sum of",
+            (f, g) -> new FunctionVariable("(" + f.getValue() + "-" + g.getValue() + ")"))),
+    FUNCTION_MUL_BINARY("*", new FunctionBiOperator(new AllTilesFactory(), "Product of",
+            (f, g) -> new FunctionVariable("(" + f.getValue() + "*" + g.getValue() + ")"))),
+    FUNCTION_DIV_BINARY("/", new FunctionBiOperator(new AllTilesFactory(), "Division of",
+            (f, g) -> new FunctionVariable("(" + f.getValue() + "/" + g.getValue() + ")"))),
+    FUNCTION_IDENTITY("", new FunctionIdentity()),
 
     // Voids
     COUNT_LETTERS("countLetters", new CountLetters(new AllTilesFactory())),
