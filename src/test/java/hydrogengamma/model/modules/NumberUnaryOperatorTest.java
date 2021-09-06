@@ -12,35 +12,34 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class NumberBiOperatorTest {
-
+public class NumberUnaryOperatorTest {
     TilesContainer container = Mockito.mock(TilesContainer.class);
     NumericTileFactory factory = Mockito.mock(NumericTileFactory.class);
     Tile createdTile = Mockito.mock(Tile.class);
 
     @Test
     void canBeThrowing() {
-        NumberBiOperator throwing = new NumberBiOperator(factory, "throw", (a, b) -> {
-            if (a.getValue().equals(b.getValue()))
+        NumberUnaryOperator throwing = new NumberUnaryOperator(factory, "throw", (a) -> {
+            if (a.getValue().equals(0d))
                 throw new ModuleException("throwing for no good reason");
-            return new NumericVariable(a.getValue() + b.getValue());
+            return new NumericVariable(a.getValue() + 2d);
         });
 
-        assertThrows(ModuleException.class, () -> throwing.execute(container, new NumericVariable(1), new NumericVariable(1)));
+        assertThrows(ModuleException.class, () -> throwing.execute(container, new NumericVariable(0)));
         Mockito.verifyNoInteractions(container, factory);
     }
 
     @Test
     void correctResult() {
-        NumberBiOperator add = new NumberBiOperator(factory, "+", (a, b) -> new NumericVariable(a.getValue() + b.getValue()));
-        assertEquals(new NumericVariable(10d), add.execute(container, new NumericVariable(3), new NumericVariable(7)));
+        NumberUnaryOperator add = new NumberUnaryOperator(factory, "+", (a) -> new NumericVariable(a.getValue() + 2));
+        assertEquals(new NumericVariable(5d), add.execute(container, new NumericVariable(3)));
     }
 
     @Test
     void factoryCommunication() {
-        NumberBiOperator add = new NumberBiOperator(factory, "+", (a, b) -> new NumericVariable(a.getValue() + b.getValue()));
+        NumberUnaryOperator add = new NumberUnaryOperator(factory, "+", (a) -> new NumericVariable(a.getValue() + 2));
 
-        NumericVariable w1 = add.execute(container, new NumericVariable(1), new NumericVariable(2));
+        NumericVariable w1 = add.execute(container, new NumericVariable(1));
 
         InOrder factOrd = Mockito.inOrder(factory);
         factOrd.verify(factory).getNumericTile(w1, "+");
@@ -49,10 +48,10 @@ public class NumberBiOperatorTest {
 
     @Test
     void containerCommunication() {
-        NumberBiOperator add=new NumberBiOperator(factory,"+",(a,b)->new NumericVariable(a.getValue()+b.getValue()));
+        NumberUnaryOperator add = new NumberUnaryOperator(factory, "+", (a) -> new NumericVariable(a.getValue() + 2));
         Mockito.when(factory.getNumericTile(new NumericVariable(3.0), "+")).then((x) -> createdTile);
 
-        add.execute(container, new NumericVariable(1),new NumericVariable(2));
+        add.execute(container, new NumericVariable(1));
 
         Mockito.verify(container).addTile(createdTile);
         Mockito.verifyNoMoreInteractions(container);
@@ -60,16 +59,16 @@ public class NumberBiOperatorTest {
 
     @Test
     public void verifyTest() {
-        NumberBiOperator add = new NumberBiOperator(factory, "+", (a, b) -> new NumericVariable(a.getValue() + b.getValue()));
+        NumberUnaryOperator add = new NumberUnaryOperator(factory, "+", (a) -> new NumericVariable(a.getValue() + 2));
         NumericVariable m = new NumericVariable(1d);
-        Variable<?>[] arr1 = new Variable[]{m, m};
-        Variable<?>[] arr2 = new Variable[]{m};
+        Variable<?>[] arr1 = new Variable[]{m};
+        Variable<?>[] arr2 = new Variable[]{m, m};
         Variable<?>[] arr3 = new Variable[]{(Variable<Double>) () -> 1d};
 
         assertTrue(add.verify(arr1));
-        add = new NumberBiOperator(factory, "+", (a, b) -> new NumericVariable(a.getValue() + b.getValue()));
+        add = new NumberUnaryOperator(factory, "+", (a) -> new NumericVariable(a.getValue() + 2));
         assertFalse(add.verify(arr2));
-        add = new NumberBiOperator(factory, "+", (a, b) -> new NumericVariable(a.getValue() + b.getValue()));
+        add = new NumberUnaryOperator(factory, "+", (a) -> new NumericVariable(a.getValue() + 2));
         assertFalse(add.verify(arr3));
     }
 

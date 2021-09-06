@@ -2,7 +2,6 @@ package hydrogengamma.model;
 
 import hydrogengamma.model.modules.*;
 import hydrogengamma.model.modules.tilefactories.AllTilesFactory;
-import hydrogengamma.model.modules.utils.ModuleException;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.model.variables.NumericVariable;
 
@@ -15,20 +14,11 @@ public enum Modules {
     NUMBER_ADD_BINARY("+", new NumberBiOperator(new AllTilesFactory(), "Sum of", (a, b) -> new NumericVariable(a.getValue() + b.getValue()))),
     NUMBER_SUB_BINARY("-", new NumberBiOperator(new AllTilesFactory(), "Difference of", (a, b) -> new NumericVariable(a.getValue() - b.getValue()))),
     NUMBER_MUL_BINARY("*", new NumberBiOperator(new AllTilesFactory(), "Product of", (a, b) -> new NumericVariable(a.getValue() * b.getValue()))),
-    NUMBER_DIV_BINARY("/", new NumberBiOperator(new AllTilesFactory(), "Division of", (a, b) -> {
-        if (b.getValue() == 0d)
-            throw new ModuleException("Division by zero: " + a.getValue() + " / " + b.getValue());
-        return new NumericVariable(a.getValue() / b.getValue());
-    })),
     NUMBER_SIN("sin", new NumberUnaryOperator(new AllTilesFactory(), "Sinus of", (a) -> new NumericVariable(sin(a.getValue())))),
     NUMBER_ADD_UNARY("+", new NumberUnaryOperator(new AllTilesFactory(), "Sum of", (a) -> new NumericVariable(a.getValue()))),
     NUMBER_MUL_UNARY("*", new NumberUnaryOperator(new AllTilesFactory(), "Product of", (a) -> new NumericVariable(a.getValue()))),
     NUMBER_SUB_UNARY("-", new NumberUnaryOperator(new AllTilesFactory(), "Negation of", (a) -> new NumericVariable(-a.getValue()))),
-    NUMBER_DIV_UNARY("/", new NumberUnaryOperator(new AllTilesFactory(), "Inverse of", (a) -> {
-        if (a.getValue() == 0d)
-            throw new ModuleException("Division by zero: " + 1 + " / " + a.getValue());
-        return new NumericVariable(1d / a.getValue());
-    })),
+    NUMBER_DIV_UNARY("/", new NumberDivision(new AllTilesFactory())),
 
     // Matrix
     MATRIX_IDENTITY("", new MatrixIdentity()),
