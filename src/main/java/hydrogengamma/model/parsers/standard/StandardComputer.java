@@ -3,6 +3,7 @@ package hydrogengamma.model.parsers.standard;
 import hydrogengamma.controllers.Computer;
 import hydrogengamma.controllers.Expression;
 import hydrogengamma.model.*;
+import hydrogengamma.model.modules.utils.ModuleException;
 import hydrogengamma.utils.Pair;
 import hydrogengamma.vartiles.Tile;
 import org.apache.log4j.Logger;
@@ -23,7 +24,6 @@ public class StandardComputer implements Computer {
 
             String[] subLabels = new String[subexpressionsIds.size()];
             Variable<?>[] subComponents = getSubComponents(variables, exp, subexpressionsIds, subLabels);
-//            Arrays.stream(subComponents).forEach(logger::debug);
 
             Optional<Modules> matchedModule = getMatchedModule(functionName, subComponents);
             if (matchedModule.isEmpty())
@@ -33,11 +33,26 @@ public class StandardComputer implements Computer {
             String argsStr = String.join(", ", subLabels);
             TilesContainerDecorator containerDecorator = new TilesContainerDecorator(new TilesContainerImpl(), argsStr);
 
-            Variable<?> value = matchedModule.get().module.execute(containerDecorator, subComponents);
-            for (Tile tile : containerDecorator.getTiles())
-                container.addTile(tile);
-            variables.put(exp.getId(), new Pair<>(exp.getLabel(), value));
+            try {
+                Variable<?> value = matchedModule.get().module.execute(containerDecorator, subComponents);
+                for (Tile tile : containerDecorator.getTiles())
+                    container.addTile(tile);
+                variables.put(exp.getId(), new Pair<>(exp.getLabel(), value));
+                logger.debug(String.format("Computed variable: %s as %s with value %s", exp.getId(), exp.getLabel(), value.getValue().toString()));
+            } catch (ModuleException exception) {
+                container.addTile(new Tile() {
+                    @Override
+                    public String getContent() {
+                        return exception.toString();
+                    }
 
+                    @Override
+                    public String getLabel() {
+                        return "Module error";
+                    }
+                });
+                return container;
+            }
         }
         return container;
     }

@@ -1,6 +1,6 @@
 package hydrogengamma.vartiles;
 
-public interface Tile {  // TODO dekoruj LUSKZ
+public interface Tile {
     String getContent();
 
     String getLabel();
