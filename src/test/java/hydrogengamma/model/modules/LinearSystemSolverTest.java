@@ -33,6 +33,19 @@ public class LinearSystemSolverTest {
     }
 
     @Test
+    void throwingIncompatible() {
+        MatrixVariable a1 = new MatrixVariable(new double[][]{{1,2}, {3,4}});
+        MatrixVariable b1 = new MatrixVariable(new double[][]{{1}, {3}, {1}});
+        MatrixVariable a2 = new MatrixVariable(new double[][]{{1,2}, {3,4}});
+        MatrixVariable b2 = new MatrixVariable(new double[][]{{1, 2}, {3, 3}});
+
+        LinearSystemSolver solver = new LinearSystemSolver(factory);
+
+        assertThrows(ModuleException.class, () -> solver.execute(container, a1, b1));
+        assertThrows(ModuleException.class, () -> solver.execute(container, a2, b2));
+    }
+
+    @Test
     void properlySolvedLinearSystems() {
         MatrixVariable A = new MatrixVariable(new double[][] {{1.0, -1.0}, {2.0, 1.0}});
         MatrixVariable B = new MatrixVariable(new double[][] {{3.0}, {9.0}});
