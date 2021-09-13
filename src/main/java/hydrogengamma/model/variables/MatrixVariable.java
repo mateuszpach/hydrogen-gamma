@@ -1,6 +1,6 @@
 package hydrogengamma.model.variables;
 
-import hydrogengamma.model.Variable;
+import hydrogengamma.model.parsers.standard.Variable;
 
 import java.util.Arrays;
 

@@ -1,6 +1,6 @@
 package hydrogengamma.model.modules.tilefactories;
 
-import hydrogengamma.vartiles.Tile;
+import hydrogengamma.model.modules.Tile;
 
 import java.util.List;
 

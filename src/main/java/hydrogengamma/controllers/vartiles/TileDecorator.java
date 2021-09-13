@@ -1,4 +1,6 @@
-package hydrogengamma.vartiles;
+package hydrogengamma.controllers.vartiles;
+
+import hydrogengamma.model.modules.Tile;
 
 public class TileDecorator implements Tile {
 

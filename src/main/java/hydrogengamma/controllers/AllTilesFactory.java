@@ -1,11 +1,13 @@
-package hydrogengamma.model.modules.tilefactories;
+package hydrogengamma.controllers;
 
+import hydrogengamma.controllers.vartiles.*;
+import hydrogengamma.model.modules.Tile;
+import hydrogengamma.model.modules.tilefactories.*;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.model.variables.NumericVariable;
 import hydrogengamma.model.variables.TextVariable;
 import hydrogengamma.utils.Pair;
-import hydrogengamma.vartiles.*;
 
 import java.util.List;
 

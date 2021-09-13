@@ -1,7 +1,7 @@
 package hydrogengamma.model.modules.tilefactories;
 
+import hydrogengamma.model.modules.Tile;
 import hydrogengamma.utils.Pair;
-import hydrogengamma.vartiles.Tile;
 
 import java.util.List;
 

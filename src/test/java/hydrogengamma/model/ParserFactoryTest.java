@@ -1,5 +1,7 @@
 package hydrogengamma.model;
 
+import hydrogengamma.controllers.ParserFactory;
+import hydrogengamma.model.parsers.standard.TilesContainer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -1,12 +1,7 @@
 package hydrogengamma;
 
-import hydrogengamma.controllers.Computer;
-import hydrogengamma.controllers.Loader;
 import hydrogengamma.controllers.Parser;
-import hydrogengamma.controllers.TreeBuilder;
-import hydrogengamma.model.TilesContainer;
-import hydrogengamma.model.parsers.standard.ParsingException;
-import hydrogengamma.model.parsers.standard.StandardParser;
+import hydrogengamma.model.parsers.standard.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

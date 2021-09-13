@@ -1,11 +1,11 @@
 package hydrogengamma.model.modules;
 
-import hydrogengamma.model.Module;
-import hydrogengamma.model.TilesContainer;
-import hydrogengamma.model.Variable;
 import hydrogengamma.model.modules.tilefactories.FunctionTileFactory;
 import hydrogengamma.model.modules.utils.Functions;
 import hydrogengamma.model.modules.utils.ModuleException;
+import hydrogengamma.model.parsers.standard.TilesContainer;
+import hydrogengamma.model.parsers.standard.Variable;
+import hydrogengamma.model.parsers.standard.computers.Module;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.utils.Pair;
 

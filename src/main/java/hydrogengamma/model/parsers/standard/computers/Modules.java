@@ -1,7 +1,7 @@
-package hydrogengamma.model;
+package hydrogengamma.model.parsers.standard.computers;
 
+import hydrogengamma.controllers.AllTilesFactory;
 import hydrogengamma.model.modules.*;
-import hydrogengamma.model.modules.tilefactories.AllTilesFactory;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.model.variables.NumericVariable;
 

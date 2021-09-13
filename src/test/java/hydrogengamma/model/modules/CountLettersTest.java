@@ -1,11 +1,10 @@
 package hydrogengamma.model.modules;
 
-import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.modules.tilefactories.DoubleColumnTableTileFactory;
+import hydrogengamma.model.parsers.standard.TilesContainer;
 import hydrogengamma.model.variables.NumericVariable;
 import hydrogengamma.model.variables.TextVariable;
 import hydrogengamma.utils.Pair;
-import hydrogengamma.vartiles.Tile;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

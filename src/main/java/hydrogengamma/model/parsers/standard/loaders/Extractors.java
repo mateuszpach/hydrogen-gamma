@@ -1,6 +1,9 @@
-package hydrogengamma.model;
+package hydrogengamma.model.parsers.standard.loaders;
 
-import hydrogengamma.model.extractors.*;
+import hydrogengamma.model.extractors.FunctionVariableExtractor;
+import hydrogengamma.model.extractors.MatrixVariableExtractor;
+import hydrogengamma.model.extractors.NumericVariableExtractor;
+import hydrogengamma.model.extractors.TextVariableExtractor;
 
 public enum Extractors {
     FUNCTION_VARIABLE_EXTRACTOR(new FunctionVariableExtractor()),

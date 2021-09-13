@@ -1,10 +1,12 @@
 package hydrogengamma.model;
 
+import hydrogengamma.controllers.vartiles.FunctionTile;
+import hydrogengamma.controllers.vartiles.MatrixTile;
+import hydrogengamma.model.modules.Tile;
+import hydrogengamma.model.parsers.standard.TilesContainer;
+import hydrogengamma.model.parsers.standard.tilescontainers.TilesContainerImpl;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.model.variables.MatrixVariable;
-import hydrogengamma.vartiles.FunctionTile;
-import hydrogengamma.vartiles.MatrixTile;
-import hydrogengamma.vartiles.Tile;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

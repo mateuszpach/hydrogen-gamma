@@ -1,7 +1,8 @@
-package hydrogengamma.model;
+package hydrogengamma.model.parsers.standard.tilescontainers;
 
-import hydrogengamma.vartiles.Tile;
-import hydrogengamma.vartiles.TileDecorator;
+import hydrogengamma.controllers.vartiles.TileDecorator;
+import hydrogengamma.model.modules.Tile;
+import hydrogengamma.model.parsers.standard.TilesContainer;
 
 import java.util.ArrayList;
 
