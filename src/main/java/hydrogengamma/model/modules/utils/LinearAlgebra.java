@@ -107,6 +107,17 @@ public interface LinearAlgebra {
         return id;
     }
 
+    static int permSign(Integer[] a) {
+        int s = 1;
+        for (int i = 0; i < a.length; i++) {
+            for (int j = i + 1; j < a.length; j++) {
+                if (a[i] > a[j])
+                    s *= -1;
+            }
+        }
+        return s;
+    }
+
     private static int rowWithMaxVal(double[][] A, int beginRow) {
         double maxi = Math.abs(A[beginRow][beginRow]);
         int idx = beginRow;

@@ -37,6 +37,6 @@ public class Determinant implements Module<NumericVariable> {
         for (int i = 0; i < U.rowsNum(); i++) {
             det *= U.get(i, i);
         }
-        return det;
+        return det * LinearAlgebra.permSign(lu.second);
     }
 }

@@ -96,4 +96,13 @@ public class LinearAlgebraTest {
             assertEquals(i, id2[i]);
         }
     }
+
+    @Test
+    void permSignTest() {
+        Integer[] a = {0, 1, 2};
+        Integer[] b = {4, 1, 0, 2, 3};
+
+        assertEquals(1, LinearAlgebra.permSign(a));
+        assertEquals(-1, LinearAlgebra.permSign(b));
+    }
 }
