@@ -38,7 +38,7 @@ public class StandardComputer implements Computer {
                 for (Tile tile : containerDecorator.getTiles())
                     container.addTile(tile);
                 variables.put(exp.getId(), new Pair<>(exp.getLabel(), value));
-                logger.debug(String.format("Computed variable: %s as %s with value %s", exp.getId(), exp.getLabel(), value.getValue().toString()));
+                logger.debug(String.format("Computed variable: %s as %s with value %s", exp.getId(), exp.getLabel(), value.getValue()));
             } catch (ModuleException exception) {
                 container.addTile(new Tile() {
                     @Override
