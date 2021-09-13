@@ -1,6 +1,6 @@
-package hydrogengamma.model.extractors;
+package hydrogengamma.model.parsers.standard.loaders;
 
-import hydrogengamma.model.Variable;
+import hydrogengamma.model.parsers.standard.Variable;
 
 public interface VariableExtractor<T extends Variable<?>> {
 

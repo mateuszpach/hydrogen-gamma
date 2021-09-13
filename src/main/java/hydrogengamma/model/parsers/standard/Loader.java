@@ -1,6 +1,4 @@
-package hydrogengamma.controllers;
-
-import hydrogengamma.model.Variable;
+package hydrogengamma.model.parsers.standard;
 
 import java.util.Map;
 

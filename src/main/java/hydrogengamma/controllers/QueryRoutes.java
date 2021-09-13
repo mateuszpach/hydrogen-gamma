@@ -1,7 +1,7 @@
 package hydrogengamma.controllers;
 
-import hydrogengamma.model.ParserFactory;
-import hydrogengamma.model.TilesContainer;
+import hydrogengamma.model.modules.Tile;
+import hydrogengamma.model.parsers.standard.TilesContainer;
 import io.javalin.Javalin;
 import io.javalin.http.Handler;
 import org.apache.log4j.Logger;
@@ -27,7 +27,7 @@ public class QueryRoutes {
         TilesContainer container = parser.parse(parameters, expression);
 
         ArrayList<TileData> tiles = new ArrayList<>();
-        for (hydrogengamma.vartiles.Tile tile : container.getTiles()) {
+        for (Tile tile : container.getTiles()) {
             tiles.add(new TileData(tile.getContent(), tile.getLabel()));
         }
         Collections.reverse(tiles);

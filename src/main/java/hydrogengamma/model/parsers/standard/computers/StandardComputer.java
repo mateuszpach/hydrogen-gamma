@@ -1,11 +1,11 @@
-package hydrogengamma.model.parsers.standard;
+package hydrogengamma.model.parsers.standard.computers;
 
-import hydrogengamma.controllers.Computer;
-import hydrogengamma.controllers.Expression;
-import hydrogengamma.model.*;
+import hydrogengamma.model.modules.Tile;
 import hydrogengamma.model.modules.utils.ModuleException;
+import hydrogengamma.model.parsers.standard.*;
+import hydrogengamma.model.parsers.standard.tilescontainers.TilesContainerDecorator;
+import hydrogengamma.model.parsers.standard.tilescontainers.TilesContainerImpl;
 import hydrogengamma.utils.Pair;
-import hydrogengamma.vartiles.Tile;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 

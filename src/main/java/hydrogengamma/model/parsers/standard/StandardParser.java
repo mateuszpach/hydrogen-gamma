@@ -1,12 +1,8 @@
 package hydrogengamma.model.parsers.standard;
 
-import hydrogengamma.controllers.Computer;
-import hydrogengamma.controllers.Loader;
 import hydrogengamma.controllers.Parser;
-import hydrogengamma.controllers.TreeBuilder;
-import hydrogengamma.model.TilesContainer;
-import hydrogengamma.model.TilesContainerImpl;
-import hydrogengamma.vartiles.InfoTile;
+import hydrogengamma.controllers.vartiles.InfoTile;
+import hydrogengamma.model.parsers.standard.tilescontainers.TilesContainerImpl;
 import org.apache.log4j.Logger;
 
 public class StandardParser implements Parser {

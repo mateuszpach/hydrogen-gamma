@@ -1,7 +1,4 @@
-package hydrogengamma.controllers;
-
-import hydrogengamma.model.TilesContainer;
-import hydrogengamma.model.Variable;
+package hydrogengamma.model.parsers.standard;
 
 import java.util.List;
 import java.util.Map;

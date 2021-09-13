@@ -1,8 +1,8 @@
-package hydrogengamma.model.parsers.standard;
+package hydrogengamma.model.parsers.standard.loaders;
 
-import hydrogengamma.controllers.Loader;
-import hydrogengamma.model.Extractors;
-import hydrogengamma.model.Variable;
+import hydrogengamma.model.parsers.standard.Loader;
+import hydrogengamma.model.parsers.standard.ParsingException;
+import hydrogengamma.model.parsers.standard.Variable;
 
 import java.util.Map;
 import java.util.TreeMap;

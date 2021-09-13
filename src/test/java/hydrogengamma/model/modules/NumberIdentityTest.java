@@ -1,6 +1,6 @@
 package hydrogengamma.model.modules;
 
-import hydrogengamma.model.TilesContainer;
+import hydrogengamma.model.parsers.standard.TilesContainer;
 import hydrogengamma.model.variables.FunctionVariable;
 import hydrogengamma.model.variables.NumericVariable;
 import org.junit.jupiter.api.Test;

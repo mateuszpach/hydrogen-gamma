@@ -1,10 +1,9 @@
 package hydrogengamma.model.modules;
 
-import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.modules.tilefactories.MatrixTileFactory;
+import hydrogengamma.model.parsers.standard.TilesContainer;
 import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.model.variables.NumericVariable;
-import hydrogengamma.vartiles.Tile;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

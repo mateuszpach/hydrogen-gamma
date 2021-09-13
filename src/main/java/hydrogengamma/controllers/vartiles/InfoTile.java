@@ -1,4 +1,4 @@
-package hydrogengamma.vartiles;
+package hydrogengamma.controllers.vartiles;
 
 
 public class InfoTile extends DefaultTile {

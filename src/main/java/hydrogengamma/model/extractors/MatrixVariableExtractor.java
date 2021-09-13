@@ -1,5 +1,6 @@
 package hydrogengamma.model.extractors;
 
+import hydrogengamma.model.parsers.standard.loaders.VariableExtractor;
 import hydrogengamma.model.variables.MatrixVariable;
 
 import java.util.ArrayList;

@@ -1,11 +1,11 @@
 package hydrogengamma.model.modules;
 
 
-import hydrogengamma.model.Module;
-import hydrogengamma.model.TilesContainer;
-import hydrogengamma.model.Variable;
-import hydrogengamma.model.variables.MatrixVariable;
 import hydrogengamma.model.modules.tilefactories.MatrixTileFactory;
+import hydrogengamma.model.parsers.standard.TilesContainer;
+import hydrogengamma.model.parsers.standard.Variable;
+import hydrogengamma.model.parsers.standard.computers.Module;
+import hydrogengamma.model.variables.MatrixVariable;
 
 public class MatrixTranspose implements Module<MatrixVariable> {
 

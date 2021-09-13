@@ -1,10 +1,9 @@
 package hydrogengamma.model.modules;
 
-import hydrogengamma.model.Module;
-import hydrogengamma.model.TilesContainer;
-import hydrogengamma.model.Variable;
+import hydrogengamma.model.parsers.standard.TilesContainer;
+import hydrogengamma.model.parsers.standard.Variable;
+import hydrogengamma.model.parsers.standard.computers.Module;
 import hydrogengamma.model.variables.VoidVariable;
-import hydrogengamma.model.modules.tilefactories.TileFactory;
 
 public class VoidIdentity implements Module<VoidVariable> {
     @Override

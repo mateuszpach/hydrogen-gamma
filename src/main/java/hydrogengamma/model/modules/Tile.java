@@ -1,4 +1,4 @@
-package hydrogengamma.vartiles;
+package hydrogengamma.model.modules;
 
 public interface Tile {
     String getContent();

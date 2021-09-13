@@ -1,4 +1,4 @@
-package hydrogengamma.vartiles;
+package hydrogengamma.controllers.vartiles;
 
 import java.util.List;
 
