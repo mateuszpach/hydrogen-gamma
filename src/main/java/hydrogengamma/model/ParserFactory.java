@@ -1,13 +1,8 @@
 package hydrogengamma.model;
 
-import hydrogengamma.controllers.Computer;
-import hydrogengamma.controllers.Loader;
 import hydrogengamma.controllers.Parser;
-import hydrogengamma.controllers.TreeBuilder;
-import hydrogengamma.model.parsers.standard.StandardComputer;
-import hydrogengamma.model.parsers.standard.StandardLoader;
-import hydrogengamma.model.parsers.standard.StandardParser;
-import hydrogengamma.model.parsers.standard.StandardTreeBuilder;
+import hydrogengamma.model.parsers.standard.*;
+import hydrogengamma.model.parsers.standard.computers.StandardComputer;
 
 public class ParserFactory {
     public static Parser getParser() {

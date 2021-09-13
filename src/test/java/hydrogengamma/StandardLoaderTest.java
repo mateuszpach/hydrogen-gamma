@@ -1,7 +1,7 @@
 package hydrogengamma;
 
-import hydrogengamma.controllers.Loader;
 import hydrogengamma.model.Variable;
+import hydrogengamma.model.parsers.standard.Loader;
 import hydrogengamma.model.parsers.standard.ParsingException;
 import hydrogengamma.model.parsers.standard.StandardLoader;
 import hydrogengamma.model.variables.MatrixVariable;

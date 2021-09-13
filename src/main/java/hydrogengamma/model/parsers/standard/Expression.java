@@ -1,4 +1,4 @@
-package hydrogengamma.controllers;
+package hydrogengamma.model.parsers.standard;
 
 import java.util.List;
 

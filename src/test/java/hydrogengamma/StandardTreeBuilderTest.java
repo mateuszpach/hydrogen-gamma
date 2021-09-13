@@ -1,9 +1,9 @@
 package hydrogengamma;
 
-import hydrogengamma.controllers.Expression;
-import hydrogengamma.controllers.TreeBuilder;
+import hydrogengamma.model.parsers.standard.Expression;
 import hydrogengamma.model.parsers.standard.ParsingException;
 import hydrogengamma.model.parsers.standard.StandardTreeBuilder;
+import hydrogengamma.model.parsers.standard.TreeBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

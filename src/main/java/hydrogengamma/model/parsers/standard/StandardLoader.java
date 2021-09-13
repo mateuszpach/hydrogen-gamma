@@ -1,6 +1,5 @@
 package hydrogengamma.model.parsers.standard;
 
-import hydrogengamma.controllers.Loader;
 import hydrogengamma.model.Extractors;
 import hydrogengamma.model.Variable;
 

@@ -1,4 +1,4 @@
-package hydrogengamma.controllers;
+package hydrogengamma.model.parsers.standard;
 
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;

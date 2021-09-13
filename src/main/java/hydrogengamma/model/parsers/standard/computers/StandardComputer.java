@@ -1,9 +1,10 @@
-package hydrogengamma.model.parsers.standard;
+package hydrogengamma.model.parsers.standard.computers;
 
-import hydrogengamma.controllers.Computer;
-import hydrogengamma.controllers.Expression;
 import hydrogengamma.model.*;
 import hydrogengamma.model.modules.utils.ModuleException;
+import hydrogengamma.model.parsers.standard.Computer;
+import hydrogengamma.model.parsers.standard.Expression;
+import hydrogengamma.model.parsers.standard.ParsingException;
 import hydrogengamma.utils.Pair;
 import hydrogengamma.vartiles.Tile;
 import org.apache.log4j.Logger;

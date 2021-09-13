@@ -1,11 +1,11 @@
 package hydrogengamma;
 
-import hydrogengamma.controllers.Computer;
-import hydrogengamma.controllers.Expression;
 import hydrogengamma.model.TilesContainer;
 import hydrogengamma.model.Variable;
+import hydrogengamma.model.parsers.standard.Computer;
+import hydrogengamma.model.parsers.standard.Expression;
 import hydrogengamma.model.parsers.standard.ParsingException;
-import hydrogengamma.model.parsers.standard.StandardComputer;
+import hydrogengamma.model.parsers.standard.computers.StandardComputer;
 import hydrogengamma.model.variables.NumericVariable;
 import org.junit.jupiter.api.Test;
 
