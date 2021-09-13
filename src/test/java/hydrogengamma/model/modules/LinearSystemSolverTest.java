@@ -26,9 +26,9 @@ public class LinearSystemSolverTest {
 
         LinearSystemSolver solver = new LinearSystemSolver(factory);
 
-        assertThrows(ModuleException.class, () -> solver.execute(container, new MatrixVariable(a), null));
-        assertThrows(ModuleException.class, () -> solver.execute(container, new MatrixVariable(b), null));
-        assertThrows(ModuleException.class, () -> solver.execute(container, new MatrixVariable(c), null));
+        assertThrows(ModuleException.class, () -> solver.execute(container, new MatrixVariable(a), new MatrixVariable(a)));
+        assertThrows(ModuleException.class, () -> solver.execute(container, new MatrixVariable(b), new MatrixVariable(b)));
+        assertThrows(ModuleException.class, () -> solver.execute(container, new MatrixVariable(c), new MatrixVariable(c)));
         Mockito.verifyNoInteractions(factory, container);
     }
 
