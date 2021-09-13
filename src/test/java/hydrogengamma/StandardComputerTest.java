@@ -59,7 +59,6 @@ public class StandardComputerTest {
 
     @Test
     void operationsAreComputedCorrectly() {
-        //can't mock tileContainer as it's created in compute routine
         Map<String, Variable<?>> variables = new TreeMap<>();
         ArrayList<Expression> operations = new ArrayList<>();
         variables.put("a", new NumericVariable(2));
@@ -77,10 +76,38 @@ public class StandardComputerTest {
         operations.add(new Expression("d", "(a+a)+(a+(a+a))", "+", operation3));
         Computer computer = new StandardComputer();
         final TilesContainer[] tilesContainer = {null};
+
         assertDoesNotThrow(() -> tilesContainer[0] = computer.compute(variables, operations));
-        assertEquals("$4.0$", tilesContainer[0].getTiles().get(0).getContent());
-        assertEquals("$6.0$", tilesContainer[0].getTiles().get(1).getContent());
-        assertEquals("$10.0$", tilesContainer[0].getTiles().get(2).getContent());
+        assertTrue(tilesContainer[0].getTiles().get(0).getContent().contains("4.0"));
+        assertTrue(tilesContainer[0].getTiles().get(1).getContent().contains("6.0"));
+        assertTrue(tilesContainer[0].getTiles().get(2).getContent().contains("10.0"));
+    }
+
+    @Test
+    void labelsAreFilledCorrectly() {
+        Map<String, Variable<?>> variables = new TreeMap<>();
+        ArrayList<Expression> operations = new ArrayList<>();
+        variables.put("a", new NumericVariable(2));
+        ArrayList<String> operation1 = new ArrayList<>();
+        operation1.add("a");
+        operation1.add("a");
+        ArrayList<String> operation2 = new ArrayList<>();
+        operation2.add("a");
+        operation2.add("b");
+        ArrayList<String> operation3 = new ArrayList<>();
+        operation3.add("b");
+        operation3.add("c");
+        operations.add(new Expression("b", "first label", "+", operation1));
+        operations.add(new Expression("c", "second label", "+", operation2));
+        operations.add(new Expression("d", "third label", "+", operation3));
+        Computer computer = new StandardComputer();
+        final TilesContainer[] tilesContainer = {null};
+
+        assertDoesNotThrow(() -> tilesContainer[0] = computer.compute(variables, operations));
+        assertTrue(tilesContainer[0].getTiles().get(0).getLabel().contains("a"));
+        assertTrue(tilesContainer[0].getTiles().get(1).getLabel().contains("first label"));
+        assertTrue(tilesContainer[0].getTiles().get(2).getLabel().contains("first label"));
+        assertTrue(tilesContainer[0].getTiles().get(2).getLabel().contains("second label"));
     }
 
 }
