@@ -3,11 +3,8 @@ package hydrogengamma.model.parsers.standard;
 import hydrogengamma.controllers.Parser;
 import hydrogengamma.controllers.vartiles.InfoTile;
 import hydrogengamma.model.parsers.standard.tilescontainers.TilesContainerImpl;
-import org.apache.log4j.Logger;
 
 public class StandardParser implements Parser {
-
-    private static final Logger logger = Logger.getLogger(StandardParser.class);
 
     private final Loader loader;
     private final Computer computer;
