@@ -26,10 +26,23 @@ public class LinearSystemSolverTest {
 
         LinearSystemSolver solver = new LinearSystemSolver(factory);
 
-        assertThrows(ModuleException.class, () -> solver.execute(container, new MatrixVariable(a), null));
-        assertThrows(ModuleException.class, () -> solver.execute(container, new MatrixVariable(b), null));
-        assertThrows(ModuleException.class, () -> solver.execute(container, new MatrixVariable(c), null));
+        assertThrows(ModuleException.class, () -> solver.execute(container, new MatrixVariable(a), new MatrixVariable(a)));
+        assertThrows(ModuleException.class, () -> solver.execute(container, new MatrixVariable(b), new MatrixVariable(b)));
+        assertThrows(ModuleException.class, () -> solver.execute(container, new MatrixVariable(c), new MatrixVariable(c)));
         Mockito.verifyNoInteractions(factory, container);
+    }
+
+    @Test
+    void throwingIncompatible() {
+        MatrixVariable a1 = new MatrixVariable(new double[][]{{1,2}, {3,4}});
+        MatrixVariable b1 = new MatrixVariable(new double[][]{{1}, {3}, {1}});
+        MatrixVariable a2 = new MatrixVariable(new double[][]{{1,2}, {3,4}});
+        MatrixVariable b2 = new MatrixVariable(new double[][]{{1, 2}, {3, 3}});
+
+        LinearSystemSolver solver = new LinearSystemSolver(factory);
+
+        assertThrows(ModuleException.class, () -> solver.execute(container, a1, b1));
+        assertThrows(ModuleException.class, () -> solver.execute(container, a2, b2));
     }
 
     @Test
