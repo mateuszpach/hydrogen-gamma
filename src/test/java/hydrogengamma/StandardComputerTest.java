@@ -3,7 +3,6 @@ package hydrogengamma;
 import hydrogengamma.controllers.Computer;
 import hydrogengamma.controllers.Expression;
 import hydrogengamma.model.TilesContainer;
-import hydrogengamma.model.TilesContainerImpl;
 import hydrogengamma.model.Variable;
 import hydrogengamma.model.parsers.standard.ParsingException;
 import hydrogengamma.model.parsers.standard.StandardComputer;
@@ -14,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StandardComputerTest {
     @Test
@@ -44,7 +43,23 @@ public class StandardComputerTest {
     }
 
     @Test
+    void computerCatchesModuleExceptions() {
+        Map<String, Variable<?>> variables = new TreeMap<>();
+        ArrayList<Expression> operations = new ArrayList<>();
+        variables.put("a", new NumericVariable(0));
+        ArrayList<String> operation1 = new ArrayList<>();
+        operation1.add("a");
+        operations.add(new Expression("b", "1/a", "/", operation1));//division by zero
+        Computer computer = new StandardComputer();
+        final TilesContainer[] state = new TilesContainer[1];
+        assertDoesNotThrow(() -> state[0] = computer.compute(variables, operations));
+        assertEquals("Module error", state[0].getTiles().get(0).getLabel());
+        assertEquals("Division by zero: 1 / 0.0", state[0].getTiles().get(0).getContent());
+    }
+
+    @Test
     void operationsAreComputedCorrectly() {
+        //can't mock tileContainer as it's created in compute routine
         Map<String, Variable<?>> variables = new TreeMap<>();
         ArrayList<Expression> operations = new ArrayList<>();
         variables.put("a", new NumericVariable(2));
@@ -61,14 +76,11 @@ public class StandardComputerTest {
         operations.add(new Expression("c", "a+(a+a)", "+", operation2));
         operations.add(new Expression("d", "(a+a)+(a+(a+a))", "+", operation3));
         Computer computer = new StandardComputer();
-        final TilesContainer[] tilesContainer = {new TilesContainerImpl()};
-//        assertDoesNotThrow(() -> tilesContainer[0] = computer.compute(variables, operations));
-//        assertEquals("$4.0$", tilesContainer[0].getTiles().get(0).getContent());
-//        assertEquals("Sum of: a, a", tilesContainer[0].getTiles().get(0).getLabel());
-//        assertEquals("$6.0$", tilesContainer[0].getTiles().get(1).getContent());
-//        assertEquals("Sum of: a, a+a", tilesContainer[0].getTiles().get(1).getLabel());
-//        assertEquals("$10.0$", tilesContainer[0].getTiles().get(2).getContent());
-//        assertEquals("Sum of: a+a, a+(a+a)", tilesContainer[0].getTiles().get(2).getLabel()); TODO
+        final TilesContainer[] tilesContainer = {null};
+        assertDoesNotThrow(() -> tilesContainer[0] = computer.compute(variables, operations));
+        assertEquals("$4.0$", tilesContainer[0].getTiles().get(0).getContent());
+        assertEquals("$6.0$", tilesContainer[0].getTiles().get(1).getContent());
+        assertEquals("$10.0$", tilesContainer[0].getTiles().get(2).getContent());
     }
 
 }

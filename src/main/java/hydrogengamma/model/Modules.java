@@ -8,7 +8,6 @@ import hydrogengamma.model.variables.NumericVariable;
 import static java.lang.Math.sin;
 
 public enum Modules {
-    // TODO: loading test must be added, just seen all tests pass while constructor was throwing
     // Numeric
     NUMBER_IDENTITY("", new NumberIdentity()),
     NUMBER_ADD_BINARY("+", new NumberBiOperator(new AllTilesFactory(), "Sum of", (a, b) -> new NumericVariable(a.getValue() + b.getValue()))),
@@ -18,7 +17,7 @@ public enum Modules {
     NUMBER_ADD_UNARY("+", new NumberUnaryOperator(new AllTilesFactory(), "Sum of", (a) -> new NumericVariable(a.getValue()))),
     NUMBER_MUL_UNARY("*", new NumberUnaryOperator(new AllTilesFactory(), "Product of", (a) -> new NumericVariable(a.getValue()))),
     NUMBER_SUB_UNARY("-", new NumberUnaryOperator(new AllTilesFactory(), "Negation of", (a) -> new NumericVariable(-a.getValue()))),
-    NUMBER_DIV_UNARY("/", new NumberDivision(new AllTilesFactory())),
+    NUMBER_DIV("/", new NumberDivision(new AllTilesFactory())),
 
     // Matrix
     MATRIX_IDENTITY("", new MatrixIdentity()),
@@ -36,14 +35,10 @@ public enum Modules {
 
     // Function
     DERIVATIVE("derivative", new Differentiator(new AllTilesFactory())),
-    FUNCTION_ADD_BINARY("+", new FunctionBiOperator(new AllTilesFactory(), "Sum of",
-            (f, g) -> new FunctionVariable("(" + f.getValue() + "+" + g.getValue() + ")"))),
-    FUNCTION_SUB_BINARY("-", new FunctionBiOperator(new AllTilesFactory(), "Sum of",
-            (f, g) -> new FunctionVariable("(" + f.getValue() + "-" + g.getValue() + ")"))),
-    FUNCTION_MUL_BINARY("*", new FunctionBiOperator(new AllTilesFactory(), "Product of",
-            (f, g) -> new FunctionVariable("(" + f.getValue() + "*" + g.getValue() + ")"))),
-    FUNCTION_DIV_BINARY("/", new FunctionBiOperator(new AllTilesFactory(), "Division of",
-            (f, g) -> new FunctionVariable("(" + f.getValue() + "/" + g.getValue() + ")"))),
+    FUNCTION_ADD_BINARY("+", new FunctionBiOperator(new AllTilesFactory(), "Sum of", (f, g) -> new FunctionVariable("(" + f.getValue() + "+" + g.getValue() + ")"))),
+    FUNCTION_SUB_BINARY("-", new FunctionBiOperator(new AllTilesFactory(), "Sum of", (f, g) -> new FunctionVariable("(" + f.getValue() + "-" + g.getValue() + ")"))),
+    FUNCTION_MUL_BINARY("*", new FunctionBiOperator(new AllTilesFactory(), "Product of", (f, g) -> new FunctionVariable("(" + f.getValue() + "*" + g.getValue() + ")"))),
+    FUNCTION_DIV_BINARY("/", new FunctionBiOperator(new AllTilesFactory(), "Division of", (f, g) -> new FunctionVariable("(" + f.getValue() + "/" + g.getValue() + ")"))),
     FUNCTION_IDENTITY("", new FunctionIdentity()),
 
     // Voids
@@ -53,7 +48,6 @@ public enum Modules {
     LONGEST_COMMON_SUBSTRING("LCS", new LongestCommonSubstrings(new AllTilesFactory())),
     VOID_IDENTITY("", new VoidIdentity());
 
-    // TODO: add stuff here L&M
     public final String name;
     public final Module<?> module;
 

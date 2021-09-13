@@ -5,7 +5,6 @@ import hydrogengamma.controllers.Loader;
 import hydrogengamma.controllers.Parser;
 import hydrogengamma.controllers.TreeBuilder;
 import hydrogengamma.model.TilesContainer;
-import hydrogengamma.model.modules.utils.ModuleException;
 import hydrogengamma.model.parsers.standard.ParsingException;
 import hydrogengamma.model.parsers.standard.StandardParser;
 import org.junit.jupiter.api.Test;
@@ -26,21 +25,6 @@ public class StandardParserTest {
         assertDoesNotThrow(() -> parser.parse(variables, operations));
     }
 
-    @Test
-    void parserCatchesModuleExceptions() {
-        Loader loader = Mockito.mock(Loader.class);
-        TreeBuilder treeBuilder = Mockito.mock(TreeBuilder.class);
-        final TilesContainer[] container = new TilesContainer[1];
-        Computer computer = (variables, expressions) -> {
-            throw new ModuleException("error");
-        };
-        Parser parser = new StandardParser(loader, treeBuilder, computer);
-        final String variables = "a=1";
-        final String operations = "a+a";
-        assertDoesNotThrow(() -> container[0] = parser.parse(variables, operations));
-        assertEquals("$\\text{error}$", container[0].getTiles().get(0).getContent());
-        assertEquals("Module error", container[0].getTiles().get(0).getLabel());
-    }
 
     @Test
     void parserCatchesParsingExceptions() {
