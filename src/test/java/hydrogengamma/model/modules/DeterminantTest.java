@@ -38,15 +38,18 @@ public class DeterminantTest {
         MatrixVariable A = new MatrixVariable(new double[][]{{3.0, 4.0}, {-1.0, 30.0}});
         MatrixVariable B = new MatrixVariable(new double[][]{{1.0}});
         MatrixVariable C = new MatrixVariable(new double[][]{{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}, {7.0, 8.0, 9.0}});
+        MatrixVariable D = new MatrixVariable(new double[][]{{1.0, 2.0}, {3.0, 3.0}});
         Determinant det = new Determinant(factory);
 
         NumericVariable w1 = det.execute(container, A);
         NumericVariable w2 = det.execute(container, B);
         NumericVariable w3 = det.execute(container, C);
+        NumericVariable w4 = det.execute(container, D);
 
         assertTrue(w1.getValue() - 94.0 < 1e-10);
         assertTrue(w2.getValue() - 1.0 < 1e-10);
         assertTrue(w3.getValue() - 0.0 < 1e-10);
+        assertTrue(w4.getValue() - -3.0 < 1e-10);
     }
 
     @Test
