@@ -36,11 +36,11 @@ public class FunctionTile extends DefaultTile {
                         open--;
                     if (open == 0) {
                         b.append('}');
-                        i = j + 1;
                         break;
                     }
                     j++;
                 }
+                i = j + 1;
             }
             else {
                 i++;
