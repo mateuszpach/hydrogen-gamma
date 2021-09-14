@@ -13,6 +13,39 @@ public class FunctionTile extends DefaultTile {
 
     @Override
     public String getContent() {
-        return '$' + function.getValue() + '$'; // TODO: use latex class LUKASZ
+        return '$' + valueWithLatexExponents() + '$';
+    }
+
+    private String valueWithLatexExponents() {
+
+        StringBuilder b = new StringBuilder();
+        char[] f = function.getValue().toCharArray();
+        int i = 0;
+
+        while (i < f.length) {
+            b.append(f[i]);
+            if (f[i] == '^') {
+                b.append('{');
+                int open = 0;
+                int j = i + 1;
+                while (j < f.length) {
+                    b.append(f[j]);
+                    if (f[j] == '(')
+                        open++;
+                    if (f[j] == ')')
+                        open--;
+                    if (open == 0) {
+                        b.append('}');
+                        i = j + 1;
+                        break;
+                    }
+                    j++;
+                }
+            }
+            else {
+                i++;
+            }
+        }
+        return b.toString();
     }
 }
