@@ -13,34 +13,6 @@ public class FunctionTile extends DefaultTile {
 
     @Override
     public String getContent() {
-        return '$' + valueWithLatexExponents() + '$';
-    }
-
-    private String valueWithLatexExponents() {
-        char[] f = function.getValue().toCharArray();
-        int i = 0;
-        while (i < f.length) {
-            if (f[i] == '^') {
-                int open = 0;
-                int j = i + 1;
-                while (j < f.length) {
-                    if (f[j] == '(')
-                        open++;
-                    if (f[j] == ')')
-                        open--;
-                    if (open == 0) {
-                        f[i + 1] = '{';
-                        f[j] = '}';
-                        i = j + 1;
-                        break;
-                    }
-                    j++;
-                }
-            }
-            else {
-                i++;
-            }
-        }
-        return String.valueOf(f);
+        return '$' + function.getValue() + '$'; // TODO: use latex class LUKASZ
     }
 }
