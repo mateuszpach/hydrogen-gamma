@@ -7,8 +7,8 @@ public class TileDecorator implements Tile {
     private final String labelSuffix;
     private final Tile tile; // decoratee
 
-    public TileDecorator(Tile tile, String prefix) {
-        this.labelSuffix = prefix;
+    public TileDecorator(Tile tile, String suffix) {
+        this.labelSuffix = suffix;
         this.tile = tile;
     }
 
@@ -19,7 +19,6 @@ public class TileDecorator implements Tile {
 
     @Override
     public String getLabel() {
-//        return String.format("$\\text{%s: } %s$", tile.getLabel(), labelSuffix);
         return String.format("%s: $\\mathit{%s}$", tile.getLabel(), labelSuffix);
     }
 }
