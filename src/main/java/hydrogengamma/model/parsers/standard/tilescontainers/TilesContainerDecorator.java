@@ -10,9 +10,9 @@ public class TilesContainerDecorator implements TilesContainer {
     private final TilesContainer container; // decoratee
     private final String labelSuffix;
 
-    public TilesContainerDecorator(TilesContainer container, String prefix) {
+    public TilesContainerDecorator(TilesContainer container, String suffix) {
         this.container = container;
-        labelSuffix = prefix;
+        labelSuffix = suffix;
     }
 
     @Override
